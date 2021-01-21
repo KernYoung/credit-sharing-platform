@@ -4450,7 +4450,7 @@
             </if>
             <if test="companyName != null and companyName.size > 0">
                 and N.ENTERPRISE_NAME in
-                <foreach collection="companyName" index="index" item="item" open="(" separator="," close=")">
+                <foreach collection="companyName" index="index" item="item"  >
                     #{item}
                 </foreach>
             </if>
@@ -4458,7 +4458,38 @@
             ORDER BY pd desc,N.ENTERPRISE_NAME
         )
     </select>
+<!--jina-->
+    <insert id="insertReportApply" parameterType="java.lang.String" useGeneratedKeys="false" >
+        insert into INPUT_PUSH(ID,USER_NAME,PUSH_FLAG,PUSH_TIME,RESULT_TYPE,RESULT,PROMPTINFO,
+                               OA_FLAG,PUSH_TYPE,TYC_UPDATETIME,URL,PROMTINFO) values
 
+               (lower(sys_guid()), #{item}, '0', sysdate, NULL,NULL,
+               '您有新的信保报告需要审核，请及时查看',NULL,'信保报告审核',NULL,NULL,NULL)
 
+    </insert>
+
+    <select id="getReportApplyUserNameList" parameterType="java.lang.String" resultType="java.lang.String">
+       SELECT USERNAME
+             FROM CREDIT_USER C
+             WHERE C.ROLE_NAME = '审核专员'
+			 AND C.COMPANY_NAME =  (
+									SELECT COMPANYNAME
+									FROM (
+									SELECT COMPANYCODE,COMPANYNAME,SUBCOMPANYCODE,SUBCOMPANYNAME,SHORTNAME
+									FROM DIM_ORG
+									WHERE 1=1
+
+									) COMP
+									WHERE SUBCOMPANYNAME =
+									    (SELECT C.COMPANY_NAME
+										FROM CREDIT_USER C
+										WHERE C.USERNAME=#{userName})
+														)
+									UNION
+                                    SELECT 'admin' AS USERNAME
+                                    FROM DUAL
+                                    WHERE 'admin' = #{userName}
+
+    </select>
 </mapper>
 
