@@ -820,6 +820,9 @@ public class CommonController {
         List<String> riskleve = ( ArrayList<String>) param.get("riskleve");
         List<String> companyName = ( ArrayList<String>) param.get("companyName");
         List<String> eventType = ( ArrayList<String>) param.get("eventType");
+        riskleve.remove("全选");
+        companyName.remove("全选");
+        eventType.remove("全选");
         String startDate = (String) param.get("startDate");
         String endDate = (String) param.get("endDate");
         Integer pageIndex = CommonUtils.getIntegerValue(param.get("pageIndex"));
@@ -851,6 +854,8 @@ public class CommonController {
         String userName = (String) param.get("userName");
         List<String> riskleve = ( ArrayList<String>) param.get("riskleve");
         List<String> companyName = ( ArrayList<String>) param.get("companyName");
+        riskleve.remove("全选");
+        companyName.remove("全选");
         String startDate = (String) param.get("startDate");
         String endDate = (String) param.get("endDate");
         Integer pageIndex = CommonUtils.getIntegerValue(param.get("pageIndex"));
@@ -868,6 +873,9 @@ public class CommonController {
         List<String> riskleve = ( ArrayList<String>) param.get("riskleve");
         List<String> companyName = ( ArrayList<String>) param.get("companyName");
         List<String> newsEmotion = ( ArrayList<String>) param.get("newsEmotion");
+        newsEmotion.remove("全选");
+        companyName.remove("全选");
+        riskleve.remove("全选");
         String startDate = (String) param.get("startDate");
         String endDate = (String) param.get("endDate");
         Integer pageIndex = CommonUtils.getIntegerValue(param.get("pageIndex"));

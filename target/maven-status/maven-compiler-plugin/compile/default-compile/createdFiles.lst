@@ -79,6 +79,7 @@ com\sinosure\exchange\edi\po\NoLcQuotaApplyAppendix2.class
 com\fanruan\platform\dao\CompanyExtendInfoDao.class
 com\sinosure\exchange\edi\po\ArrayOfEdiPolicyInfoDetail.class
 com\sinosure\exchange\edi\service\DoEdiTotalDomDeclareApplyResponse.class
+com\fanruan\platform\bean\InputPush.class
 com\sinosure\exchange\edi\service\DoEdiBuyerCodeApplyResponse.class
 com\sinosure\exchange\edi\service\GetEdiShipmentTotalApproveInfo.class
 com\fanruan\platform\dao\ReportPushDao.class

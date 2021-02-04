@@ -73,4 +73,9 @@ public interface CommonsMapper {
     /**消息中心 新闻早报*/
     List<MorningNews> getMorningNews(String userName, List<String> riskleve, List<String> companyName, List<String> newsEmotion, String startDate, String endDate, Integer pageIndex, Integer pageSize);
     Integer getMorningNewsCount(String userName, List<String> riskleve, List<String> companyName, List<String> newsEmotion, String startDate, String endDate, Integer pageIndex, Integer pageSize);
+    //jina
+    /*根据userName查出多个审核人*/
+    List<String> getReportApplyUserNameList(String userName);
+    /*将信报申请落库*/
+    Integer insertReportApply(String userName);
 }

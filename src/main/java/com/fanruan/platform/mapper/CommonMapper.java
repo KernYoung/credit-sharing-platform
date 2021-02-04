@@ -30,7 +30,7 @@ public interface CommonMapper {
             "INNER JOIN ODS_ZXB_RATINGINFO F ON F.NOTICESERIALNO=S.NOTICESERIALNO " +
             "WHERE 1 = 1" +
             "<if test=\"name != null or engName != null\">"+
-            " and (F.BUYERCHNNAME = #{name, jdbcType=VARCHAR}  OR  F.BUYERENGNAME = #{engName, jdbcType=VARCHAR}) "+
+            " and (F.BUYERCHNNAME = #{name, jdbcType=VARCHAR}  OR  F.BUYERENGNAME = #{engName, jdbcType=VARCHAR} OR  F.SINOSUREBUYERNO =#{reportbuyerno,jdbcType=VARCHAR}) "+
             "</if> "
         +"</script> ")
     @Results(id="zhongXinBaoShare",  value={
@@ -40,7 +40,7 @@ public interface CommonMapper {
             @Result(property="valueHold", column="VALUEHOLD"),
             @Result(property="valueUSD", column="VALUEUSD")
     })
-    public List<ZhongXinBaoShare> getZhongXinBaoShare(@Param("name") String name,@Param("engName") String engName);
+    public List<ZhongXinBaoShare> getZhongXinBaoShare(@Param("name") String name,@Param("engName") String engName,@Param("reportbuyerno") String reportbuyerno);
 
     @Select("select PERMISSION_ROLE,PERMISSION_ROLE_NAME  \n" +
             "from CREDIT_PERMISSOION_POINT where PERMISSION_ROLE is not null GROUP BY PERMISSION_ROLE,PERMISSION_ROLE_NAME ")
@@ -175,7 +175,7 @@ public interface CommonMapper {
             "WHERE 1 = 1" +
             "AND ROWNUM = 1"+
             "<if test=\"name != null or engName != null\">"+
-            " and (R.BUYERCHNNAME = #{name, jdbcType=VARCHAR}  OR  R.BUYERENGNAME = #{engName, jdbcType=VARCHAR}) "+
+            " and (R.BUYERCHNNAME = #{name, jdbcType=VARCHAR}  OR  R.BUYERENGNAME = #{engName, jdbcType=VARCHAR} OR R.SINOSUREBUYERNO =#{reportbuyerno, jdbcType=VARCHAR}) "+
             "</if> " +
             "</script> "
     )
@@ -208,6 +208,6 @@ public interface CommonMapper {
 
             @Result(property="updateTime", column="UPDATETIME")
     })
-    public Optional<ZhongXinBaoInfo> getZhongXinBaoInfo(@Param("name") String name,@Param("engName") String engName);
+    public Optional<ZhongXinBaoInfo> getZhongXinBaoInfo(@Param("name") String name,@Param("engName") String engName,@Param("reportbuyerno") String reportbuyerno);
 
 }

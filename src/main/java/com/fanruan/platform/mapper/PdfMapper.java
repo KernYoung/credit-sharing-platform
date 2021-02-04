@@ -14,25 +14,27 @@ public interface PdfMapper {
             "P.NOTICESERIALNO||'.pdf' as NOTICESERIALNO,\n" +
             "p.UPDATETIME \n" +
             "FROM ODS_ZXB_PDF P\n" +
-            "INNER JOIN (SELECT NOTICESERIALNO,MAX(UPDATETIME) MAXTIME FROM ODS_ZXB_PDF  GROUP BY NOTICESERIALNO) D \n" +
-            "ON D.MAXTIME=P.UPDATETIME and p.NOTICESERIALNO=D.NOTICESERIALNO\n" +
+            /*"INNER JOIN (SELECT NOTICESERIALNO,MAX(UPDATETIME) MAXTIME FROM ODS_ZXB_PDF  GROUP BY NOTICESERIALNO) D \n" +
+            "ON D.MAXTIME=P.UPDATETIME and p.NOTICESERIALNO=D.NOTICESERIALNO\n" +*/
             "INNER JOIN ODS_ZXB_REPORTAPPROVE R ON R.NOTICESERIALNO=P.NOTICESERIALNO \n" +
             "LEFT JOIN LOG_ZXB_APPLY A ON A.CORPSERIALNO_IMPORT=R.CORPSERIALNO \n" +
             "LEFT JOIN ODS_ZXB_RATINGINFO F ON F.SINOSUREBUYERNO=A.REPORTBUYERNO " +
             "WHERE 1 = 1" +
             "<if test=\"(name != null and name != '')  or (engName != null and engName != '')\">"+
-            " and ORDERSTATE='0' AND  A.REPORTCORPCHNNAME= #{name,jdbcType=VARCHAR}  OR F.BUYERCHNNAME=#{name,jdbcType=VARCHAR}  and A.REPORTCORPENGNAME=#{engName,jdbcType=VARCHAR} OR F.BUYERENGNAME=#{engName,jdbcType=VARCHAR}"+
-            "</if> " +
+            " and ORDERSTATE='0' AND  A.REPORTCORPCHNNAME= #{name,jdbcType=VARCHAR}  OR F.BUYERCHNNAME=#{name,jdbcType=VARCHAR}  and A.REPORTCORPENGNAME=#{engName,jdbcType=VARCHAR} OR F.BUYERENGNAME=#{engName,jdbcType=VARCHAR} OR  F.SINOSUREBUYERNO =#{reportbuyerno,jdbcType=VARCHAR}"+
+            "</if> \n" +
+            "ORDER BY p.UPDATETIME DESC"+
             "</script> "
     )
     @Results(id="zhongXinBaoPDF", value={
             @Result(property="noticeSerialno",   column="NOTICESERIALNO"),
             @Result(property="updateTime",   column="UPDATETIME")
     })
-    public List<ZhongXinBaoPDF> selectZhongXinBaoPDF(@Param("name") String name,@Param("engName") String engName);
+    public List<ZhongXinBaoPDF> selectZhongXinBaoPDF(@Param("name") String name,@Param("engName") String engName,@Param("reportbuyerno") String reportbuyerno);
 
     @Select("<script> " +
-            "SELECT ROWNUM," +
+            "select * from (" +
+            "SELECT /*+ optimizer_features_enable('9.2.0')*/ ROWNUM as r," +
             "\t t.* \n" +
             "FROM\n" +
             "\t(\n" +
@@ -42,7 +44,7 @@ public interface PdfMapper {
             "\t\tA.REPORTCORPCHNNAME,--中文名称\n" +
             "\t\tA.REPORTCORPENGNAME,--英文名称\n" +
             "\t\tP.NOTICESERIALNO || '.pdf' as reportName,\n" +
-            "\t\tI.MAXTIME AS GETTIME,\n" +
+            "\t\tNVL(I.MAXTIME,'暂无摘要') AS GETTIME,\n" +
             "\t\tp.UPDATETIME \n" +
             "\tFROM\n" +
             "\t\tODS_ZXB_PDF P\n" +
@@ -50,9 +52,10 @@ public interface PdfMapper {
             "\t\tINNER JOIN ODS_ZXB_REPORTAPPROVE R ON R.NOTICESERIALNO = P.NOTICESERIALNO \n" +
             "\t\tAND ORDERSTATE = '0'\n" +
             "\t\tINNER JOIN LOG_ZXB_APPLY A ON R.CORPSERIALNO = A.CORPSERIALNO_IMPORT\n" +
-            "\t\tINNER JOIN ( SELECT BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO, MAX( UPDATETIME ) MAXTIME FROM ODS_ZXB_RATINGINFO GROUP BY BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO ) I ON I.BUYERENGNAME = A.REPORTCORPENGNAME \n" +
+            "\t\tLEFT JOIN ( SELECT BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO, MAX( UPDATETIME ) MAXTIME FROM ODS_ZXB_RATINGINFO GROUP BY BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO ) I ON I.BUYERENGNAME = A.REPORTCORPENGNAME \n" +
             "\t\tOR I.BUYERCHNNAME = A.REPORTCORPCHNNAME \n" +
-            "\t) t " +
+            "\t\tOR I.SINOSUREBUYERNO = A.REPORTBUYERNO \n"+
+            "\t\tORDER BY UPDATETIME DESC) t " +
             "WHERE 1 = 1"+
             "<if test=\"name != null and name!=''\">"+
             "and (t.REPORTCORPCHNNAME like '%'||#{name, jdbcType=VARCHAR}||'%' OR t.REPORTCORPENGNAME like '%'||#{name, jdbcType=VARCHAR}||'%') "+
@@ -60,8 +63,8 @@ public interface PdfMapper {
             "<if test=\"xcode != null and xcode!=''\">"+
             "and (t.REPORTBUYERNO like '%'||#{xcode, jdbcType=VARCHAR}||'%')"+
             "</if> "+
-            "AND ROWNUM &lt;= #{page, jdbcType=INTEGER} * #{pageSize, jdbcType=INTEGER}  \n" +
-            "AND ROWNUM &gt; (#{page, jdbcType=INTEGER}-1) * #{pageSize, jdbcType=INTEGER} \n" +
+            "AND ROWNUM &lt;= #{page, jdbcType=INTEGER} * #{pageSize, jdbcType=INTEGER} )s \n" +
+            "where r &gt; (#{page, jdbcType=INTEGER}-1) * #{pageSize, jdbcType=INTEGER} \n" +
             "</script> "
     )
     @Results(id="zhongXinBaoPDFList", value={
@@ -91,7 +94,7 @@ public interface PdfMapper {
             "\t\tA.REPORTCORPCHNNAME,--中文名称\n" +
             "\t\tA.REPORTCORPENGNAME,--英文名称\n" +
             "\t\tP.NOTICESERIALNO || '.pdf' as reportName,\n" +
-            "\t\tI.MAXTIME AS GETTIME,\n" +
+            "\t\tNVL(I.MAXTIME,'暂无摘要') AS GETTIME,\n" +
             "\t\tp.UPDATETIME \n" +
             "\tFROM\n" +
             "\t\tODS_ZXB_PDF P\n" +
@@ -99,9 +102,10 @@ public interface PdfMapper {
             "\t\tINNER JOIN ODS_ZXB_REPORTAPPROVE R ON R.NOTICESERIALNO = P.NOTICESERIALNO \n" +
             "\t\tAND ORDERSTATE = '0'\n" +
             "\t\tINNER JOIN LOG_ZXB_APPLY A ON R.CORPSERIALNO = A.CORPSERIALNO_IMPORT\n" +
-            "\t\tINNER JOIN ( SELECT BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO, MAX( UPDATETIME ) MAXTIME FROM ODS_ZXB_RATINGINFO GROUP BY BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO ) I ON I.BUYERENGNAME = A.REPORTCORPENGNAME \n" +
+            "\t\tLEFT JOIN ( SELECT BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO, MAX( UPDATETIME ) MAXTIME FROM ODS_ZXB_RATINGINFO GROUP BY BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO ) I ON I.BUYERENGNAME = A.REPORTCORPENGNAME \n" +
             "\t\tOR I.BUYERCHNNAME = A.REPORTCORPCHNNAME \n" +
-            "\t) t " +
+            "\t\tOR I.SINOSUREBUYERNO = A.REPORTBUYERNO \n"+
+            "\t\tORDER BY UPDATETIME DESC) t " +
             "WHERE 1 = 1"+
             "<if test=\"name != null and name!=''\">"+
             "and (t.REPORTCORPCHNNAME like '%'||#{name, jdbcType=VARCHAR}||'%' OR t.REPORTCORPENGNAME like '%'||#{name, jdbcType=VARCHAR}||'%') "+

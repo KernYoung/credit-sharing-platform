@@ -7,6 +7,7 @@ import com.fanruan.platform.dao.UserDao;
 import com.fanruan.platform.dao.ZhongXinBaoLogDao;
 import com.fanruan.platform.htmlToPdf.HtmlToPdfUtils;
 import com.fanruan.platform.mapper.PdfMapper;
+import com.fanruan.platform.service.CommonService;
 import com.fanruan.platform.util.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +21,7 @@ import com.sinosure.exchange.edi.po.EntrustInput;
 import com.sinosure.exchange.edi.service.EdiException_Exception;
 import com.sinosure.exchange.edi.service.SolEdiProxyWebService;
 import com.sinosure.exchange.edi.service.SolEdiProxyWebServicePortType;
+import io.swagger.models.auth.In;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,9 @@ public class CompanyController {
 
     @Autowired
     private PdfMapper pdfMapper;
+
+    @Autowired
+    private CommonService commonService;
 
     @RequestMapping(value = "/company/getRiskInfo", method = RequestMethod.POST)
     @ResponseBody
@@ -224,6 +229,13 @@ public class CompanyController {
         HashMap<String,Object> hs=new HashMap<>();
         Integer userId = CommonUtils.getIntegerValue(param.get("userId")) ;
         User user = userService.getUserById(userId);
+        //jina
+        List<String> reportApplyUserNameList = commonService.getReportApplyUserNameList(user.getUsername());
+        for(String userName:reportApplyUserNameList){
+            commonService.insertReportApply(userName);
+        }
+
+       //
         ArrayOfEntrustInput arrayOfEntrustInput = new ArrayOfEntrustInput();
         EntrustInput entrustInput = new EntrustInput();
         buildEntrustInput(arrayOfEntrustInput, entrustInput,param);
@@ -237,7 +249,7 @@ public class CompanyController {
     @RequestMapping(value = "/company/zhongxinbaoApprove", method = RequestMethod.POST)
     @ResponseBody
     public String getZhongXinbaoApprove( @RequestBody Map<String,Object> param) throws JsonProcessingException {
-        HashMap<String,Object> hs=new HashMap<>();
+       HashMap<String,Object> hs=new HashMap<>();
         Integer approve = CommonUtils.getIntegerValue(param.get("approve")) ;
         User user = userService.getUserById(approve);
         Integer approveCode = CommonUtils.getIntegerValue(param.get("approveCode")) ;
@@ -282,6 +294,7 @@ public class CompanyController {
 
         ObjectMapper objectMapper=new ObjectMapper();
         return objectMapper.writeValueAsString(hs);
+
     }
     @RequestMapping(value = "/company/getAllCompanyLevel", method = RequestMethod.POST)
     @ResponseBody
@@ -390,8 +403,9 @@ public class CompanyController {
         ObjectMapper objectMapper=new ObjectMapper();
         String reportcorpchnname = (String)param.get("reportcorpchnname");
         String reportcorpengname = (String)param.get("reportcorpengname");
+        String reportbuyerno = (String)param.get("reportbuyerno");
         if(StringUtils.isNotBlank(reportcorpchnname) || StringUtils.isNotBlank(reportcorpengname)){
-            hs = companyService.getBusinessInfo(reportcorpchnname,reportcorpengname,hs);
+            hs = companyService.getBusinessInfo(reportcorpchnname,reportcorpengname,reportbuyerno,hs);
         }
         if(hs.isEmpty()){
             hs.put("code",1);
@@ -484,7 +498,7 @@ public class CompanyController {
             hs.put("msg","未查询到公司或者公司名为空");
             return objectMapper.writeValueAsString(hs);
         }
-        List<ZhongXinBaoPDF> zhongXinBaoPDFS = pdfMapper.selectZhongXinBaoPDF(company.getCompanyName(),"");
+        List<ZhongXinBaoPDF> zhongXinBaoPDFS = pdfMapper.selectZhongXinBaoPDF(company.getCompanyName(),"","");
         if(CollectionUtils.isEmpty(zhongXinBaoPDFS)){
             hs.put("code","3");
             hs.put("msg","服务器上未查询到该公司pdf文件");

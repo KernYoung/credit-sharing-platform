@@ -551,4 +551,15 @@ public class CommonService {
         hs.put("totalPages",Math.ceil(totalRecords/pageSize));
         return hs;
     }
+    //jina
+    public List<String> getReportApplyUserNameList(String userName){
+        List<String> userNameList = new ArrayList<>();
+        userNameList = commonsMapper.getReportApplyUserNameList(userName);
+        return userNameList;
+    }
+    public Integer insertReportApply(String userName){
+        Integer i = commonsMapper.insertReportApply(userName);
+        return i;
+    }
+
 }

@@ -121,6 +121,7 @@ D:\国贸二期\credit-sharing-platform\src\main\java\com\sinosure\exchange\edi\
 D:\国贸二期\credit-sharing-platform\src\main\java\com\sinosure\exchange\edi\service\DoEdiDomDeclareSupplementApplyResponse.java
 D:\国贸二期\credit-sharing-platform\src\main\java\com\sinosure\exchange\edi\service\DoEdiShipmentAlterApply.java
 D:\国贸二期\credit-sharing-platform\src\main\java\com\sinosure\exchange\edi\po\ArrayOfEdiRateInfoDetail.java
+D:\国贸二期\credit-sharing-platform\src\main\java\com\fanruan\platform\bean\InputPush.java
 D:\国贸二期\credit-sharing-platform\src\main\java\com\sinosure\exchange\edi\po\ArrayOfEDIInfoStructure.java
 D:\国贸二期\credit-sharing-platform\src\main\java\com\sinosure\exchange\edi\service\GetEdiContractApproveInfoResponse.java
 D:\国贸二期\credit-sharing-platform\src\main\java\com\fanruan\platform\bean\LogCreditOper.java

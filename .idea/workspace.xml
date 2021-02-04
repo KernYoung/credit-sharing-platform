@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9f607a91-6dc8-461d-92ba-f79ce2d93bf6" name="Default Changelist" comment="将申请数据落库">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/8e2ac347-97a7-45dd-a5af-9e95b76bcc91.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/8e2ac347-97a7-45dd-a5af-9e95b76bcc91/storage_v2/_src_/schema/BIUSER.knDMdA.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/8e2ac347-97a7-45dd-a5af-9e95b76bcc91/storage_v2/_src_/schema/BIUSER.knDMdA.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/8e2ac347-97a7-45dd-a5af-9e95b76bcc91/storage_v2/_src_/schema/PUBLIC.aaZQjQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/8e2ac347-97a7-45dd-a5af-9e95b76bcc91/storage_v2/_src_/schema/SYS.rUIBAA.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/8e2ac347-97a7-45dd-a5af-9e95b76bcc91/storage_v2/_src_/schema/SYSTEM.L2avkg.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/bean/InputPush.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/bean/InputPush.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/mapper/CommonMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/mapper/CommonMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/mapper/CommonsMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/mapper/CommonsMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/mapper/PdfMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/mapper/PdfMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/controller/CommonController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/controller/CommonController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/controller/CompanyController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/controller/CompanyController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/mapper/CommonMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/mapper/CommonMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/mapper/CommonsMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/mapper/CommonsMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/mapper/PdfMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/mapper/PdfMapper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/service/CommonService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/service/CommonService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/service/CompanyService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/service/CompanyService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapping/CommonsMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapping/CommonsMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.jar.original" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="@10.0.130.27" type="feb32156:DbDataSourceImpl" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="@10.0.130.27" type="feb32156:DbDataSourceImpl" />
+        <item name="BIUSER: schema" type="3abd1b6a:OraImplModel$Schema" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="@10.0.130.27" type="feb32156:DbDataSourceImpl" />
+        <item name="BIUSER: schema" type="3abd1b6a:OraImplModel$Schema" />
+        <item name="tables" type="d4e8921:DatabaseStructure$FamilyGroup" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="@10.0.130.27" type="feb32156:DbDataSourceImpl" />
+        <item name="BIUSER: schema" type="3abd1b6a:OraImplModel$Schema" />
+        <item name="tables" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="INPUT_PUSH: table" type="942f455b:OraImplModel$Table" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="D:\国贸二期\credit-sharing-platform\.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="D:/maven/maven/apache-maven-3.6.3" />
+        <option name="userSettingsFile" value="D:\maven\maven\apache-maven-3.6.3\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="enabledProfiles">
+      <list>
+        <option value="dev" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1n5INqnVXMgISSL29V9Nzpz8UXi" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="mysql&#10;oracle" />
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
+  </component>
+  <component name="RunManager">
+    <configuration name="CreditSharingPlatformApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="credit-sharing-platform" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.fanruan.platform.CreditSharingPlatformApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <option name="contentProportion" value="0.052449964" />
+          <treeState>
+            <expand>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="root:@10.0.130.27" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              </path>
+            </expand>
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+    <option name="showServicesTree" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9f607a91-6dc8-461d-92ba-f79ce2d93bf6" name="Default Changelist" comment="" />
+      <created>1610673487413</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1610673487413</updated>
+      <workItem from="1610673493622" duration="12826000" />
+      <workItem from="1610694271144" duration="7625000" />
+      <workItem from="1610936190523" duration="30465000" />
+      <workItem from="1611123655391" duration="1045000" />
+      <workItem from="1611124916293" duration="94957000" />
+    </task>
+    <task id="LOCAL-00001" summary="将申请数据落库">
+      <created>1611216222411</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1611216222411</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="将申请数据落库" />
+    <option name="LAST_COMMIT_MESSAGE" value="将申请数据落库" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="554" y="94" width="688" height="681" key="#Assign_Data_Sources" timestamp="1611125207458">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="554" y="94" width="688" height="681" key="#Assign_Data_Sources/0.0.1536.824@0.0.1536.824" timestamp="1611125207458" />
+    <state x="247" y="136" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1610693920833">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="247" y="136" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1610693920833" />
+    <state x="553" y="132" key="#com.intellij.ide.util.MemberChooser" timestamp="1611194869408">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="553" y="132" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1611194869408" />
+    <state x="400" y="319" key="#com.intellij.javaee.module.view.common.J2EE.J2EEDeploymentDescriptorLocationPanel.changeDDPath" timestamp="1610690355927">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="400" y="319" key="#com.intellij.javaee.module.view.common.J2EE.J2EEDeploymentDescriptorLocationPanel.changeDDPath/0.0.1536.824@0.0.1536.824" timestamp="1610690355927" />
+    <state x="548" y="271" width="439" height="291" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1611540209575">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="548" y="271" width="439" height="291" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1536.824@0.0.1536.824" timestamp="1611540209575" />
+    <state x="587" y="14" key="CommitChangelistDialog2" timestamp="1611801180108">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="587" y="14" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1611801180108" />
+    <state width="1114" height="466" key="DebuggerActiveHint" timestamp="1611823935884">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1114" height="466" key="DebuggerActiveHint/0.0.1536.824@0.0.1536.824" timestamp="1611823935884" />
+    <state x="744" y="239" key="FileChooserDialogImpl" timestamp="1611215771175">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="744" y="239" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1611215771175" />
+    <state width="1493" height="470" key="GridCell.Tab.0.bottom" timestamp="1612339529487">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1612339529487" />
+    <state width="1493" height="470" key="GridCell.Tab.0.center" timestamp="1612339529486">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1612339529486" />
+    <state width="1493" height="470" key="GridCell.Tab.0.left" timestamp="1612339529486">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1612339529486" />
+    <state width="1493" height="470" key="GridCell.Tab.0.right" timestamp="1612339529487">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1612339529487" />
+    <state width="1493" height="470" key="GridCell.Tab.1.bottom" timestamp="1612339529333">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1612339529333" />
+    <state width="1493" height="470" key="GridCell.Tab.1.center" timestamp="1612339529332">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1612339529332" />
+    <state width="1493" height="470" key="GridCell.Tab.1.left" timestamp="1612339529332">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1612339529332" />
+    <state width="1493" height="470" key="GridCell.Tab.1.right" timestamp="1612339529333">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1612339529333" />
+    <state width="1493" height="470" key="GridCell.Tab.2.bottom" timestamp="1612339529333">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.2.bottom/0.0.1536.824@0.0.1536.824" timestamp="1612339529333" />
+    <state width="1493" height="470" key="GridCell.Tab.2.center" timestamp="1612339529333">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.2.center/0.0.1536.824@0.0.1536.824" timestamp="1612339529333" />
+    <state width="1493" height="470" key="GridCell.Tab.2.left" timestamp="1612339529333">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.2.left/0.0.1536.824@0.0.1536.824" timestamp="1612339529333" />
+    <state width="1493" height="470" key="GridCell.Tab.2.right" timestamp="1612339529333">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="470" key="GridCell.Tab.2.right/0.0.1536.824@0.0.1536.824" timestamp="1612339529333" />
+    <state x="122" y="110" key="SettingsEditor" timestamp="1611215616236">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="122" y="110" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1611215616236" />
+    <state x="361" y="146" key="Vcs.Push.Dialog.v2" timestamp="1611800867980">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="361" y="146" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1611800867980" />
+    <state width="768" height="612" key="XDebugger.FullValuePopup" timestamp="1611824536871">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="768" height="612" key="XDebugger.FullValuePopup/0.0.1536.824@0.0.1536.824" timestamp="1611824536871" />
+    <state x="449" y="237" key="com.intellij.ide.util.TipDialog" timestamp="1611124917835">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="449" y="237" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1611124917835" />
+    <state x="544" y="224" width="782" height="600" key="find.popup" timestamp="1612415391656">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="544" y="224" width="782" height="600" key="find.popup/0.0.1536.824@0.0.1536.824" timestamp="1612415391656" />
+    <state x="463" y="255" key="git4idea.merge.GitPullDialog" timestamp="1611215582919">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="463" y="255" key="git4idea.merge.GitPullDialog/0.0.1536.824@0.0.1536.824" timestamp="1611215582919" />
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1611121135141">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1611121135141" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>274</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>276</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>278</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>270</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>228</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>271</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>251</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>232</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java</url>
+          <line>556</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java</url>
+          <line>560</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>521</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>534</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java</url>
+          <line>650</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java</url>
+          <line>314</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>623</line>
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>401</line>
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
+          <line>1315</line>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java</url>
+          <line>851</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java</url>
+          <line>816</line>
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java</url>
+          <line>871</line>
+          <option name="timeStamp" value="39" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java</url>
+          <line>882</line>
+          <option name="timeStamp" value="40" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java</url>
+          <line>879</line>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java</url>
+          <line>541</line>
+          <option name="timeStamp" value="43" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

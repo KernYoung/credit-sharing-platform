@@ -1296,7 +1296,7 @@ public class CompanyService {
         if(company==null||StringUtils.isBlank(company.getCompanyName())){
             return null;
         }
-        return commonMapper.getZhongXinBaoShare(company.getCompanyName(),"");
+        return commonMapper.getZhongXinBaoShare(company.getCompanyName(),"","");
     }
 
     public ZhongXinBaoInfo getBusinessInfo(Integer companyId) {
@@ -1305,17 +1305,17 @@ public class CompanyService {
         if(company==null||StringUtils.isBlank(company.getCompanyName())){
             return null;
         }
-        Optional<ZhongXinBaoInfo> zhongXinBaoInfo = commonMapper.getZhongXinBaoInfo(company.getCompanyName(),"");
+        Optional<ZhongXinBaoInfo> zhongXinBaoInfo = commonMapper.getZhongXinBaoInfo(company.getCompanyName(),"","");
         if(zhongXinBaoInfo.isPresent()){
             return zhongXinBaoInfo.get();
         }
         return null;
     }
 
-    public HashMap<String,Object> getBusinessInfo(String name,String engName,HashMap<String,Object> hs) {
-        Optional<ZhongXinBaoInfo> zhongXinBaoInfo = commonMapper.getZhongXinBaoInfo(name,engName);
-        List<ZhongXinBaoShare> zhongXinBaoShare = commonMapper.getZhongXinBaoShare(name,engName);
-        List<ZhongXinBaoPDF> zhongXinBaoPdf =  pdfMapper.selectZhongXinBaoPDF(name,engName);
+    public HashMap<String,Object> getBusinessInfo(String name,String engName,String reportbuyerno,HashMap<String,Object> hs) {
+        Optional<ZhongXinBaoInfo> zhongXinBaoInfo = commonMapper.getZhongXinBaoInfo(name,engName,reportbuyerno);
+        List<ZhongXinBaoShare> zhongXinBaoShare = commonMapper.getZhongXinBaoShare(name,engName,reportbuyerno);
+        List<ZhongXinBaoPDF> zhongXinBaoPdf =  pdfMapper.selectZhongXinBaoPDF(name,engName,reportbuyerno);
 
         hs.put("businessInfo",zhongXinBaoInfo.get());
         hs.put("shareList",zhongXinBaoShare);
