@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -31,10 +32,10 @@ public class User {
     @Column(name="email")
     private String email;
 
-    @Column(name="companyName")
+    @Column(name="company_Name")
     private String companyName;
 
-    @Column(name="deptName")
+    @Column(name="dept_Name")
     private String deptName;
 
     @Column(name="name")
@@ -55,10 +56,27 @@ public class User {
     @Column(name="ROLE_NAME")
     private String roleName;
 
+    @Column(name="PSW_CREATE_TIME")
+    private Timestamp passwordCreateTime;
+
+    @Column(name="PSW_UPDATE_TIME")
+    private Timestamp passwordUpdateTime;
+
     @Transient
     private String permissionRoles;
 
     @Transient
     private String updatePermission;
+
+    private String RolePermission;
+
+    public String toString(){
+        String result = "";
+        result = "userId: " + userId + ",userName: " + username + ",name: " + name + ",password: "
+                + password+ ",mobile: " + mobile + ",email: " + email + ",companyName: "
+                + companyName + ",companyCode: " + companyCode + ",deptName: " + deptName
+                + ",roleName: " + roleName;
+        return result;
+    }
 
 }

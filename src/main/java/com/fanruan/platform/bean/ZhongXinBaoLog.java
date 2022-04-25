@@ -82,9 +82,24 @@ public class ZhongXinBaoLog {
     @Column(name="APPROVEDATE")
     private Timestamp approveDate;
 
+    //待调查企业联系电话
+    @Column(name="PHONE",length = 100)
+    private String reportCorptel;
+
+    //待调查企业邮箱
+    @Column(name="MAIL",length = 100)
+    private String reportCorpemail;
+
+    //速度
+    @Column(name="SPEED",length = 100)
+    private String speed;
+
+
+
     @Transient
     private String updateName;
 
     @Transient
     private String approveName;
+
 }

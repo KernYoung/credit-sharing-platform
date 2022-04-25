@@ -3,13 +3,15 @@ package com.fanruan.platform.bean;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+
 @Data
 @Entity
 @Table(name = "INPUT_PUSH")
 public class InputPush {
         @Id
         @Column(name = "ID")
-        private Integer id;
+        private String id;
 
         /**
          * 审核人
@@ -65,6 +67,12 @@ public class InputPush {
         /**
          *
          */
-        @Column(name="PROMTINFO")
-        private String  promtinfo;
+//        @Column(name="PROMTINFO")
+//        private String  promtinfo;
+
+        /**
+         *
+         */
+        @Column(name="UPDATETIME")
+        private Timestamp updateTime;
     }

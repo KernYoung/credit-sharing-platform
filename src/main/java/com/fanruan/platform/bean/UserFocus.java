@@ -29,8 +29,8 @@ public class UserFocus {
     @Column(name="RELATIONS")
     private String relations;
 
-
-
-
+    @Transient
+    @Column(name="MESSAGE_NUMBER")
+    private String messageNumber;
 
 }

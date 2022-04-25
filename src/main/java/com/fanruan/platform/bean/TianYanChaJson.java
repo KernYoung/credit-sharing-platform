@@ -33,5 +33,13 @@ public class TianYanChaJson {
     @Column(name="JSONFLAG")
     private String jsonFlag;
 
+    @Column(name="TOKEN_ID")
+    private String tokenId;
 
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name="PARAM_IN",columnDefinition="Clob",nullable=true)
+    private String paramIn;
+
+    @Column(name="INSERT_Date")
+    private Timestamp insertDate;
 }

@@ -2,55 +2,188 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fanruan.platform.mapper.CommonsMapper">
 
-    <resultMap id="getBlackListResultMap" type="com.fanruan.platform.bean.BlackList">
-        <result column="PID" jdbcType="VARCHAR" property="pid" />
-        <result column="ENTNAME" jdbcType="VARCHAR" property="entName" />
-        <result column="CODE" jdbcType="VARCHAR" property="code" />
-        <result column="START_DATE" jdbcType="TIMESTAMP" property="startDate" />
-        <result column="END_DATE" jdbcType="TIMESTAMP" property="endDate" />
-        <result column="GRADE" jdbcType="VARCHAR" property="grade" />
-        <result column="REASON" jdbcType="VARCHAR" property="reason" />
-        <result column="REASON_URL" jdbcType="VARCHAR" property="reasonUrl" />
-        <result column="PUBLISH_DEPT" jdbcType="VARCHAR" property="publishDept" />
-        <result column="APPROVE_DEPT" jdbcType="VARCHAR" property="approveDept" />
-        <result column="PUBLISH_TIME" jdbcType="TIMESTAMP" property="publishTime" />
-        <result column="TYPE" jdbcType="VARCHAR" property="type" />
-        <result column="STATUS" jdbcType="VARCHAR" property="status" />
-        <result column="APPROVE_TIME" jdbcType="TIMESTAMP" property="approveTime" />
-        <result column="UPDATEBY" jdbcType="VARCHAR" property="updateby" />
-        <result column="CANCEL_BY" jdbcType="VARCHAR" property="cancelBy" />
-        <result column="CANCEL_TIME" jdbcType="VARCHAR" property="cancelTime" />
-        <result column="CANCEL_REASON" jdbcType="VARCHAR" property="cancelReason" />
-    </resultMap>
+<!--    <resultMap id="getBlackListResultMap" type="com.fanruan.platform.bean.BlackList">-->
+<!--        <result column="PID" jdbcType="VARCHAR" property="pid" />-->
+<!--        <result column="ENTNAME" jdbcType="VARCHAR" property="entName" />-->
+<!--        <result column="CODE" jdbcType="VARCHAR" property="code" />-->
+<!--        <result column="START_DATE" jdbcType="TIMESTAMP" property="startDate" />-->
+<!--        <result column="END_DATE" jdbcType="TIMESTAMP" property="endDate" />-->
+<!--        <result column="GRADE" jdbcType="VARCHAR" property="grade" />-->
+<!--        <result column="REASON" jdbcType="VARCHAR" property="reason" />-->
+<!--        <result column="REASON_URL" jdbcType="VARCHAR" property="reasonUrl" />-->
+<!--        <result column="PUBLISH_DEPT" jdbcType="VARCHAR" property="publishDept" />-->
+<!--        <result column="APPROVE_DEPT" jdbcType="VARCHAR" property="approveDept" />-->
+<!--        <result column="PUBLISH_TIME" jdbcType="TIMESTAMP" property="publishTime" />-->
+<!--        <result column="TYPE" jdbcType="VARCHAR" property="type" />-->
+<!--        <result column="STATUS" jdbcType="VARCHAR" property="status" />-->
+<!--        <result column="APPROVE_TIME" jdbcType="TIMESTAMP" property="approveTime" />-->
+<!--        <result column="UPDATEBY" jdbcType="VARCHAR" property="updateby" />-->
+<!--        <result column="CANCEL_BY" jdbcType="VARCHAR" property="cancelBy" />-->
+<!--        <result column="CANCEL_TIME" jdbcType="VARCHAR" property="cancelTime" />-->
+<!--        <result column="CANCEL_REASON" jdbcType="VARCHAR" property="cancelReason" />-->
+<!--    </resultMap>-->
+<!--    <select id="getBlackList" resultType="com.fanruan.platform.bean.BlackList">-->
+<!--        select-->
+<!--        PID-->
+<!--        , ENTNAME-->
+<!--        , CODE-->
+<!--        , START_DATE-->
+<!--        , GRADE-->
+<!--        , REASON-->
+<!--        , REASON_URL-->
+<!--        , TYPE-->
+<!--        , STATUS-->
+<!--        , PUBLISH_DEPTID-->
+<!--        , PUBLISH_DEPT-->
+<!--        , PUBLISH_SDEPTID-->
+<!--        , PUBLISH_SDEPT-->
+<!--        , PUBLISH_BY-->
+<!--        , PUBLISH_TIME-->
+<!--        , APPROVE_BY-->
+<!--        , APPROVE_TIME-->
+<!--        , APPROVE_REMARKS-->
+<!--        , CANCEL_BY-->
+<!--        , CANCEL_TIME-->
+<!--        , CANCEL_REASON-->
+<!--        , FILENAME-->
+<!--        , UPDATEBY-->
+<!--        , UPDATETIME-->
+<!--        , END_DATE-->
+<!--        , APPROVE_DEPT-->
+<!--        , COMPANYNAME-->
+<!--        , REASONS_FOR_RENEWAL-->
+<!--        from INPUT_BLACKLIST  where sysdate &lt;= add_months(start_date,1) and status=2-->
+<!--        and COMPANYNAME in (-->
+<!--        SELECT DISTINCT O.SUBCOMPANYNAME &#45;&#45;二级公司-->
+<!--        FROM ODS_HR_PSNDOC A-->
+<!--        LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE-->
+<!--        WHERE  A.CODE=#{userCode}&#45;&#45;用户名-->
+<!--        AND O.TP=2-->
+<!--        UNION-->
+<!--        SELECT DISTINCT O.SUBCOMPANYNAME &#45;&#45;管理员-->
+<!--        FROM ODS_HR_PSNDOC A-->
+<!--        LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE-->
+<!--        WHERE  'admin'=#{userCode}&#45;&#45;用户名-->
+<!--        AND O.TP IN (1,2)-->
+<!--        UNION-->
+<!--        SELECT DISTINCT O.SUBCOMPANYNAME &#45;&#45;集团-->
+<!--        FROM DIM_ORG O-->
+<!--        WHERE  '浙江省国际贸易集团有限公司' =-->
+<!--        (-->
+<!--        SELECT DISTINCT O.SUBCOMPANYNAME &#45;&#45;集团-->
+<!--        FROM ODS_HR_PSNDOC A-->
+<!--        LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE-->
+<!--        WHERE  A.CODE=#{userCode}&#45;&#45;用户名-->
+<!--        AND O.TP=1-->
+<!--        )-->
+<!--        AND O.TP IN (1,2)-->
+<!--        UNION-->
+<!--        SELECT a.NAME FROM(-->
+<!--        SELECT * FROM biuser.ODS_HR_ORG a start  with a.NAME  = (-->
+<!--        SELECT ORGNAME-->
+<!--        FROM ODS_HR_PSNDOC A-->
+<!--        WHERE  A.CODE=#{userCode}&#45;&#45;用户名-->
+<!--        )  connect  by-->
+<!--        prior  a.SCODE  = a.CODE) a-->
+<!--        WHERE SCODE = '010' OR CODE = '010'-->
+<!--        )-->
+<!--        UNION ALL-->
+<!--        select-->
+<!--        rawtohex(SYS_GUID()) AS PID,-->
+<!--        a.NAME,-->
+<!--        a.credit_code,-->
+<!--        a.DATE1,-->
+<!--        a.GRADE,-->
+<!--        a.REASON,-->
+<!--        a.REASON_URL,-->
+<!--        a.TYPE,-->
+<!--        a.STATUS,-->
+<!--        a.PUBLISH_DEPTID,-->
+<!--        a.PUBLISH_DEPT,-->
+<!--        a.PUBLISH_SDEPTID,-->
+<!--        a.PUBLISH_SDEPT,-->
+<!--        a.FIELD0002,-->
+<!--        a.date2,-->
+<!--        a.APPROVE_BY,-->
+<!--        a.APPROVE_TIME,-->
+<!--        a.APPROVE_REMARKS,-->
+<!--        a.CANCEL_BY,-->
+<!--        a.CANCEL_TIME,-->
+<!--        a.CANCEL_REASON,-->
+<!--        a.FILENAME,-->
+<!--        a.UPDATEBY,-->
+<!--        a.UPDATEtIME,-->
+<!--        a.END_DATE,-->
+<!--        a.E_DEPT,-->
+<!--        a.field0001,-->
+<!--        a.REASONS_FOR_RENEWAL-->
 
-    <select id="getBlackList" resultType="com.fanruan.platform.bean.BlackList">
-        select * from INPUT_BLACKLIST where sysdate &lt;=add_months(start_date,1) and status=2
-        and COMPANYNAME in (
-        SELECT DISTINCT O.SUBCOMPANYNAME --二级公司
-        FROM ODS_HR_PSNDOC A
-        LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE
-        WHERE  A.CODE=#{userCode}--用户名
-        AND O.TP=2
-        UNION
-        SELECT DISTINCT O.SUBCOMPANYNAME --管理员
-        FROM ODS_HR_PSNDOC A
-        LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE
-        WHERE  'admin'=#{userCode}--用户名
-        AND O.TP IN (1,2)
-        UNION
-        SELECT DISTINCT O.SUBCOMPANYNAME --集团
-        FROM DIM_ORG O
-        WHERE  '浙江省国际贸易集团有限公司' =
-        (
-        SELECT DISTINCT O.SUBCOMPANYNAME --集团
-        FROM ODS_HR_PSNDOC A
-        LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE
-        WHERE  A.CODE=#{userCode}--用户名
-        AND O.TP=1
-        )
-        AND O.TP IN (1,2)
-        )
-    </select>
+<!--        from(-->
+<!--        select-->
+<!--        distinct-->
+<!--        NAME,-->
+<!--        t.credit_code,-->
+<!--        to_date(a.field0032,'yyyy-mm-dd') AS DATE1,-->
+<!--        '' AS GRADE,-->
+<!--        '' AS REASON,-->
+<!--        '' AS REASON_URL,-->
+<!--        '' AS TYPE,-->
+<!--        '' AS STATUS,-->
+<!--        '' AS PUBLISH_DEPTID,-->
+<!--        '' AS PUBLISH_DEPT,-->
+<!--        '' AS PUBLISH_SDEPTID,-->
+<!--        '' AS PUBLISH_SDEPT,-->
+<!--        A.FIELD0002,-->
+<!--        TO_DATE(A.field0032,'yyyy-mm-dd') AS date2,-->
+<!--        '' AS APPROVE_BY,-->
+<!--        SYSDATE AS APPROVE_TIME,-->
+<!--        '' AS APPROVE_REMARKS,-->
+<!--        '' AS CANCEL_BY,-->
+<!--        SYSDATE AS CANCEL_TIME,-->
+<!--        '' AS CANCEL_REASON,-->
+<!--        '' AS FILENAME,-->
+<!--        '' AS UPDATEBY,-->
+<!--        SYSDATE AS UPDATEtIME,-->
+<!--        SYSDATE AS END_DATE,-->
+<!--        '' AS  E_DEPT,-->
+<!--        a.field0001,-->
+<!--        '' AS REASONS_FOR_RENEWAL-->
+<!--        from  BIUSER.TEMP_INPUT_BLACKLIST t-->
+<!--        join ODS_OA_RISKASSET  a  on a.field0021 = t.name-->
+<!--        left join DIM_OA_RISKENUM b on a.field0017 = b.enum_id_k and b.enum_name_k = '科目大类' and enum_id_d = '0'-->
+<!--        left join DIM_OA_RISKENUM c on a.field0006 = c.enum_id_k and c.enum_name_k = '风险资产状态'-->
+<!--        left join DIM_OA_RISKENUM d on a.field0019 = d.enum_id_k and d.enum_name_k = '业务大类'-->
+<!--        ) a-->
+<!--    </select>-->
+<!--    <select id="getBlackList" resultType="com.fanruan.platform.bean.BlackList">-->
+
+<!--        select * from INPUT_BLACKLIST  where sysdate &lt;=add_months(start_date,1) and status=2-->
+<!--        and COMPANYNAME in (-->
+<!--        SELECT DISTINCT O.SUBCOMPANYNAME &#45;&#45;二级公司-->
+<!--        FROM ODS_HR_PSNDOC A-->
+<!--        LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE-->
+<!--        WHERE  A.CODE=#{userCode}&#45;&#45;用户名-->
+<!--        AND O.TP=2-->
+<!--        UNION-->
+<!--        SELECT DISTINCT O.SUBCOMPANYNAME &#45;&#45;管理员-->
+<!--        FROM ODS_HR_PSNDOC A-->
+<!--        LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE-->
+<!--        WHERE  'admin'=#{userCode}&#45;&#45;用户名-->
+<!--        AND O.TP IN (1,2)-->
+<!--        UNION-->
+<!--        SELECT DISTINCT O.SUBCOMPANYNAME &#45;&#45;集团-->
+<!--        FROM DIM_ORG O-->
+<!--        WHERE  '浙江省国际贸易集团有限公司' =-->
+<!--        (-->
+<!--        SELECT DISTINCT O.SUBCOMPANYNAME &#45;&#45;集团-->
+<!--        FROM ODS_HR_PSNDOC A-->
+<!--        LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE-->
+<!--        WHERE  A.CODE=#{userCode}&#45;&#45;用户名-->
+<!--        AND O.TP=1-->
+<!--        )-->
+<!--        AND O.TP IN (1,2)-->
+<!--        )-->
+<!--    </select>-->
 
     <resultMap id="getUserCompanyResultMap" type="com.fanruan.platform.bean.UserCompany">
         <result column="CODE" jdbcType="VARCHAR" property="code" />
@@ -90,6 +223,38 @@
                  INNER JOIN ds1 D ON C.CODE=D.SCODE
         WHERE A.SCODE=(SELECT COMPANY_CODE FROM CREDIT_USER WHERE USERNAME=#{username})
         order by code
+    </select>
+
+<!--    <resultMap id="reportbuyerNoIsExist4ApplyResultMap" type="com.fanruan.platform.bean.ZhongXinBaoLog">-->
+<!--        <result column="corpSerialNo" jdbcType="VARCHAR" property="corpSerialNo" />-->
+<!--        <result column="clientNo" jdbcType="VARCHAR" property="clientNo" />-->
+<!--        <result column="reportbuyerNo" jdbcType="VARCHAR" property="reportbuyerNo" />-->
+<!--        <result column="reportCorpCountryCode" jdbcType="VARCHAR" property="reportCorpCountryCode" />-->
+<!--        <result column="reportCorpChnName" jdbcType="VARCHAR" property="reportCorpChnName" />-->
+<!--        <result column="reportCorpEngName" jdbcType="VARCHAR" property="reportCorpEngName" />-->
+<!--        <result column="reportCorpaddress" jdbcType="VARCHAR" property="reportCorpaddress" />-->
+<!--        <result column="creditno" jdbcType="VARCHAR" property="creditno" />-->
+<!--        <result column="istranslation" jdbcType="VARCHAR" property="istranslation" />-->
+<!--        <result column="corpSerialNoOut" jdbcType="VARCHAR" property="corpSerialNoOut" />-->
+<!--        <result column="approveCode" jdbcType="VARCHAR" property="approveCode" />-->
+<!--        <result column="approveMsg" jdbcType="VARCHAR" property="approveMsg" />-->
+<!--        <result column="clientNoOut" jdbcType="VARCHAR" property="clientNoOut" />-->
+<!--        <result column="otherMsg" jdbcType="VARCHAR" property="otherMsg" />-->
+<!--        <result column="updateBy" jdbcType="VARCHAR" property="updateBy" />-->
+<!--        <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime" />-->
+<!--        <result column="approveby" jdbcType="VARCHAR" property="approveby" />-->
+<!--        <result column="approveDate" jdbcType="TIMESTAMP" property="approveDate" />-->
+<!--        <result column="updateName" jdbcType="VARCHAR" property="updateName" />-->
+<!--        <result column="approveName" jdbcType="VARCHAR" property="approveName" />-->
+<!--    </resultMap>-->
+
+    <select id="reportbuyerNoIsExist4Apply" resultType="com.fanruan.platform.bean.ZhongXinBaoLog">
+
+        SELECT * FROM (
+                          SELECT CORPSERIALNO_IMPORT AS corpSerialNo,APPROVECODE,UPDATETIME FROM LOG_ZXB_APPLY
+                          WHERE REPORTBUYERNO = #{reportbuyerNo}
+                          ORDER BY UPDATETIME DESC)
+        WHERE ROWNUM = 1
     </select>
 
     <resultMap id="getZxbApplyListResultMap" type="com.fanruan.platform.bean.ZhongXinBaoLog">
@@ -141,7 +306,8 @@
         M.APPROVEBY as approveby,
         M.APPROVEDATE as approveDate,
         M.updateName as updateName,
-        M.approveName as approveName
+        M.approveName as approveName,
+        M.SPEED as speed
         FROM (SELECT ROWNUM AS rowno, N.*
         FROM (SELECT T.*,
         U.NAME as updateName,
@@ -298,6 +464,35 @@
                                                                                             ,'信保报告审核')
     </insert>
 
+    <update id="updateTYCJson" parameterType="com.fanruan.platform.bean.TianYanChaJson">
+
+        UPDATE ODS_TYC_JSON SET UPDATETIME = SYSDATE, ERROR_CODE = #{errorCode}, REASON = #{reason}, JSON = #{json}
+        WHERE ID = #{id,jdbcType=VARCHAR} AND NAME = #{name} AND JSONFLAG = #{jsonFlag}
+    </update>
+
+    <update id="updateTYCJsonByIdBlank" parameterType="com.fanruan.platform.bean.TianYanChaJson">
+
+        UPDATE ODS_TYC_JSON SET UPDATETIME = SYSDATE, ERROR_CODE = #{errorCode}, REASON = #{reason}, JSON = #{json}
+        WHERE ID is null AND NAME = #{name} AND JSONFLAG = #{jsonFlag}
+    </update>
+
+    <insert id="insertTYCJson" parameterType="com.fanruan.platform.bean.TianYanChaJson">
+        INSERT INTO ODS_TYC_JSON
+         (ERROR_CODE, REASON,JSON, UPDATETIME, NAME, ID, JSONFLAG, TOKEN_ID, PARAM_IN, INSERT_DATE)
+        VALUES
+
+        <if test="json != null and json !=''">
+            ( #{errorCode}, #{reason}, #{json}, TO_DATE(TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS'), #{name}, #{id,jdbcType=VARCHAR}, #{jsonFlag}, #{tokenId}, #{paramIn}, TO_DATE(TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS'))
+        </if>
+
+        <if test="json == null or json ==''">
+            ( #{errorCode}, #{reason}, #{json}, TO_DATE(TO_CHAR(SYSDATE, 'YYYY-MM-DD'),'YYYY-MM-DD'), #{name}, #{id,jdbcType=VARCHAR}, #{jsonFlag}, #{tokenId}, #{paramIn}, TO_DATE(TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS'))
+        </if>
+
+
+
+    </insert>
+
     <resultMap id="getAllCompanyLevelResultMap" type="com.fanruan.platform.bean.CompanyLevel">
         <result column="code" jdbcType="VARCHAR" property="code" />
         <result column="name" jdbcType="VARCHAR" property="name" />
@@ -372,7 +567,95 @@
         <result column="co" jdbcType="VARCHAR" property="co" />
     </resultMap>
 
+<!--    <select id="getMerchantsViewResultsCount" resultType="java.lang.Integer">-->
+<!--        SELECT COUNT(*) FROM(-->
+<!--        SELECT ROWNUM AS rowno, Y.* FROM(-->
+<!--        SELECT Row_number()over(partition by X.CUSTOM_NAME order by X.UPDATETIME desc) rn, X.* FROM(-->
+<!--        WITH ds1 as(-->
+<!--        SELECT substr(b.ESTIBLISHTIME,0,10) AS DATE1,a.CUSTOM_SOCIAL_CODE,a.CUSTOM_NAME,b.*-->
+<!--        FROM "BIUSER"."INPUT_CUSTOM_HAND"  a-->
+<!--        inner join ODS_TYC_GSINFO b on a.CUSTOM_NAME = b.NAME-->
+<!--        where-->
+<!--        1=1-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--        UNION-->
+<!--        SELECT substr(b.ESTIBLISHTIME,0,10) AS DATE1,a.CUSTOM_SOCIAL_CODE,a.CUSTOM_NAME,b.*-->
+<!--        FROM "BIUSER"."INPUT_CUSTOM_HAND"  a-->
+<!--        inner join ODS_TYC_GSINFO b on a.CUSTOM_NAME = b.INPUT_NAME-->
+<!--        where-->
+<!--        1=1-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--        and b.NAME IS NOT NULL-->
+<!--        UNION-->
+<!--        SELECT '' AS DATE1-->
+<!--        ,a.CUSTOM_SOCIAL_CODE-->
+<!--        ,a.CUSTOM_NAME-->
+<!--        ,'' AS "ID"-->
+<!--        ,b.REASON AS "NAME"-->
+<!--        ,'' AS COMPANYORGTYPE-->
+<!--        ,'' AS REGCAPITAL-->
+<!--        ,'' AS ESTIBLISHTIME-->
+<!--        ,'' AS REGLOCATION-->
+<!--        ,'' AS INDUSTRY-->
+<!--        ,'' AS DS_CREDITCODE-->
+<!--        ,'' AS GS_CREDITCODE-->
+<!--        ,'' AS REGT_CREDIDTCODE-->
+<!--        ,'' AS REG_CREDIDTCODE-->
+<!--        ,'' AS FROMTIME-->
+<!--        ,'' AS TOTIME-->
+<!--        ,'' AS UPDATETIME-->
+<!--        ,'' AS CREDIT_CODE-->
+<!--        ,'' AS LEGALPERSONNAME-->
+<!--        ,'' AS BASE-->
+<!--        ,'' AS INVESTORNAME-->
+<!--        ,'' AS ETL_FLAG-->
+<!--        ,'' AS CREATETIME-->
+<!--        ,0 AS TIMES-->
+<!--        ,'' AS INPUT_NAME-->
+<!--        ,'' AS BUSINESS_SCOPE-->
+<!--        ,'' AS PHONE_NUMBER-->
+<!--        FROM "BIUSER"."INPUT_CUSTOM_HAND"  a-->
+<!--        inner join ODS_TYC_JSON b-->
+<!--        on a.CUSTOM_NAME = b.NAME-->
+<!--        where-->
+<!--        b.error_code > '0'-->
+<!--        AND b.JSONFLAG = '1001'-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--        )-->
+<!--        SELECT M.* FROM (-->
+<!--        SELECT a.CUSTOM_NAME as CUSTOM_NAME1,a.CUSTOM_SOCIAL_CODE as customSocialCode,ds1.* from "BIUSER"."INPUT_CUSTOM_HAND" a-->
+<!--        LEFT JOIN ds1 on a.CUSTOM_NAME=ds1.CUSTOM_NAME-->
+<!--        where 1=1-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--        )M-->
+<!--        )X-->
+<!--        )Y WHERE RN = 1)-->
+<!--    </select>-->
+
     <select id="getMerchantsViewResultsCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM(
+        SELECT ROWNUM AS rowno, Y.* FROM(
+        SELECT Row_number()over(partition by X.CUSTOM_NAME order by X.UPDATETIME desc) rn, X.* FROM(
         WITH ds1 as(
         SELECT substr(b.ESTIBLISHTIME,0,10) AS DATE1,a.CUSTOM_SOCIAL_CODE,a.CUSTOM_NAME,b.*
         FROM "BIUSER"."INPUT_CUSTOM_HAND"  a
@@ -427,10 +710,11 @@
         ,'' AS BUSINESS_SCOPE
         ,'' AS PHONE_NUMBER
         FROM "BIUSER"."INPUT_CUSTOM_HAND"  a
-        inner join ODS_TYC_JSON b
+        inner join (select id,name,jsonflag,max(updatetime),max(reason) as reason,max(error_code) as error_code from ODS_TYC_JSON  group by  id,name,jsonflag) b
         on a.CUSTOM_NAME = b.NAME
         where
         b.error_code > '0'
+        AND b.JSONFLAG = '1001'
         <if test="updataBy != null and updataBy !=''">
             and (a.UPDATEBY = #{updataBy})
         </if>
@@ -438,7 +722,8 @@
             and (a.SERIALID = #{serialid})
         </if>
         )
-        SELECT COUNT (1) as co from  (SELECT a.CUSTOM_NAME as CUSTOM_NAME1,ds1.* from "BIUSER"."INPUT_CUSTOM_HAND" a
+        SELECT M.* FROM (
+        SELECT a.CUSTOM_NAME as CUSTOM_NAME1,a.CUSTOM_SOCIAL_CODE as customSocialCode,ds1.* from "BIUSER"."INPUT_CUSTOM_HAND" a
         LEFT JOIN ds1 on a.CUSTOM_NAME=ds1.CUSTOM_NAME
         where 1=1
         <if test="updataBy != null and updataBy !=''">
@@ -447,7 +732,9 @@
         <if test="serialid != null and serialid !=''">
             and (a.SERIALID = #{serialid})
         </if>
-        )
+        )M
+        )X
+        )Y WHERE RN = 1)
     </select>
 
     <resultMap id="getMerchantsViewResultsResultMap" type="com.fanruan.platform.bean.MerchantsViewResults">
@@ -466,7 +753,98 @@
         <result column="fromtime" jdbcType="VARCHAR" property="fromtime"/>
         <result column="totime" jdbcType="VARCHAR" property="totime"/>
     </resultMap>
+
+<!--    <select id="getMerchantsViewResults" resultType="com.fanruan.platform.bean.MerchantsViewResults">-->
+<!--        SELECT  * FROM(-->
+<!--        SELECT ROWNUM AS ROWNO, Y.* FROM(-->
+<!--        SELECT Row_number()over(partition by X.CUSTOM_NAME order by X.UPDATETIME desc) rn, X.* FROM(-->
+<!--        WITH ds1 as(-->
+<!--        SELECT substr(b.ESTIBLISHTIME,0,10) AS DATE1,a.CUSTOM_SOCIAL_CODE,a.CUSTOM_NAME,b.*-->
+<!--        FROM "BIUSER"."INPUT_CUSTOM_HAND"  a-->
+<!--        inner join ODS_TYC_GSINFO b on a.CUSTOM_NAME = b.NAME-->
+<!--        where-->
+<!--        1=1-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--        UNION-->
+<!--        SELECT substr(b.ESTIBLISHTIME,0,10) AS DATE1,a.CUSTOM_SOCIAL_CODE,a.CUSTOM_NAME,b.*-->
+<!--        FROM "BIUSER"."INPUT_CUSTOM_HAND"  a-->
+<!--        inner join ODS_TYC_GSINFO b on a.CUSTOM_NAME = b.INPUT_NAME-->
+<!--        where-->
+<!--        1=1-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--        and b.NAME IS NOT NULL-->
+<!--        UNION-->
+<!--        SELECT '' AS DATE1-->
+<!--        ,a.CUSTOM_SOCIAL_CODE-->
+<!--        ,a.CUSTOM_NAME-->
+<!--        ,'' AS "ID"-->
+<!--        ,b.REASON AS "NAME"-->
+<!--        ,'' AS COMPANYORGTYPE-->
+<!--        ,'' AS REGCAPITAL-->
+<!--        ,'' AS ESTIBLISHTIME-->
+<!--        ,'' AS REGLOCATION-->
+<!--        ,'' AS INDUSTRY-->
+<!--        ,'' AS DS_CREDITCODE-->
+<!--        ,'' AS GS_CREDITCODE-->
+<!--        ,'' AS REGT_CREDIDTCODE-->
+<!--        ,'' AS REG_CREDIDTCODE-->
+<!--        ,'' AS FROMTIME-->
+<!--        ,'' AS TOTIME-->
+<!--        ,'' AS UPDATETIME-->
+<!--        ,'' AS CREDIT_CODE-->
+<!--        ,'' AS LEGALPERSONNAME-->
+<!--        ,'' AS BASE-->
+<!--        ,'' AS INVESTORNAME-->
+<!--        ,'' AS ETL_FLAG-->
+<!--        ,'' AS CREATETIME-->
+<!--        ,0 AS TIMES-->
+<!--        ,'' AS INPUT_NAME-->
+<!--        ,'' AS BUSINESS_SCOPE-->
+<!--        ,'' AS PHONE_NUMBER-->
+<!--        FROM "BIUSER"."INPUT_CUSTOM_HAND"  a-->
+<!--        inner join ODS_TYC_JSON b-->
+<!--        on a.CUSTOM_NAME = b.NAME-->
+<!--        where-->
+<!--        b.error_code > '0'-->
+<!--        AND b.JSONFLAG = '1001'-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--        )-->
+<!--        SELECT M.* FROM (-->
+<!--        SELECT a.CUSTOM_NAME as CUSTOM_NAME1,a.CUSTOM_SOCIAL_CODE as customSocialCode,ds1.* from "BIUSER"."INPUT_CUSTOM_HAND" a-->
+<!--        LEFT JOIN ds1 on a.CUSTOM_NAME=ds1.CUSTOM_NAME-->
+<!--        where 1=1-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--        )M-->
+<!--        )X-->
+<!--        )Y WHERE RN = 1)-->
+<!--        WHERE 1=1-->
+<!--        AND ROWNO &lt;= #{pageIndex} * #{pageSize}-->
+<!--        AND ROWNO &gt; (#{pageIndex}-1) * #{pageSize}-->
+<!--    </select>-->
     <select id="getMerchantsViewResults" resultType="com.fanruan.platform.bean.MerchantsViewResults">
+        SELECT  * FROM(
+        SELECT ROWNUM AS ROWNO, Y.* FROM(
+        SELECT Row_number()over(partition by X.CUSTOM_NAME order by X.UPDATETIME desc) rn, X.* FROM(
         WITH ds1 as(
         SELECT substr(b.ESTIBLISHTIME,0,10) AS DATE1,a.CUSTOM_SOCIAL_CODE,a.CUSTOM_NAME,b.*
         FROM "BIUSER"."INPUT_CUSTOM_HAND"  a
@@ -491,7 +869,7 @@
         <if test="serialid != null and serialid !=''">
             and (a.SERIALID = #{serialid})
         </if>
-            and b.NAME IS NOT NULL
+        and b.NAME IS NOT NULL
         UNION
         SELECT '' AS DATE1
         ,a.CUSTOM_SOCIAL_CODE
@@ -521,10 +899,11 @@
         ,'' AS BUSINESS_SCOPE
         ,'' AS PHONE_NUMBER
         FROM "BIUSER"."INPUT_CUSTOM_HAND"  a
-        inner join ODS_TYC_JSON b
+        inner join (select id,name,jsonflag,max(updatetime),max(reason) as reason,max(error_code) as error_code from ODS_TYC_JSON  group by  id,name,jsonflag) b
         on a.CUSTOM_NAME = b.NAME
         where
         b.error_code > '0'
+        AND b.JSONFLAG = '1001'
         <if test="updataBy != null and updataBy !=''">
             and (a.UPDATEBY = #{updataBy})
         </if>
@@ -533,7 +912,6 @@
         </if>
         )
         SELECT M.* FROM (
-        SELECT ROWNUM AS rowno,N.* from (
         SELECT a.CUSTOM_NAME as CUSTOM_NAME1,a.CUSTOM_SOCIAL_CODE as customSocialCode,ds1.* from "BIUSER"."INPUT_CUSTOM_HAND" a
         LEFT JOIN ds1 on a.CUSTOM_NAME=ds1.CUSTOM_NAME
         where 1=1
@@ -543,11 +921,12 @@
         <if test="serialid != null and serialid !=''">
             and (a.SERIALID = #{serialid})
         </if>
-        )N
         )M
-        WHERE 1 = 1
-        AND rowno &lt;= #{pageIndex} * #{pageSize}
-        AND rowno &gt; (#{pageIndex}-1) * #{pageSize}
+        )X
+        )Y WHERE RN = 1)
+        WHERE 1=1
+        AND ROWNO &lt;= #{pageIndex} * #{pageSize}
+        AND ROWNO &gt; (#{pageIndex}-1) * #{pageSize}
     </select>
 
     <resultMap id="getMerchantsViewExcelResultMap" type="com.fanruan.platform.bean.MerchantsViewResults">
@@ -566,6 +945,7 @@
         <result column="fromtime" jdbcType="VARCHAR" property="fromtime"/>
         <result column="totime" jdbcType="VARCHAR" property="totime"/>
     </resultMap>
+
     <select id="getMerchantsViewExcel" resultType="com.fanruan.platform.bean.MerchantsViewResults">
         WITH ds1 as(
         SELECT substr(b.ESTIBLISHTIME,0,10) AS DATE1,a.CUSTOM_SOCIAL_CODE,a.CUSTOM_NAME,b.*
@@ -621,7 +1001,7 @@
         ,'' AS BUSINESS_SCOPE
         ,'' AS PHONE_NUMBER
         FROM "BIUSER"."INPUT_CUSTOM_HAND"  a
-        inner join ODS_TYC_JSON b
+        inner join (select id,name,jsonflag,max(updatetime),max(reason) as reason,max(error_code) as error_code from ODS_TYC_JSON  group by  id,name,jsonflag) b
         on a.CUSTOM_NAME = b.NAME
         where
         b.error_code > '0'
@@ -642,6 +1022,83 @@
             and (a.SERIALID = #{serialid})
         </if>
     </select>
+<!--    <select id="getMerchantsViewExcel" resultType="com.fanruan.platform.bean.MerchantsViewResults">-->
+<!--        WITH ds1 as(-->
+<!--        SELECT substr(b.ESTIBLISHTIME,0,10) AS DATE1,a.CUSTOM_SOCIAL_CODE,a.CUSTOM_NAME,b.*-->
+<!--        FROM "BIUSER"."INPUT_CUSTOM_HAND"  a-->
+<!--        inner join ODS_TYC_GSINFO b on a.CUSTOM_NAME = b.NAME-->
+<!--        where-->
+<!--        1=1-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--        UNION-->
+<!--        SELECT substr(b.ESTIBLISHTIME,0,10) AS DATE1,a.CUSTOM_SOCIAL_CODE,a.CUSTOM_NAME,b.*-->
+<!--        FROM "BIUSER"."INPUT_CUSTOM_HAND"  a-->
+<!--        inner join ODS_TYC_GSINFO b on a.CUSTOM_NAME = b.INPUT_NAME-->
+<!--        where-->
+<!--        1=1-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--        and b.NAME IS NOT NULL-->
+<!--        UNION-->
+<!--        SELECT '' AS DATE1-->
+<!--        ,a.CUSTOM_SOCIAL_CODE-->
+<!--        ,a.CUSTOM_NAME-->
+<!--        ,'' AS "ID"-->
+<!--        ,b.REASON AS "NAME"-->
+<!--        ,'' AS COMPANYORGTYPE-->
+<!--        ,'' AS REGCAPITAL-->
+<!--        ,'' AS ESTIBLISHTIME-->
+<!--        ,'' AS REGLOCATION-->
+<!--        ,'' AS INDUSTRY-->
+<!--        ,'' AS DS_CREDITCODE-->
+<!--        ,'' AS GS_CREDITCODE-->
+<!--        ,'' AS REGT_CREDIDTCODE-->
+<!--        ,'' AS REG_CREDIDTCODE-->
+<!--        ,'' AS FROMTIME-->
+<!--        ,'' AS TOTIME-->
+<!--        ,'' AS UPDATETIME-->
+<!--        ,'' AS CREDIT_CODE-->
+<!--        ,'' AS LEGALPERSONNAME-->
+<!--        ,'' AS BASE-->
+<!--        ,'' AS INVESTORNAME-->
+<!--        ,'' AS ETL_FLAG-->
+<!--        ,'' AS CREATETIME-->
+<!--        ,0 AS TIMES-->
+<!--        ,'' AS INPUT_NAME-->
+<!--        ,'' AS BUSINESS_SCOPE-->
+<!--        ,'' AS PHONE_NUMBER-->
+<!--        FROM "BIUSER"."INPUT_CUSTOM_HAND"  a-->
+<!--        inner join ODS_TYC_JSON b-->
+<!--        on a.CUSTOM_NAME = b.NAME-->
+<!--        where-->
+<!--        b.error_code > '0'-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--        )-->
+<!--        SELECT a.CUSTOM_NAME as CUSTOM_NAME1,a.CUSTOM_SOCIAL_CODE as customSocialCode,ds1.* from "BIUSER"."INPUT_CUSTOM_HAND" a-->
+<!--        LEFT JOIN ds1 on a.CUSTOM_NAME=ds1.CUSTOM_NAME-->
+<!--        where 1=1-->
+<!--        <if test="updataBy != null and updataBy !=''">-->
+<!--            and (a.UPDATEBY = #{updataBy})-->
+<!--        </if>-->
+<!--        <if test="serialid != null and serialid !=''">-->
+<!--            and (a.SERIALID = #{serialid})-->
+<!--        </if>-->
+<!--    </select>-->
+
 
     <resultMap id="getAllBlackListResultListResultMap" type="com.fanruan.platform.bean.BlacklistResultList">
         <result column="pid" jdbcType="VARCHAR" property="pid" />
@@ -676,11 +1133,18 @@
             </foreach>
         </if>
         <if test="publishBy != null and publishBy !=''">
-            and (b.PUBLISH_by = #{publishBy})
+            and (b.PUBLISH_by  IN (SELECT PUBLISH_by
+            FROM  INPUT_BLACKLIST
+            WHERE #{publishBy}='admin'
+            UNION
+            SELECT PUBLISH_by
+            FROM  INPUT_BLACKLIST
+            WHERE PUBLISH_by=#{publishBy}
+            AND PUBLISH_by != 'admin'
+            ))
         </if>
-        order by b.status,case when GRADE = '高' then 0
-        when GRADE = '中' then 1
-        else 3 end,b.UPDATETIME desc
+        order by b.PUBLISH_TIME desc
+               ,b.APPROVE_TIME desc
         )N
         )M
         WHERE 1 = 1
@@ -698,15 +1162,23 @@
             "BIUSER"."INPUT_BLACKLIST" b on a.credit_code = B.code
             where
             1=1
-            <if test="status != null and status.size > 0">
-                and b.status in
-                <foreach collection="status" index="index" item="item" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            <if test="publishBy != null and publishBy !=''">
-                and (b.PUBLISH_by = #{publishBy})
-            </if>
+        <if test="status != null and status.size > 0">
+            and b.status in
+            <foreach collection="status" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="publishBy != null and publishBy !=''">
+            and (b.PUBLISH_by  IN (SELECT PUBLISH_by
+            FROM  INPUT_BLACKLIST
+            WHERE #{publishBy}='admin'
+            UNION
+            SELECT PUBLISH_by
+            FROM  INPUT_BLACKLIST
+            WHERE PUBLISH_by=#{publishBy}
+            AND PUBLISH_by != 'admin'
+            ))
+        </if>
             order by b.status,case when GRADE = '高' then 0
             when GRADE = '中' then 1
             else 3 end,b.UPDATETIME desc
@@ -736,7 +1208,7 @@
         </if>
         )
         AND COMPANYNAME= SUBCOMPANYNAME
-        AND TP = '2'
+        --AND TP = '2'
     </select>
 
 
@@ -830,7 +1302,7 @@
             </foreach>
         </if>
 		AND b.PID IS NOT NULL
-		AND b.status != 4
+	    AND b.status != 4
         AND b.companyname in
         (
         SELECT DISTINCT O.SUBCOMPANYNAME --二级公司
@@ -844,16 +1316,8 @@
         WHERE #{userName} = 'admin'
         AND O.TP IN (1,2)
         )
-	ORDER BY
-		b.status,
-	CASE
-
-			WHEN GRADE = '高' THEN
-			0
-			WHEN GRADE = '中' THEN
-			1 ELSE 3
-		END,
-	b.UPDATETIME DESC
+        order by b.PUBLISH_TIME desc
+        ,b.APPROVE_TIME desc
         )N
         )M
         WHERE 1 = 1
@@ -4283,38 +4747,74 @@
         SELECT M.* FROM (
         SELECT ROWNUM AS rowno,N.*
         FROM (
-            SELECT
-            TO_CHAR(R.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as cd,
-            case R.LEVEL1 when '0' then '一般' when '1' then '重大' when '2' then '警示' end as LEVEL_TYPE,
-            case R.ENT_TYPE when '0' then '非城投企业' when '1' then '城投企业' end as  ENT_TYPE,
-            R.DESCRIPTION,
-            R.TYPE_NAME,
-            R.CREDIT_CODE,
-            TO_CHAR(R.UPDATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as ud,
-            R.ENTERPRISE_NAME
-            FROM
-            BIUSER.ODS_ZCX_RISKEVENT R
-            WHERE TO_CHAR(R.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') BETWEEN #{startDate} AND #{endDate}
-            and ENTERPRISE_NAME in (SELECT DISTINCT ENTNAME FROM LOG_ZCX_CONCERN WHERE CONCERN_FLAG=1 AND UPDATEBY= #{userName})
-            <if test="riskleve != null and riskleve.size > 0">
-                and R.LEVEL1 in
-                <foreach collection="riskleve" index="index" item="item" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            <if test="companyName != null and companyName.size > 0">
-                and R.ENTERPRISE_NAME in
-                <foreach collection="companyName" index="index" item="item" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            ORDER BY cd desc,R.ENTERPRISE_NAME
+        SELECT
+        TO_CHAR(R.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD hh24:mi:ss'), 'YYYY-MM-DD') as cd,
+        case R.LEVEL1 when '0' then '一般' when '1' then '重大' when '2' then '警示' end as LEVEL_TYPE,
+        case R.ENT_TYPE when '0' then '非城投企业' when '1' then '城投企业' end as  ENT_TYPE,
+        R.DESCRIPTION,
+        R.TYPE_NAME,
+        R.CREDIT_CODE,
+        TO_CHAR(R.UPDATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD hh24:mi:ss'), 'YYYY-MM-DD') as ud,
+        R.ENTERPRISE_NAME
+        FROM
+        BIUSER.ODS_ZCX_RISKEVENT R
+        WHERE TO_CHAR(R.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD hh24:mi:ss'), 'YYYY-MM-DD') BETWEEN #{startDate} AND #{endDate}
+        and ENTERPRISE_NAME in (SELECT DISTINCT ENTNAME FROM LOG_ZCX_CONCERN WHERE CONCERN_FLAG=1 AND UPDATEBY= #{userName})
+        <if test="riskleve != null and riskleve.size > 0">
+            and R.LEVEL1 in
+            <foreach collection="riskleve" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="companyName != null and companyName.size > 0">
+            and R.ENTERPRISE_NAME in
+            <foreach collection="companyName" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY cd desc,R.ENTERPRISE_NAME
         )N
         )M
         where 1 = 1
         AND rowno &lt;= #{pageIndex} * #{pageSize}
         AND rowno &gt; (#{pageIndex}-1) * #{pageSize}
     </select>
+<!--    <select id="getRiskMorningPost" resultType="com.fanruan.platform.bean.RiskMorningPost">-->
+<!--        SELECT M.* FROM (-->
+<!--        SELECT ROWNUM AS rowno,N.*-->
+<!--        FROM (-->
+<!--            SELECT-->
+<!--            TO_CHAR(R.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as cd,-->
+<!--            case R.LEVEL1 when '0' then '一般' when '1' then '重大' when '2' then '警示' end as LEVEL_TYPE,-->
+<!--            case R.ENT_TYPE when '0' then '非城投企业' when '1' then '城投企业' end as  ENT_TYPE,-->
+<!--            R.DESCRIPTION,-->
+<!--            R.TYPE_NAME,-->
+<!--            R.CREDIT_CODE,-->
+<!--            TO_CHAR(R.UPDATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as ud,-->
+<!--            R.ENTERPRISE_NAME-->
+<!--            FROM-->
+<!--            BIUSER.ODS_ZCX_RISKEVENT R-->
+<!--            WHERE TO_CHAR(R.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') BETWEEN #{startDate} AND #{endDate}-->
+<!--            and ENTERPRISE_NAME in (SELECT DISTINCT ENTNAME FROM LOG_ZCX_CONCERN WHERE CONCERN_FLAG=1 AND UPDATEBY= #{userName})-->
+<!--            <if test="riskleve != null and riskleve.size > 0">-->
+<!--                and R.LEVEL1 in-->
+<!--                <foreach collection="riskleve" index="index" item="item" open="(" separator="," close=")">-->
+<!--                    #{item}-->
+<!--                </foreach>-->
+<!--            </if>-->
+<!--            <if test="companyName != null and companyName.size > 0">-->
+<!--                and R.ENTERPRISE_NAME in-->
+<!--                <foreach collection="companyName" index="index" item="item" open="(" separator="," close=")">-->
+<!--                    #{item}-->
+<!--                </foreach>-->
+<!--            </if>-->
+<!--            ORDER BY cd desc,R.ENTERPRISE_NAME-->
+<!--        )N-->
+<!--        )M-->
+<!--        where 1 = 1-->
+<!--        AND rowno &lt;= #{pageIndex} * #{pageSize}-->
+<!--        AND rowno &gt; (#{pageIndex}-1) * #{pageSize}-->
+<!--    </select>-->
 
     <resultMap id="getRiskMorningPostCountResultMap" type="java.lang.Integer">
         <result column="co" jdbcType="VARCHAR" property="co" />
@@ -4323,17 +4823,17 @@
     <select id="getRiskMorningPostCount" resultType="java.lang.Integer">
          SELECT COUNT(*) as co FROM (
             SELECT
-            TO_CHAR(R.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as cd,
+            TO_CHAR(R.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD') as cd,
             case R.LEVEL1 when '0' then '一般' when '1' then '重大' when '2' then '警示' end as LEVEL_TYPE,
             case R.ENT_TYPE when '0' then '非城投企业' when '1' then '城投企业' end as  ENT_TYPE,
             R.DESCRIPTION,
             R.TYPE_NAME,
             R.CREDIT_CODE,
-            TO_CHAR(R.UPDATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as ud,
+            TO_CHAR(R.UPDATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD') as ud,
             R.ENTERPRISE_NAME
             FROM
             BIUSER.ODS_ZCX_RISKEVENT R
-            WHERE TO_CHAR(R.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') BETWEEN #{startDate} AND #{endDate}
+            WHERE TO_CHAR(R.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD') BETWEEN #{startDate} AND #{endDate}
             and ENTERPRISE_NAME in (SELECT DISTINCT ENTNAME FROM LOG_ZCX_CONCERN WHERE CONCERN_FLAG=1 AND UPDATEBY= #{userName})
             <if test="riskleve != null and riskleve.size > 0">
                 and R.LEVEL1 in
@@ -4363,48 +4863,96 @@
         <result column="URL" jdbcType="VARCHAR" property="URL" />
         <result column="CD" jdbcType="VARCHAR" property="CD" />
     </resultMap>
+<!--    <select id="getMorningNews" resultType="com.fanruan.platform.bean.MorningNews">-->
+<!--        SELECT M.* FROM (-->
+<!--        SELECT ROWNUM AS rowno,N.*-->
+<!--        FROM (-->
+<!--            SELECT-->
+<!--            TO_CHAR(N.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as cd,-->
+<!--            case N.LEVEL1 when '0' then '一般' when '1' then '重大' when '2' then '警示' end as LEVEL_TYPE,-->
+<!--            case N.ENT_TYPE when '0' then '非城投企业' when '1' then '城投企业' end as  ENT_TYPE,-->
+<!--            N.DESCRIPTION,-->
+<!--            N.TYPE_NAME,-->
+<!--            N.CREDIT_CODE,-->
+<!--            TO_CHAR(N.UPDATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as ud,-->
+<!--            N.ENTERPRISE_NAME,-->
+<!--            N.NEWSTAGS,-->
+<!--            N.TITLE,-->
+<!--            N.NEWSTYPE,-->
+<!--            N.URL,-->
+<!--            TO_CHAR(N.PUBLISHTIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as pd-->
+
+<!--            FROM-->
+<!--            BIUSER.ODS_ZCX_NEWSPUBOPINION N-->
+<!--            WHERE TO_CHAR(N.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD')  BETWEEN #{startDate} AND #{endDate}-->
+<!--            <if test="riskleve != null and riskleve.size > 0">-->
+<!--                and N.LEVEL1 in-->
+<!--                <foreach collection="riskleve" index="index" item="item" open="(" separator="," close=")">-->
+<!--                    #{item}-->
+<!--                </foreach>-->
+<!--            </if>-->
+<!--            <if test="newsEmotion != null and newsEmotion.size > 0">-->
+<!--                and N.DESCRIPTION in-->
+<!--                <foreach collection="newsEmotion" index="index" item="item" open="(" separator="," close=")">-->
+<!--                    #{item}-->
+<!--                </foreach>-->
+<!--            </if>-->
+<!--            <if test="companyName != null and companyName.size > 0">-->
+<!--                and N.ENTERPRISE_NAME in-->
+<!--                <foreach collection="companyName" index="index" item="item" open="(" separator="," close=")">-->
+<!--                    #{item}-->
+<!--                </foreach>-->
+<!--            </if>-->
+<!--            and ENTERPRISE_NAME in (SELECT DISTINCT ENTNAME FROM LOG_ZCX_CONCERN WHERE CONCERN_FLAG=1 AND UPDATEBY = #{userName} )-->
+<!--            ORDER BY pd desc,N.ENTERPRISE_NAME-->
+<!--        )N-->
+<!--        )M-->
+<!--        where 1 = 1-->
+<!--        AND rowno &lt;= #{pageIndex} * #{pageSize}-->
+<!--        AND rowno &gt; (#{pageIndex}-1) * #{pageSize}-->
+<!--    </select>-->
     <select id="getMorningNews" resultType="com.fanruan.platform.bean.MorningNews">
         SELECT M.* FROM (
         SELECT ROWNUM AS rowno,N.*
         FROM (
-            SELECT
-            TO_CHAR(N.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as cd,
-            case N.LEVEL1 when '0' then '一般' when '1' then '重大' when '2' then '警示' end as LEVEL_TYPE,
-            case N.ENT_TYPE when '0' then '非城投企业' when '1' then '城投企业' end as  ENT_TYPE,
-            N.DESCRIPTION,
-            N.TYPE_NAME,
-            N.CREDIT_CODE,
-            TO_CHAR(N.UPDATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as ud,
-            N.ENTERPRISE_NAME,
-            N.NEWSTAGS,
-            N.TITLE,
-            N.NEWSTYPE,
-            N.URL,
-            TO_CHAR(N.PUBLISHTIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as pd
+        SELECT
+        TO_CHAR(TO_DATE( '1970-01-01 08:00:00', 'yyyy-mm-dd hh24:mi:ss')+TO_NUMBER(N.CREATE_TIME)/(1000*60*60*24),'yyyy-mm-dd') as cd,
+        case N.LEVEL1 when '0' then '一般' when '1' then '重大' when '2' then '警示' end as LEVEL_TYPE,
+        case N.ENT_TYPE when '0' then '非城投企业' when '1' then '城投企业' end as  ENT_TYPE,
+        N.DESCRIPTION,
+        N.TYPE_NAME,
+        N.CREDIT_CODE,
+        TO_CHAR(TO_DATE( '1970-01-01 08:00:00', 'yyyy-mm-dd hh24:mi:ss')+TO_NUMBER(N.UPDATE_TIME)/(1000*60*60*24),'yyyy-mm-dd') as ud,
+        N.ENTERPRISE_NAME,
+        N.NEWSTAGS,
+        N.TITLE,
+        N.NEWSTYPE,
+        N.URL,
+        TO_CHAR(TO_DATE( '1970-01-01 08:00:00', 'yyyy-mm-dd hh24:mi:ss')+TO_NUMBER(N.PUBLISHTIME)/(1000*60*60*24),'yyyy-mm-dd') as pd
 
-            FROM
-            BIUSER.ODS_ZCX_NEWSPUBOPINION N
-            WHERE TO_CHAR(N.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD')  BETWEEN #{startDate} AND #{endDate}
-            <if test="riskleve != null and riskleve.size > 0">
-                and N.LEVEL1 in
-                <foreach collection="riskleve" index="index" item="item" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            <if test="newsEmotion != null and newsEmotion.size > 0">
-                and N.DESCRIPTION in
-                <foreach collection="newsEmotion" index="index" item="item" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            <if test="companyName != null and companyName.size > 0">
-                and N.ENTERPRISE_NAME in
-                <foreach collection="companyName" index="index" item="item" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            and ENTERPRISE_NAME in (SELECT DISTINCT ENTNAME FROM LOG_ZCX_CONCERN WHERE CONCERN_FLAG=1 AND UPDATEBY = #{userName} )
-            ORDER BY pd desc,N.ENTERPRISE_NAME
+        FROM
+        BIUSER.ODS_ZCX_NEWSPUBOPINION N
+        WHERE TO_CHAR(TO_DATE( '1970-01-01 08:00:00', 'yyyy-mm-dd hh24:mi:ss')+TO_NUMBER(N.CREATE_TIME)/(1000*60*60*24),'yyyy-mm-dd')  BETWEEN #{startDate} AND #{endDate}
+        <if test="riskleve != null and riskleve.size > 0">
+            and N.LEVEL1 in
+            <foreach collection="riskleve" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="newsEmotion != null and newsEmotion.size > 0">
+            and N.DESCRIPTION in
+            <foreach collection="newsEmotion" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="companyName != null and companyName.size > 0">
+            and N.ENTERPRISE_NAME in
+            <foreach collection="companyName" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        and ENTERPRISE_NAME in (SELECT DISTINCT ENTNAME FROM LOG_ZCX_CONCERN WHERE CONCERN_FLAG=1 AND UPDATEBY = #{userName} )
+        ORDER BY cd desc,N.ENTERPRISE_NAME
         )N
         )M
         where 1 = 1
@@ -4418,53 +4966,53 @@
 
     <select id="getMorningNewsCount" resultType="java.lang.Integer">
         SELECT COUNT(*) as co FROM (
-            SELECT
-            TO_CHAR(N.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as cd,
-            case N.LEVEL1 when '0' then '一般' when '1' then '重大' when '2' then '警示' end as LEVEL_TYPE,
-            case N.ENT_TYPE when '0' then '非城投企业' when '1' then '城投企业' end as  ENT_TYPE,
-            N.DESCRIPTION,
-            N.TYPE_NAME,
-            N.CREDIT_CODE,
-            TO_CHAR(N.UPDATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as ud,
-            N.ENTERPRISE_NAME,
-            N.NEWSTAGS,
-            N.TITLE,
-            N.NEWSTYPE,
-            N.URL,
-            TO_CHAR(N.PUBLISHTIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') as pd
+        SELECT
+        TO_CHAR(N.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD  HH24:MI:SS'), 'YYYY-MM-DD') as cd,
+        case N.LEVEL1 when '0' then '一般' when '1' then '重大' when '2' then '警示' end as LEVEL_TYPE,
+        case N.ENT_TYPE when '0' then '非城投企业' when '1' then '城投企业' end as  ENT_TYPE,
+        N.DESCRIPTION,
+        N.TYPE_NAME,
+        N.CREDIT_CODE,
+        TO_CHAR(N.UPDATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD') as ud,
+        N.ENTERPRISE_NAME,
+        N.NEWSTAGS,
+        N.TITLE,
+        N.NEWSTYPE,
+        N.URL,
+        TO_CHAR(N.PUBLISHTIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD') as pd
 
-            FROM
-            BIUSER.ODS_ZCX_NEWSPUBOPINION N
-            WHERE TO_CHAR(N.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD')  BETWEEN #{startDate} AND #{endDate}
-            <if test="riskleve != null and riskleve.size > 0">
-                and N.LEVEL1 in
-                <foreach collection="riskleve" index="index" item="item" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            <if test="newsEmotion != null and newsEmotion.size > 0">
-                and N.DESCRIPTION in
-                <foreach collection="newsEmotion" index="index" item="item" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </if>
-            <if test="companyName != null and companyName.size > 0">
-                and N.ENTERPRISE_NAME in
-                <foreach collection="companyName" index="index" item="item"  >
-                    #{item}
-                </foreach>
-            </if>
-            and ENTERPRISE_NAME in (SELECT DISTINCT ENTNAME FROM LOG_ZCX_CONCERN WHERE CONCERN_FLAG=1 AND UPDATEBY = #{userName} )
-            ORDER BY pd desc,N.ENTERPRISE_NAME
+        FROM
+        BIUSER.ODS_ZCX_NEWSPUBOPINION N
+        WHERE TO_CHAR(N.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD')  BETWEEN #{startDate} AND #{endDate}
+        <if test="riskleve != null and riskleve.size > 0">
+            and N.LEVEL1 in
+            <foreach collection="riskleve" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="newsEmotion != null and newsEmotion.size > 0">
+            and N.DESCRIPTION in
+            <foreach collection="newsEmotion" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="companyName != null and companyName.size > 0">
+            and N.ENTERPRISE_NAME in
+            <foreach collection="companyName" index="index" item="item"  open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        and ENTERPRISE_NAME in (SELECT DISTINCT ENTNAME FROM LOG_ZCX_CONCERN WHERE CONCERN_FLAG=1 AND UPDATEBY = #{userName} )
+        ORDER BY pd desc,N.ENTERPRISE_NAME
         )
     </select>
 <!--jina-->
     <insert id="insertReportApply" parameterType="java.lang.String" useGeneratedKeys="false" >
         insert into INPUT_PUSH(ID,USER_NAME,PUSH_FLAG,PUSH_TIME,RESULT_TYPE,RESULT,PROMPTINFO,
-                               OA_FLAG,PUSH_TYPE,TYC_UPDATETIME,URL,PROMTINFO) values
+                               OA_FLAG,PUSH_TYPE,TYC_UPDATETIME,URL) values
 
                (lower(sys_guid()), #{item}, '0', sysdate, NULL,NULL,
-               '您有新的信保报告需要审核，请及时查看',NULL,'信保报告审核',NULL,NULL,NULL)
+               '您有新的信保报告需要审核，请及时查看',NULL,'信保报告审核',NULL,NULL)
 
     </insert>
 
@@ -4491,5 +5039,723 @@
                                     WHERE 'admin' = #{userName}
 
     </select>
+
+    <select id="getSecondaryDepartmentByLoginName" parameterType="java.lang.String" resultType="java.lang.String">
+
+    SELECT COMPANYNAME FROM VIEW_ORG
+    WHERE COMPANYNAME IN
+    (
+    select COMPANYNAME from VIEW_ORG WHERE 1 = 1
+
+
+        and (SUBCOMPANYNAME =
+    (SELECT U.COMPANY_NAME
+    FROM CREDIT_USER U
+    WHERE USERNAME = #{loginName})
+    )
+
+    )
+    AND COMPANYNAME= SUBCOMPANYNAME
+    AND TP in ('1','2')
+
+    </select>
+    <select id="reportbuyerNoIsExist" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(*) from
+    (SELECT L.REPORTBUYERNO
+    FROM LOG_ZXB_APPLY L
+    WHERE L.UPDATETIME >=add_months(sysdate,-6)  and L.REPORTBUYERNO =  #{reportbuyerNo})
+    </select>
+
+
+    <select id="getOrderState" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT ORDERSTATE FROM (
+            SELECT ORDERSTATE FROM ODS_ZXB_REPORTAPPROVE WHERE CORPSERIALNO = #{corpSerialNo} ORDER BY UPDATETIME DESC)
+        WHERE ROWNUM = 1
+    </select>
+
+    <select id="getNoticeSerialNo" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT NOTICESERIALNO FROM (
+                                   SELECT NOTICESERIALNO FROM ODS_ZXB_REPORTAPPROVE WHERE CORPSERIALNO = #{corpSerialNo} ORDER BY UPDATETIME DESC)
+        WHERE ROWNUM = 1
+    </select>
+
+    <select id="companyExist" parameterType="com.fanruan.platform.bean.Company" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM CREDIT_COMPANY WHERE ID = #{id} AND UPDATE_TIME &lt; TRUNC(SYSDATE, 'dd')
+    </select>
+
+    <update id="updateCompany" parameterType="com.fanruan.platform.bean.Company">
+        UPDATE CREDIT_COMPANY SET COMPANY_NAME = #{companyName}, UPDATE_TIME = #{updateTime}, BUILD_DATE = #{buildDate}, CREDIT_CODE = #{creditCode}
+                                , OPER_NAME = #{operName}, REGIST_CAPI = #{registCapi}, REG_NO = #{regNo}
+                                  WHERE ID = #{id}
+    </update>
+
+<!--        <resultMap id="getBlackListInHomePageResultMap" type="com.fanruan.platform.bean.BlackListDetailResultList">-->
+<!--            <result column="COMPANY_NAME" jdbcType="VARCHAR" property="companyName" />-->
+<!--            <result column="BE_RISKY_ASSETS_DATE" jdbcType="VARCHAR" property="beRiskyAssetsDate" />-->
+<!--            <result column="AMOUNT_OF_MARK" jdbcType="VARCHAR" property="amountOfMark" />-->
+<!--            <result column="ORG_NO" jdbcType="VARCHAR" property="orgNo" />-->
+<!--        </resultMap>-->
+<!--        <select id="getBlackListInHomePage" resultType="com.fanruan.platform.bean.BlackListDetailResultList">-->
+<!--            SELECT * FROM(-->
+<!--                SELECT ROWNUM AS r,x.* FROM(-->
+<!--                    SELECT * FROM V_CREDIT_BLACKLIST-->
+<!--                    <if test="sortCriteria != null and sortCriteria == 'startDate'">-->
+<!--                        ORDER BY BE_RISKY_ASSETS_DATE DESC-->
+<!--                    </if>-->
+<!--                    <if test="sortCriteria != null and sortCriteria == 'amount'">-->
+<!--                        ORDER BY AMOUNT_OF_MARK DESC-->
+<!--                    </if>-->
+<!--                             ) x ) Y-->
+<!--                WHERE 1 = 1-->
+<!--                  AND r &lt;= #{pageIndex, jdbcType=INTEGER} * #{pageSize, jdbcType=INTEGER}-->
+<!--                  AND r  &gt; (#{pageIndex, jdbcType=INTEGER}-1) * #{pageSize, jdbcType=INTEGER}-->
+<!--        </select>-->
+
+<!--        <select id="getBlackListInHomePageCount" resultType="java.lang.Integer">-->
+<!--            select count(*) from (-->
+<!--                                     select * from V_CREDIT_BLACKLIST-->
+<!--                                     )-->
+<!--        </select>-->
+
+
+    <resultMap id="getBlackListResultMap" type="com.fanruan.platform.bean.BlackListDetailResultList">
+        <result column="COMPANY_NAME" jdbcType="VARCHAR" property="companyName" />
+        <result column="BE_RISKY_ASSETS_DATE" jdbcType="VARCHAR" property="beRiskyAssetsDate" />
+        <result column="AMOUNT_OF_MARK" jdbcType="VARCHAR" property="amountOfMark" />
+        <result column="ORG_NO" jdbcType="VARCHAR" property="orgNo" />
+        <result column="TYC_COMPANY_ID" jdbcType="VARCHAR" property="tycCompanyId" />
+    </resultMap>
+    <select id="getBlackList" resultType="com.fanruan.platform.bean.BlackListDetailResultList">
+        SELECT * FROM(
+            SELECT ROWNUM AS r,A.* FROM(
+                SELECT * FROM V_CREDIT_BLACKLIST
+                <if test="sortCriteria != null and sortCriteria == 'startDate'">
+                    ORDER BY BE_RISKY_ASSETS_DATE DESC
+                </if>
+                <if test="sortCriteria != null and sortCriteria == 'amount'">
+                    ORDER BY AMOUNT_OF_MARK DESC
+                </if>
+            ) A
+        )
+        WHERE 1 = 1
+        <if test=" pageIndex != null and pageIndex != '' and pageSize != null and pageSize != ''">
+            AND r &lt;= #{pageIndex, jdbcType=INTEGER} * #{pageSize, jdbcType=INTEGER}
+            AND r  &gt; (#{pageIndex, jdbcType=INTEGER}-1) * #{pageSize, jdbcType=INTEGER}
+        </if>
+
+    </select>
+
+    <select id="getBlackListTotalCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (
+                                 SELECT * FROM V_CREDIT_BLACKLIST
+                             )
+    </select>
+
+    <resultMap id="getGreyListResultMap" type="com.fanruan.platform.bean.BlackListDetailResultList">
+        <result column="COMPANY_NAME" jdbcType="VARCHAR" property="companyName" />
+        <result column="BE_RISKY_ASSETS_DATE" jdbcType="VARCHAR" property="beRiskyAssetsDate" />
+        <result column="AMOUNT_OF_MARK" jdbcType="VARCHAR" property="amountOfMark" />
+        <result column="ORG_NO" jdbcType="VARCHAR" property="orgNo" />
+        <result column="TYC_COMPANY_ID" jdbcType="VARCHAR" property="tycCompanyId" />
+    </resultMap>
+    <select id="getGreyList" resultType="com.fanruan.platform.bean.BlackListDetailResultList">
+        SELECT * FROM(
+            SELECT ROWNUM AS r,A.* FROM(
+                SELECT * FROM V_CREDIT_GREYLIST
+                ORDER BY BE_RISKY_ASSETS_DATE DESC
+            ) A
+        )
+        WHERE 1 = 1
+        <if test=" pageIndex != null and pageIndex != '' and pageSize != null and pageSize != ''">
+            AND r &lt;= #{pageIndex, jdbcType=INTEGER} * #{pageSize, jdbcType=INTEGER}
+            AND r  &gt; (#{pageIndex, jdbcType=INTEGER}-1) * #{pageSize, jdbcType=INTEGER}
+        </if>
+
+    </select>
+
+    <select id="getGreyListTotalCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (
+                                 SELECT * FROM V_CREDIT_GREYLIST
+                             )
+    </select>
+
+    <select id="getXBPDFFileName" resultType="java.lang.String">
+        SELECT REPORTNAME FROM (
+            SELECT ROWNUM AS r, t.*  FROM (
+                SELECT DISTINCT
+                    A.REPORTBUYERNO,--信保代码
+                    P.NOTICESERIALNO || '.pdf' AS reportName,
+                    p.UPDATETIME
+                FROM
+                    ODS_ZXB_PDF P
+                        INNER JOIN ( SELECT NOTICESERIALNO, MAX( UPDATETIME ) MAXTIME FROM ODS_ZXB_PDF GROUP BY NOTICESERIALNO ) D ON D.MAXTIME = P.UPDATETIME
+                        INNER JOIN ODS_ZXB_REPORTAPPROVE R ON R.NOTICESERIALNO = P.NOTICESERIALNO
+                        AND ORDERSTATE = '0'
+                        INNER JOIN LOG_ZXB_APPLY A ON R.CORPSERIALNO = A.CORPSERIALNO_IMPORT
+                        LEFT JOIN ( SELECT BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO, MAX( UPDATETIME ) MAXTIME FROM ODS_ZXB_RATINGINFO GROUP BY BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO ) I ON I.BUYERENGNAME = A.REPORTCORPENGNAME
+                        OR I.BUYERCHNNAME = A.REPORTCORPCHNNAME
+                        OR I.SINOSUREBUYERNO = A.REPORTBUYERNO
+                ORDER BY UPDATETIME DESC
+            ) t
+            WHERE 1 = 1
+            AND (t.REPORTBUYERNO = #{reportBuyerNo, jdbcType=VARCHAR})
+            ORDER BY REPORTBUYERNO DESC
+        ) WHERE ROWNUM = 1
+    </select>
+
+    <select id="getXBPDFFileUpdateTime" resultType="java.lang.String">
+        SELECT TO_CHAR(UPDATETIME, 'YYYY-MM-DD') AS UPDATETIME FROM (
+            SELECT ROWNUM AS r, t.*  FROM (
+                  SELECT DISTINCT
+                      A.REPORTBUYERNO,--信保代码
+                      P.NOTICESERIALNO || '.pdf' AS reportName,
+                      p.UPDATETIME
+                  FROM
+                      ODS_ZXB_PDF P
+                          INNER JOIN ( SELECT NOTICESERIALNO, MAX( UPDATETIME ) MAXTIME FROM ODS_ZXB_PDF GROUP BY NOTICESERIALNO ) D ON D.MAXTIME = P.UPDATETIME
+                          INNER JOIN ODS_ZXB_REPORTAPPROVE R ON R.NOTICESERIALNO = P.NOTICESERIALNO
+                          AND ORDERSTATE = '0'
+                          INNER JOIN LOG_ZXB_APPLY A ON R.CORPSERIALNO = A.CORPSERIALNO_IMPORT
+                          LEFT JOIN ( SELECT BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO, MAX( UPDATETIME ) MAXTIME FROM ODS_ZXB_RATINGINFO GROUP BY BUYERENGNAME, BUYERCHNNAME, SINOSUREBUYERNO ) I ON I.BUYERENGNAME = A.REPORTCORPENGNAME
+                          OR I.BUYERCHNNAME = A.REPORTCORPCHNNAME
+                          OR I.SINOSUREBUYERNO = A.REPORTBUYERNO
+                  ORDER BY UPDATETIME DESC
+              ) t
+            WHERE 1 = 1
+              AND (t.REPORTBUYERNO = #{reportBuyerNo, jdbcType=VARCHAR})
+            ORDER BY REPORTBUYERNO DESC
+        ) WHERE ROWNUM = 1
+    </select>
+
+    <select id="getUserId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT USER_ID FROM CREDIT_USER WHERE USERNAME = #{userName}
+    </select>
+
+    <select id="getApplyInfo" resultType="com.fanruan.platform.bean.InputPush">
+        SELECT LOWER (SYS_GUID()) AS ID,
+               C.USERNAME,
+               '0' AS PUSH_FLAG,
+               '您有一条新的信保报告待审核，请尽快处理。申请人：'||B.NAME AS promptinfo,
+               '信保报告申请' AS PUSH_TYPE,
+               SYSDATE AS UPDATETIME
+        FROM CREDIT_USER C
+                 LEFT JOIN CREDIT_USER B
+                           ON 1=1
+                               AND  B.USERNAME = #{username}
+        WHERE C.ROLE_NAME = '信保审核专员'
+          AND C.COMPANY_NAME = (
+            SELECT COMPANYNAME
+            FROM (
+                     SELECT COMPANYCODE,COMPANYNAME,SUBCOMPANYCODE,SUBCOMPANYNAME,SHORTNAME
+                     FROM DIM_ORG
+                     WHERE 1=1
+
+                 ) COMP
+            WHERE SUBCOMPANYNAME =
+                  (SELECT C.COMPANY_NAME
+                   FROM CREDIT_USER C
+                   WHERE C.USERNAME= #{username})
+        )
+    </select>
+
+    <insert id="insertZXBApplyInfo4ETL" parameterType="com.fanruan.platform.bean.TianYanChaJson">
+        insert into INPUT_PUSH(ID,USER_NAME,PUSH_FLAG,PROMPTINFO,PUSH_TYPE,UPDATETIME) VALUES (lower(sys_guid())
+                                                                                            ,#{userName}
+                                                                                            ,#{pushFlag}
+                                                                                            ,#{promptinfo}
+                                                                                            ,#{pushType}
+                                                                                            ,#{updateTime})
+    </insert>
+
+    <insert id="insertPAFCUser" parameterType="com.fanruan.platform.bean.PAFCUser">
+        INSERT INTO PAFC_INPUT_USER (USERNAME,EMAIL,COMPANY_CODE) VALUES (#{userName}
+                                                                        ,#{email}
+                                                                        ,#{companyCode})
+    </insert>
+
+    <update id="updatePAFCUserById" parameterType="com.fanruan.platform.bean.PAFCUser">
+        UPDATE PAFC_INPUT_USER SET USERNAME = #{userName} , EMAIL = #{email} WHERE ID = #{id}
+    </update>
+
+    <delete id="deletePAFCUserById" parameterType="com.fanruan.platform.bean.PAFCUser">
+        DELETE FROM PAFC_INPUT_USER WHERE ID = #{id}
+    </delete>
+
+<!--    <insert id="insertPAFCDistributeInfo" parameterType="com.fanruan.platform.bean.PAFCUser">-->
+<!--        INSERT INTO PAFC_INPUT_DISTRIBUTE (COMPANY_CODE, USERNAME, VERSION_NO, CREATE_DATE) VALUES-->
+<!--                                        (#{companyCode},  #{userName}, #{versionNo}, sysdate)-->
+<!--    </insert>-->
+
+
+    <update id="updatePAFCVersion" parameterType="com.fanruan.platform.bean.PAFCVersion">
+        UPDATE PAFC_INPUT_VERSION SET VERSION_NO = #{versionNo}, INTERFACE_TOTAL_POINTS = #{interfaceTotalPoints}
+                                    , ATTENTION_TOTAL_POINTS = #{attentionTotalPoints}, START_DATE = to_date(#{startDate},'YYYY-MM-DD')
+                                    , END_DATE = to_date(#{endDate},'YYYY-MM-DD'), UPDATE_DATE = sysdate
+                                    WHERE VERSION_NO = #{versionNo}
+    </update>
+
+    <insert id="insertPAFCVersion" parameterType="com.fanruan.platform.bean.PAFCVersion">
+        INSERT INTO PAFC_INPUT_VERSION
+        (SUPPLIER_NAME, VERSION_NO, INTERFACE_TOTAL_POINTS,ATTENTION_TOTAL_POINTS,START_DATE,END_DATE,CREATE_DATE)
+            VALUES
+        (#{supplierName},#{versionNo},#{interfaceTotalPoints},#{attentionTotalPoints},TO_DATE(#{startDate},'YYYY-MM-DD'),TO_DATE(#{endDate},'YYYY-MM-DD'),SYSDATE)
+    </insert>
+
+    <insert id="insertPAFCPoints" parameterType="com.fanruan.platform.bean.PAFCPoints">
+        INSERT INTO PAFC_INPUT_DISTRIBUTE
+            (COMPANY_CODE, VERSION_NO, CREATE_DATE)
+        VALUES
+            (#{companyCode}, #{versionNo}, SYSDATE)
+    </insert>
+
+    <update id="updatePAFCPoints" parameterType="com.fanruan.platform.bean.PAFCPoints">
+        UPDATE PAFC_INPUT_DISTRIBUTE SET INTERFACE_DISTRIBUTE_POINTS = #{interfaceDistributePoints}
+                                       , ATTENTION_DISTRIBUTE_POINTS = #{attentionDistributePoints}
+                                    , UPDATE_DATE = sysdate
+        WHERE COMPANY_CODE = #{companyCode} AND VERSION_NO = #{versionNo}
+    </update>
+
+    <update id="updatePAFCCompany" parameterType="com.fanruan.platform.bean.PAFCCompany">
+        UPDATE PAFC_INPUT_COMPANY SET COMPANY_NAME = #{companyName} WHERE COMPANY_CODE = #{companyCode}
+    </update>
+
+    <insert id="insertPAFCCompany" parameterType="com.fanruan.platform.bean.PAFCCompany">
+        INSERT INTO PAFC_INPUT_COMPANY (COMPANY_CODE,COMPANY_NAME) VALUES ( #{companyCode}, #{companyName} )
+    </insert>
+
+    <delete id="deletePAFCCompany" parameterType="com.fanruan.platform.bean.PAFCCompany">
+        DELETE FROM PAFC_INPUT_COMPANY WHERE COMPANY_CODE = #{companyCode}
+    </delete>
+
+    <select id="getPAFCVersionList" resultType="com.fanruan.platform.bean.PAFCVersion">
+        SELECT A.VERSION_NO,A.SUPPLIER_NAME, A.INTERFACE_TOTAL_POINTS,A.ATTENTION_TOTAL_POINTS, A.START_DATE, A.END_DATE,
+               (SELECT SUM(INTERFACE_DISTRIBUTE_POINTS) FROM PAFC_INPUT_DISTRIBUTE WHERE VERSION_NO = A.VERSION_NO) AS INTERFACEDISTRIBUTETOTALPOINTS,
+               (SELECT SUM(ATTENTION_DISTRIBUTE_POINTS) FROM PAFC_INPUT_DISTRIBUTE WHERE VERSION_NO = A.VERSION_NO) AS ATTENTIONDISTRIBUTETOTALPOINTS
+        FROM (SELECT TMP.*,ROW_NUMBER() OVER(PARTITION BY SUPPLIER_NAME ORDER BY END_DATE DESC) AS RN FROM PAFC_INPUT_VERSION TMP) A
+        WHERE RN = 1
+    </select>
+
+    <select id="getPAFCVersion" resultType="com.fanruan.platform.bean.PAFCVersion">
+        SELECT VERSION_NO,SUPPLIER_NAME, INTERFACE_TOTAL_POINTS, START_DATE, END_DATE
+        FROM PAFC_INPUT_VERSION WHERE VERSION_NO = #{versionNo} ORDER BY END_DATE DESC
+    </select>
+
+    <select id="getPAFCPointsList" resultType="com.fanruan.platform.bean.PAFCPoints">
+        SELECT (SELECT SUPPLIER_NAME FROM PAFC_INPUT_VERSION WHERE VERSION_NO = A.VERSION_NO) AS SUPPLIER_NAME,
+               A.*  FROM PAFC_INPUT_DISTRIBUTE A WHERE A.VERSION_NO = #{versionNo} ORDER BY COMPANY_CODE
+    </select>
+
+    <select id="getCompanyPoints" resultType="com.fanruan.platform.bean.PAFCPoints">
+        select * from table(F_CREDIT_FIRM_INPUT(to_date(#{startDate},'yyyy-mm-dd'),to_date(#{endDate},'yyyy-mm-dd'),#{supplierName}))
+    </select>
+
+    <select id="getVersionPointsTYC" resultType="com.fanruan.platform.bean.PAFCVersion">
+        select * from table(F_CREDIT_TYC_INPUT(to_date(#{startDate},'yyyy-mm-dd'),to_date(#{endDate},'yyyy-mm-dd')))
+
+    </select>
+
+    <select id="getVersionPointsZCX" resultType="com.fanruan.platform.bean.PAFCVersion">
+        select * from table(F_CREDIT_ZCX_INPUT(to_date(#{startDate},'yyyy-mm-dd'),to_date(#{endDate},'yyyy-mm-dd')))
+    </select>
+
+    <select id="getPAFCCompanyList" resultType="com.fanruan.platform.bean.PAFCCompany">
+        SELECT * FROM PAFC_INPUT_COMPANY ORDER BY COMPANY_CODE
+    </select>
+
+
+    <select id="getPAFCUserList" resultType="com.fanruan.platform.bean.PAFCUser">
+        SELECT * FROM PAFC_INPUT_USER
+    </select>
+
+    <select id="getPAFCUserListByCompanyCode" parameterType="java.lang.String" resultType="com.fanruan.platform.bean.PAFCUser">
+        SELECT * FROM PAFC_INPUT_USER WHERE COMPANY_CODE = #{companyCode}
+    </select>
+
+    <select id="getENTTokenId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT ENT_TOKENID FROM CREDIT_API_RELATION WHERE ENTNAME = #{companyName}
+    </select>
+
+    <select id="getCompanyNameByTokenId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT ENTNAME FROM CREDIT_API_RELATION WHERE ENT_TOKENID = #{tokenId}
+    </select>
+
+    <select id="getCompanyName" resultType="com.fanruan.platform.bean.CompanyLevel">
+        SELECT CODE,NAME,SCODE FROM(
+                                       SELECT CODE,NAME,SHORTNAME,SCODE,SNAME FROM ODS_HR_ORG
+                                       WHERE ENABLESTATE = 2
+                                       UNION ALL
+                                       SELECT CODE,NAME,SHORTNAME,SCODE,SNAME FROM INPUT_HR_ORG
+                                       WHERE ENABLESTATE = 1) WHERE CODE =  #{companyCode}
+    </select>
+
+    <select id="getLV2Company" resultType="com.fanruan.platform.bean.CompanyLevel">
+        WITH DS1 AS(
+            SELECT CODE,NAME,SHORTNAME,SCODE,SNAME FROM ODS_HR_ORG
+            WHERE ENABLESTATE = 2
+            UNION ALL
+            SELECT CODE,NAME,SHORTNAME,SCODE,SNAME FROM INPUT_HR_ORG
+            WHERE ENABLESTATE = 1)
+        SELECT CODE,NAME FROM DS1 WHERE CODE = '010'
+        UNION
+        SELECT CODE,NAME FROM DS1 WHERE SCODE = '010'
+        ORDER BY CODE
+    </select>
+
+    <resultMap id="getBlackListDetailListResultMap" type="com.fanruan.platform.bean.BlackListDetailResultList">
+        <result column="COMPANY_NAME" jdbcType="VARCHAR" property="companyName" />
+        <result column="ORG_NO" jdbcType="VARCHAR" property="orgNo" />
+        <result column="JURIDICAL_PERSON_NAME" jdbcType="VARCHAR" property="juridicalPersonName" />
+        <result column="ENTERPRISE_STATUS" jdbcType="VARCHAR" property="enterpriseStatus" />
+        <result column="INDUSTRY_CATEGORY" jdbcType="VARCHAR" property="industryCategory" />
+        <result column="SUBJECT_CATEGORY" jdbcType="VARCHAR" property="subjectCategory" />
+        <result column="BUSINESS_CATEGORY" jdbcType="VARCHAR" property="businessCategory" />
+        <result column="STATUS" jdbcType="VARCHAR" property="status" />
+        <result column="RISK_REASON" jdbcType="VARCHAR" property="riskReason" />
+        <result column="BE_RISKY_ASSETS_DATE" jdbcType="VARCHAR" property="beRiskyAssetsDate" />
+        <result column="EXISTING_DIFFICULTIES" jdbcType="VARCHAR" property="existingDifficulties" />
+        <result column="AMOUNT_OF_MARK" jdbcType="VARCHAR" property="amountOfMark" />
+        <result column="DATA_SOURCE" jdbcType="VARCHAR" property="dataSource" />
+    </resultMap>
+    <select id="getBlackListDetailList" resultType="com.fanruan.platform.bean.BlackListDetailResultList">
+        select * from(
+            select rownum as rowno, N.* from (
+                select * from V_CREDIT_BLACKLIST
+                where LIMITS_COMPANYNAME in (
+                SELECT DISTINCT O.SUBCOMPANYNAME --二级公司
+                FROM ODS_HR_PSNDOC A
+                LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE
+                WHERE  A.CODE=#{userCode}--用户名
+                AND O.TP=2
+                UNION
+                SELECT DISTINCT O.SUBCOMPANYNAME --管理员
+                FROM ODS_HR_PSNDOC A
+                LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE
+                WHERE  'admin'=#{userCode}--用户名
+                AND O.TP IN (1,2)
+                UNION
+                SELECT DISTINCT O.SUBCOMPANYNAME --集团
+                FROM DIM_ORG O
+                WHERE  '浙江省国际贸易集团有限公司' =
+                (
+                SELECT DISTINCT O.SUBCOMPANYNAME --集团
+                FROM ODS_HR_PSNDOC A
+                LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE
+                WHERE  A.CODE=#{userCode}--用户名
+                AND O.TP=1
+                )
+                AND O.TP IN (1,2)
+                UNION
+                SELECT a.NAME FROM(
+                SELECT * FROM biuser.ODS_HR_ORG a start  with a.NAME  = (
+                SELECT ORGNAME
+                FROM ODS_HR_PSNDOC A
+                WHERE  A.CODE=#{userCode}--用户名
+                )  connect  by
+                prior  a.SCODE  = a.CODE) a
+                WHERE SCODE = '010' OR CODE = '010'
+                )
+                ORDER BY BE_RISKY_ASSETS_DATE DESC
+            ) N
+            where 1=1
+            <if test="companyName != null and companyName!=''">
+                and (N.COMPANY_NAME like '%'||#{companyName}||'%' )
+            </if>
+            <if test="dataSource != null and dataSource != ''">
+                and (N.DATA_SOURCE = #{dataSource})
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND N.BE_RISKY_ASSETS_DATE >= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND N.BE_RISKY_ASSETS_DATE &lt;= #{endDate}
+            </if>
+        ) M
+        WHERE 1 = 1
+        <if test=" pageIndex != null and pageIndex != '' and pageSize != null and pageSize != ''">
+            AND rowno &lt;= #{pageIndex} * #{pageSize}
+            AND rowno &gt; (#{pageIndex}-1) * #{pageSize}
+        </if>
+    </select>
+
+    <select id="getBlackListDetailListCount" resultType="java.lang.Integer">
+        select count(*) from (
+            select * from(
+                select * from V_CREDIT_BLACKLIST
+                where LIMITS_COMPANYNAME in (
+                SELECT DISTINCT O.SUBCOMPANYNAME --二级公司
+                FROM ODS_HR_PSNDOC A
+                LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE
+                WHERE  A.CODE=#{userCode}--用户名
+                AND O.TP=2
+                UNION
+                SELECT DISTINCT O.SUBCOMPANYNAME --管理员
+                FROM ODS_HR_PSNDOC A
+                LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE
+                WHERE  'admin'=#{userCode}--用户名
+                AND O.TP IN (1,2)
+                UNION
+                SELECT DISTINCT O.SUBCOMPANYNAME --集团
+                FROM DIM_ORG O
+                WHERE  '浙江省国际贸易集团有限公司' =
+                (
+                SELECT DISTINCT O.SUBCOMPANYNAME --集团
+                FROM ODS_HR_PSNDOC A
+                LEFT JOIN DIM_ORG O ON A.ORGCODE=O.SUBCOMPANYCODE
+                WHERE  A.CODE=#{userCode}--用户名
+                AND O.TP=1
+                )
+                AND O.TP IN (1,2)
+                UNION
+                SELECT a.NAME FROM(
+                SELECT * FROM biuser.ODS_HR_ORG a start  with a.NAME  = (
+                SELECT ORGNAME
+                FROM ODS_HR_PSNDOC A
+                WHERE  A.CODE=#{userCode}--用户名
+                )  connect  by
+                prior  a.SCODE  = a.CODE) a
+                WHERE SCODE = '010' OR CODE = '010'
+                )
+            ) N
+            WHERE 1=1
+            <if test="companyName != null and companyName!=''">
+                AND (N.COMPANY_NAME like '%'||#{companyName}||'%' )
+            </if>
+            <if test="dataSource != null and dataSource != ''">
+                AND (N.DATA_SOURCE = #{dataSource})
+            </if>
+            <if test="startDate != null and startDate != ''">
+                AND N.BE_RISKY_ASSETS_DATE >= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND N.BE_RISKY_ASSETS_DATE &lt;= #{endDate}
+            </if>
+        )
+    </select>
+
+    <insert id="insertConcernHistory" parameterType="com.fanruan.platform.bean.LogConcernHistory">
+        INSERT INTO LOG_CONCERN_HISTORY
+        (ENTNAME, CODE, REQUEST_ID, UPDATE_BY, INSERT_DATE, CONCERN_FLAG, OPERATE_FLAG, DATA_SOURCE)
+        VALUES
+            (#{entName}, #{code}, #{requestId}, #{updateBy}, SYSDATE, #{concernFlag}, #{operateFlag}, #{dataSource})
+    </insert>
+
+    <select id="getInterfaceUsedNumber" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*) AS USED_NUMBER
+        FROM ODS_TYC_JSON A
+                 LEFT JOIN CREDIT_API_RELATION B
+                           ON SUBSTR(A.TOKEN_ID,1,3) = B.ENT_TOKENID
+        WHERE TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') = TO_CHAR(SYSDATE,'YYYY-MM-DD')
+          AND A.JSONFLAG = #{jsonFlag}
+          AND A.ERROR_CODE = '0'
+          AND B.ENTNAME  = #{companyName}
+        GROUP BY A.JSONFLAG,B.ENTNAME
+    </select>
+
+    <select id="getInterfaceLimitNumber" resultType="java.lang.Integer">
+        SELECT LIMIT_NUMBER FROM (
+            SELECT LIMIT_NUMBER, UPDATE_DATE FROM INTERFACE_USED_LIMIT
+            WHERE JSON_FLAG = #{jsonFlag}
+              AND COMPANY_NAME = #{companyName}
+            ORDER BY UPDATE_DATE DESC
+        )A
+        WHERE 1=1
+          AND ROWNUM = 1
+    </select>
+
+    <select id="getValidRequest4TheDay" resultType="com.fanruan.platform.bean.TianYanChaJson">
+        SELECT * FROM ODS_TYC_JSON
+        WHERE 1=1
+          AND ERROR_CODE = '0'
+          AND TO_CHAR(UPDATETIME, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+          AND NAME = #{companyName}
+          AND JSONFLAG = #{jsonFlag}
+        ORDER BY UPDATETIME DESC
+    </select>
+
+    <select id="getTokenList" resultType="com.fanruan.platform.bean.OpenAPI">
+        SELECT * FROM (
+            SELECT ROWNUM AS RN, B.* FROM(
+                SELECT A.OPEN_ID,
+                    CASE WHEN SUBSTR(A.TOKEN_ID,0,2)='0X'
+                    THEN (SELECT DISTINCT ENTNAME FROM CREDIT_API_RELATION WHERE ENT_TOKENID = SUBSTR(A.TOKEN_ID,3,3))
+                    ELSE (SELECT DISTINCT ENTNAME FROM CREDIT_API_RELATION WHERE ENT_TOKENID = SUBSTR(A.TOKEN_ID,0,3))
+                    END AS COMPANY_NAME,
+                    A.URI,
+                    A.INTERFACE_NAME,
+                    A.TOKEN_ID,
+                    A.REMARK,
+                    CASE WHEN SUBSTR(A.TOKEN_ID,0,2)='0X'
+                    THEN 0
+                    ELSE 1
+                    END AS STATUS
+                    FROM CREDIT_OPEN_API A
+            ) B
+                WHERE 1=1
+                <if test="companyName != null and companyName != ''">
+                    AND B.COMPANY_NAME = #{companyName}
+                </if>
+                <if test="uri != null and uri != ''">
+                    AND B.URI LIKE '%'||#{uri}||'%'
+                </if>
+                <if test="interfaceName != null and interfaceName != ''">
+                    AND B.INTERFACE_NAME LIKE '%'||#{interfaceName}||'%'
+                </if>
+                <if test="status != null">
+                    and B.STATUS = #{status}
+                </if>
+        )
+        WHERE 1 = 1
+        AND RN &lt;= #{pageIndex} * #{pageSize}
+        AND RN &gt; (#{pageIndex}-1) * #{pageSize}
+
+    </select>
+
+    <select id="getTokenListTotalCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM
+        (
+        SELECT ROWNUM AS RN, B.* FROM(
+            SELECT A.OPEN_ID,
+                CASE WHEN SUBSTR(A.TOKEN_ID,0,2)='0X'
+                THEN (SELECT DISTINCT ENTNAME FROM CREDIT_API_RELATION WHERE ENT_TOKENID = SUBSTR(A.TOKEN_ID,3,3))
+                ELSE (SELECT DISTINCT ENTNAME FROM CREDIT_API_RELATION WHERE ENT_TOKENID = SUBSTR(A.TOKEN_ID,0,3))
+                END AS COMPANY_NAME,
+                A.URI,
+                A.INTERFACE_NAME,
+                A.TOKEN_ID,
+                A.REMARK,
+                CASE WHEN SUBSTR(A.TOKEN_ID,0,2)='0X'
+                THEN 0
+                ELSE 1
+                END AS STATUS
+                FROM CREDIT_OPEN_API A
+        ) B
+        WHERE 1=1
+        <if test="companyName != null and companyName != ''">
+            AND B.COMPANY_NAME = #{companyName}
+        </if>
+        <if test="uri != null and uri != ''">
+            AND B.URI LIKE '%'||#{uri}||'%'
+        </if>
+        <if test="interfaceName != null and interfaceName != ''">
+            AND B.INTERFACE_NAME LIKE '%'||#{interfaceName}||'%'
+        </if>
+        <if test="status != null">
+            and B.STATUS = #{status}
+        </if>
+        )
+    </select>
+
+    <update id="updateOpenAPIStatus">
+        UPDATE CREDIT_OPEN_API SET TOKEN_ID = #{tokenId} WHERE OPEN_ID = #{openId}
+    </update>
+
+    <select id="getOpenAPIRelationList" resultType="com.fanruan.platform.bean.OpenAPIRelation">
+        SELECT ENTNAME AS companyName, ENT_TOKENID AS tokenIdPrefix, SHORT_NAME AS companyNameShort, ID AS id
+        FROM CREDIT_API_RELATION ORDER BY ENT_TOKENID
+    </select>
+
+    <insert id="insertTokenRelation">
+        INSERT INTO CREDIT_API_RELATION (ENTNAME, ENT_TOKENID, SHORT_NAME) VALUES (#{companyName}, #{tokenIdPrefix}, #{companyNameShort})
+    </insert>
+
+    <update id="updateTokenRelation">
+        UPDATE CREDIT_API_RELATION SET ENTNAME = #{companyName}, ENT_TOKENID = #{tokenIdPrefix}, SHORT_NAME = #{companyNameShort}
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteTokenRelation">
+        DELETE FROM CREDIT_API_RELATION WHERE id = #{id, jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteCreditOpenAPI" parameterType="java.lang.String">
+        DELETE FROM CREDIT_OPEN_API WHERE TOKEN_ID LIKE #{tokenId}||'%' OR TOKEN_ID LIKE '0X'||#{tokenId}||'%'
+    </delete>
+
+    <insert id="insertToken">
+        INSERT INTO CREDIT_OPEN_API (TOKEN_ID, TOKEN_KEY, URI, INTERFACE_NAME, REMARK) VALUES (#{tokenId},'credit_service_token',  #{uri}, #{interfaceName}, #{remark})
+    </insert>
+
+    <update id="updateToken">
+        UPDATE CREDIT_OPEN_API SET TOKEN_ID = #{tokenId}, URI = #{uri}, INTERFACE_NAME = #{interfaceName}, REMARK = #{remark}
+        WHERE OPEN_ID = #{openId, jdbcType=INTEGER}
+    </update>
+
+    <select id="getInterfaceLimitList" resultType="com.fanruan.platform.bean.InterfaceUsedLimit">
+        SELECT * FROM (
+            SELECT ROWNUM AS RN, A.* FROM(
+                SELECT ID,COMPANY_NAME,INTERFACE_NAME,JSON_FLAG,LIMIT_NUMBER,TO_CHAR(UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS UPDATE_DATE
+                 FROM INTERFACE_USED_LIMIT
+            ) A
+            WHERE 1 = 1
+            <if test="companyName != null and companyName != ''">
+                AND COMPANY_NAME = #{companyName}
+            </if>
+            <if test="interfaceName != null and interfaceName != ''">
+                AND INTERFACE_NAME LIKE '%'||#{interfaceName}||'%'
+            </if>
+            <if test="jsonFlag != null and jsonFlag != ''">
+                AND JSON_FLAG LIKE '%'||#{jsonFlag}||'%'
+            </if>
+            ORDER BY COMPANY_NAME, JSON_FLAG
+        )
+        WHERE 1 = 1
+        AND RN &lt;= #{pageIndex} * #{pageSize}
+        AND RN &gt; (#{pageIndex}-1) * #{pageSize}
+    </select>
+
+    <select id="getInterfaceLimitListTotalCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (
+            SELECT ROWNUM AS RN, A.* FROM(
+                SELECT * FROM INTERFACE_USED_LIMIT
+            ) A
+            WHERE 1 = 1
+            <if test="companyName != null and companyName != ''">
+                AND COMPANY_NAME = #{companyName}
+            </if>
+            <if test="interfaceName != null and interfaceName != ''">
+                AND INTERFACE_NAME LIKE '%'||#{interfaceName}||'%'
+            </if>
+            <if test="jsonFlag != null and jsonFlag != ''">
+                AND JSON_FLAG LIKE '%'||#{jsonFlag}||'%'
+            </if>
+        )
+    </select>
+
+    <delete id="deleteInterfaceLimit" parameterType="com.fanruan.platform.bean.InterfaceUsedLimit">
+        DELETE INTERFACE_USED_LIMIT WHERE ID = #{id}
+    </delete>
+
+    <update id="updateInterfaceLimit" parameterType="com.fanruan.platform.bean.InterfaceUsedLimit">
+        UPDATE INTERFACE_USED_LIMIT SET LIMIT_NUMBER = #{limitNumber}, UPDATE_DATE = SYSDATE
+                                        WHERE ID = #{id}
+    </update>
+
+    <insert id="insertInterfaceLimit" parameterType="com.fanruan.platform.bean.InterfaceUsedLimit" >
+        INSERT INTO INTERFACE_USED_LIMIT (COMPANY_NAME, INTERFACE_NAME, JSON_FLAG, LIMIT_NUMBER, UPDATE_DATE, INSERT_DATE)
+        VALUES
+            (#{companyName}, #{interfaceName}, #{jsonFlag}, #{limitNumber}, SYSDATE, SYSDATE)
+    </insert>
+
+    <select id="getCreditOpenApi" resultType="com.fanruan.platform.bean.OpenAPI">
+        SELECT * FROM CREDIT_OPEN_API
+            WHERE 1 = 1
+            <if test="tokenId != null and tokenId != ''">
+                AND (TOKEN_ID = #{tokenId} OR TOKEN_ID = '0X'||#{tokenId} )
+            </if>
+            <if test="uri != null and uri != ''">
+                AND URI = #{uri}
+            </if>
+            <if test="openId != null and openId != ''">
+                AND OPEN_ID = #{openId}
+            </if>
+    </select>
+
+    <select id="getCreditApiRelation" parameterType="java.lang.String" resultType="com.fanruan.platform.bean.OpenAPIRelation">
+        SELECT ID,ENTNAME AS COMPANY_NAME,ENT_TOKENID AS TOKEN_ID_PREFIX,SHORT_NAME AS COMPANY_NAME_SHORT FROM CREDIT_API_RELATION
+        WHERE 1 = 1
+        AND ENT_TOKENID = #{tokenIdPrefix}
+    </select>
+
 </mapper>
 

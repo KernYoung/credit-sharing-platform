@@ -1,9 +1,6 @@
 package com.fanruan.platform.constant;
 
-import com.fanruan.platform.bean.BlackPush;
-import com.fanruan.platform.bean.Company;
-import com.fanruan.platform.bean.NewCompany;
-import com.fanruan.platform.bean.User;
+import com.fanruan.platform.bean.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +24,21 @@ public class CommonUtils {
             return Integer.valueOf(String.valueOf(obj));
         }
     }
+
+    public static Long getLongValue(Object obj) {
+        if(obj == null ){
+            return null;
+        }
+        if(obj instanceof Long){
+            return (Long)obj;
+        }else {
+            if(StringUtils.isBlank(String.valueOf(obj))){
+                return null;
+            }
+            return Long.valueOf(String.valueOf(obj));
+        }
+    }
+
     public static String getRandomCode() {
         UUID uuid = UUID.randomUUID();
         return uuid.toString().replace("-", "").substring(0, 16);
@@ -49,6 +61,14 @@ public class CommonUtils {
 
 
     public static Company getCompanyValue(Optional<Company> optional) {
+        if(optional.isPresent()){
+            return optional.get();
+        }else {
+            return null;
+        }
+    }
+
+    public static ZhongXinBaoLog getZhongXinBaoLogValue(Optional<ZhongXinBaoLog> optional) {
         if(optional.isPresent()){
             return optional.get();
         }else {
@@ -103,5 +123,21 @@ public class CommonUtils {
             list.add(company.getCompanyName());
         }
         return list;
+    }
+
+    public static List<Long> getCompanyId(List<Company> companys) {
+        List<Long> list = Lists.newArrayList();
+        for(Company company:companys){
+            list.add( company.getId());
+        }
+        return list;
+    }
+
+    public static Map<String, String> getCompanyCredit(List<Company> companys) {
+        Map<String,String> map = new HashMap<>();
+        for(Company company:companys){
+            map.put(company.getCreditCode(),company.getCompanyName());
+        }
+        return map;
     }
 }

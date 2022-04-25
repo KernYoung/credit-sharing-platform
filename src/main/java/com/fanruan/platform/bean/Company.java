@@ -49,7 +49,7 @@ public class Company {
     /**
      * 社会统一信用编码
      */
-    @Column(name="creditCode")
+    @Column(name="credit_code")
     private String creditCode;
 
     /**

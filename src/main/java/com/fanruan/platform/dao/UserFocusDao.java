@@ -12,6 +12,7 @@ public interface UserFocusDao extends JpaRepository<UserFocus,Integer> {
     Optional<UserFocus> findById(Integer id);
 //    Page<UserFocus> findAllByUserId(Pageable pageable,Integer userId);
     List<UserFocus> findAllByUserId(Integer userId);
+
     UserFocus findAllByUserIdAndCompanyId(Integer userId,Integer companyId);
 
 }

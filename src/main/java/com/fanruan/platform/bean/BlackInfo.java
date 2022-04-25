@@ -83,4 +83,7 @@ public class BlackInfo {
     @Column(name = "CANCEL_REASON")
     private String cancelReason;
 
+    @Column(name = "TYC_COMPANY_ID")
+    private Long tycCompanyId;
+
 }

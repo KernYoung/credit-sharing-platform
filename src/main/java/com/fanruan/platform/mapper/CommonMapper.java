@@ -90,6 +90,24 @@ public interface CommonMapper {
     })
     public List<UserCompany> getUserCompany(@Param("username") String username);
 
+//    @Select("SELECT CODE,NAME,SCODE FROM(\n" +
+//            "            SELECT CODE,NAME,SHORTNAME,SCODE,SNAME FROM ODS_HR_ORG\n" +
+//            "            WHERE ENABLESTATE = 2\n" +
+//            "            UNION ALL\n" +
+//            "            SELECT CODE,NAME,SHORTNAME,SCODE,SNAME FROM INPUT_HR_ORG\n" +
+//            "            WHERE ENABLESTATE = 1) WHERE CODE = #{companyCode, jdbcType=VARCHAR} ")
+//    @Results(id="companyLevel",  value={
+//            @Result(property="code", column="CODE"),
+//            @Result(property="name", column="NAME"),
+//            @Result(property="scode", column="SCODE")
+//    })
+//    public CompanyLevel getCompanyName(@Param("companyCode") String companyCode);
+
+//    @Select("SELECT ROLE_NAME FROM CREDIT_USER_ROLE ")
+//    @Results(id="userRole",  value={
+//            @Result(property="role", column="ROLE_NAME"),
+//    })
+//    public List<String> getUserRole();
 
     @Select("SELECT \n" +
             "USER_ID,USERNAME,NAME FROM CREDIT_USER\n" +

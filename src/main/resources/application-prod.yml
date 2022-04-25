@@ -6,8 +6,10 @@ spring:
     driver-class-name: oracle.jdbc.driver.OracleDriver
 #    url: jdbc:oracle:thin:@10.0.130.27:1521:orcl
     url: jdbc:oracle:thin:@10.0.119.2:1521:orcl
-    username: biuser
-    password: GMfr2020
+    username: CREDITUSER
+    password: GMzx2021
+  #    username: biuser
+  #    password: GMfr2020
 
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #    url: jdbc:mysql://106.14.210.23:5306/sharing_platform?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
@@ -40,8 +42,21 @@ mybatis:
     configuration:
       map-underscore-to-camel-case: true
 
+logging.config:
+  classpath:log4j2.xml
+
 platform:
   es:
     schema: http
     host: 10.0.105.4
     port: 9200
+
+local:
+  schema: http
+  host: credit.zibchina.com
+  port: 9001
+
+interfaceIssued:
+  schema: http
+  ip: 10.0.105.4
+  port: 9292

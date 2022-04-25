@@ -14,6 +14,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class UserService {
+    private static Logger log = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private CompanyDao companyDao;
 
@@ -115,11 +118,12 @@ public class UserService {
 
 
 
-    public String getCareCompanySet(Integer userId) {
+    public String getCareCompanySet(Integer userId, Integer pageIndex, Integer pageSize) {
         if(userId==null){
             return null;
         }
-        List<UserFocus> userFocusList = userFocusDao.findAllByUserId(userId);
+//        List<UserFocus> userFocusList = userFocusDao.findAllByUserId(userId);
+        List<UserFocus> userFocusList = userMapper.getUserFocusByUserId(userId, pageIndex, pageSize);
         List<Integer> collect = userFocusList.stream().map(x -> x.getCompanyId()).collect(Collectors.toList());
         List<Company> companyIdIn = companyDao.findAllByCompanyIdIn(collect);
         Map<String, Company> companyHashMap = Maps.newHashMap();
@@ -139,6 +143,7 @@ public class UserService {
             map.put("companyId",userFocus.getCompanyId());
             map.put("creditCode",company.getCreditCode());
             map.put("companyName",userFocus.getCompanyName());
+            map.put("messageNumber",userFocus.getMessageNumber());
             Map mapRelations = JSON.parseObject(userFocus.getRelations(),Map.class);
             map.putAll(mapRelations);
             result.add(map);
@@ -195,6 +200,11 @@ public class UserService {
     }
 
     public User updateUser(String operator, Integer userId, Map<String, Object> para) {
+
+        String oldUserMessage = "";
+        String newUserMessage = "";
+        log.info("update by: " + operator);
+
         boolean isNew = false;
         User user = null;
         if(userId!=null){
@@ -207,6 +217,8 @@ public class UserService {
             isNew = true;
         }
         if(user!=null){
+            oldUserMessage = user.toString();
+            log.info("oldUserMessage: " + oldUserMessage);
             Integer status = CommonUtils.getIntegerValue(para.get("status"));
             String password = (String)para.get("password");
             String username = (String)para.get("username");
@@ -218,6 +230,15 @@ public class UserService {
             String deptName = (String)para.get("deptName");
             String deptCode = (String)para.get("deptCode");
             String permissionRoles = (String)para.get("permissionRoles");
+
+            boolean isAccountSet = true;
+
+            for(String key : para.keySet()){
+                if(key.equals("permissionRoles")){
+                    isAccountSet = false;
+                }
+            }
+
             if(StringUtils.isNotBlank(username)){
                 user.setUsername(username);
             }
@@ -241,10 +262,20 @@ public class UserService {
             }
             if(status!=null){
                 user.setStatus(status);
+                if(status == 0){
+                    user.setRoleName("");
+                    user.setPermissionRoles("");
+                }
             }
             if(StringUtils.isNotBlank(password)&&!password.equals(user.getPassword())){
                 password = MD5Util.MD5(username+password);
                 user.setPassword(password);
+                //密码过期校验需求：当新增用户或密码变更时，更新数据库时间
+                Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+                if(isNew){
+                    user.setPasswordCreateTime(currentTime);
+                }
+                user.setPasswordUpdateTime(currentTime);
             }
             if(StringUtils.isNoneBlank(mobile)){
                 user.setMobile(mobile);
@@ -252,21 +283,125 @@ public class UserService {
             if(StringUtils.isNoneBlank(email)){
                 user.setEmail(email);
             }
-            if(StringUtils.isNoneBlank(permissionRoles)){
-                user.setPermissionRoles(permissionRoles);
-                user.setRoleName(permissionRoles);
+
+            if(isAccountSet){
+                permissionRoles = user.getRoleName();
+            }else{
+                if(StringUtils.isNoneBlank(permissionRoles)){
+                    user.setPermissionRoles(permissionRoles);
+                    user.setRoleName(permissionRoles);
+                }
             }
+
             User result = userDao.saveAndFlush(user);
+
             if(isNew){//新增用户同步到FR
                 insertUserToFr(user);
             }
+
             updatePermission(operator, result.getUserId(), permissionRoles);
+
             result.setPermissionRoles(permissionRoles);
             result.setRoleName(permissionRoles);
+            newUserMessage = result.toString();
+            log.info("newUserMessage: " + newUserMessage);
             return result;
         }
         return null;
     }
+
+//    public User updateUser(String operator, Integer userId, Map<String, Object> para) {
+//        boolean isNew = false;
+//        User user = null;
+//        if(userId!=null){
+//            Optional<User> userOptional = userDao.findById(userId);
+//            user = CommonUtils.getUserValue(userOptional);
+//        }else {//为新增用户
+//            user = new User();
+//            user.setStatus(1);
+//            //同步到FR
+//            isNew = true;
+//        }
+//        if(user!=null){
+//            Integer status = CommonUtils.getIntegerValue(para.get("status"));
+//            String password = (String)para.get("password");
+//            String username = (String)para.get("username");
+//            String name = (String)para.get("name");
+//            String mobile = (String)para.get("mobile");
+//            String email = (String)para.get("email");
+//            String companyCode = (String)para.get("companyCode");
+//            String companyName = (String)para.get("companyName");
+//            String deptName = (String)para.get("deptName");
+//            String deptCode = (String)para.get("deptCode");
+//            String permissionRoles = (String)para.get("permissionRoles");
+//            if(StringUtils.isNotBlank(username)){
+//                user.setUsername(username);
+//            }
+//            if(StringUtils.isNotBlank(name)){
+//                user.setName(name);
+//            }
+//            if(StringUtils.isNoneBlank(companyName)){
+//                user.setCompanyName(companyName);
+//            }
+//            if(user.getUserId()!=null){
+//                user.setNewCompanyFlag(1);
+//            }
+//            if(StringUtils.isNoneBlank(companyCode)){
+//                user.setCompanyCode(companyCode);
+//            }
+//            if(StringUtils.isNoneBlank(deptName)){
+//                user.setDeptName(deptName);
+//            }
+//            if(StringUtils.isNoneBlank(deptCode)){
+//                user.setDeptCode(deptCode);
+//            }
+//            if(status!=null){
+//                user.setStatus(status);
+//                if(status == 0){
+//                    user.setRoleName("");
+//                    user.setPermissionRoles("");
+//                }
+//            }
+//            if(StringUtils.isNotBlank(password)&&!password.equals(user.getPassword())){
+////                password = MD5Util.MD5(password);
+//                password = MD5Util.MD5(username+password);
+//                user.setPassword(password);
+//                //密码过期校验需求：当新增用户或密码变更时，更新数据库时间
+//                Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+//                if(isNew){
+//                    user.setPasswordCreateTime(currentTime);
+//                }
+//                user.setPasswordUpdateTime(currentTime);
+//            }
+//            if(StringUtils.isNoneBlank(mobile)){
+//                user.setMobile(mobile);
+//            }
+//            if(StringUtils.isNoneBlank(email)){
+//                user.setEmail(email);
+//            }
+//            if(StringUtils.isNoneBlank(permissionRoles)){
+//                user.setPermissionRoles(permissionRoles);
+//                user.setRoleName(permissionRoles);
+//            }
+//
+//            User result = userDao.saveAndFlush(user);
+//
+//
+//
+//            if(isNew){//新增用户同步到FR
+//                insertUserToFr(user);
+//            }
+//            updatePermission(operator, result.getUserId(), permissionRoles);
+//
+//
+//            result.setPermissionRoles(permissionRoles);
+//            log.info("setPermissionRoles: " + permissionRoles);
+//            result.setRoleName(permissionRoles);
+//            log.info("setRoleName: " + permissionRoles);
+//            return result;
+//        }
+//        return null;
+//    }
 
     private boolean insertUserToFr(User user){
         Integer f1 = usersMapper.insertStep1(user);
@@ -278,11 +413,18 @@ public class UserService {
     }
 
     private void updatePermission(String operator, Integer userId, String permissionRoles) {
+        String oldPermissionListStr = "";
+        String newPermissionListStr = "";
         if(StringUtils.isBlank(operator)){
             return;
         }
         List<UserPermission> permissionList = Lists.newArrayList();
         List<UserPermission> oldPermissionList = userPermissionDao.findAllByUserIdAndPermissionStatus(userId,"1");
+        for(int i = 0; i < oldPermissionList.size(); i ++){
+            UserPermission userPermission = oldPermissionList.get(i);
+            oldPermissionListStr += userPermission.getPermissionRole() + ", ";
+        }
+        log.info("oldPermissionList: " + oldPermissionListStr);
         userPermissionDao.deleteAll(oldPermissionList);
         if(StringUtils.isBlank(permissionRoles)){
             String permission = "信保报告申请权限,信保报告列表权限,客商初筛权限,消息中心权限,黑名单申请权限";
@@ -295,9 +437,11 @@ public class UserService {
                 userPermission.setUpdateBy(operator);
                 userPermission.setUpdateTime(new Timestamp(System.currentTimeMillis()));
                 permissionList.add(userPermission);
+                newPermissionListStr += userPermission.getPermissionRole() + ", ";
             }
             userPermissionDao.saveAll(permissionList);
             userPermissionDao.flush();
+            log.info("newPermissionList: " + newPermissionListStr);
             return;
         }
         String[] split = permissionRoles.split(",");
@@ -316,12 +460,14 @@ public class UserService {
                     userPermission.setUpdateBy(operator);
                     userPermission.setUpdateTime(new Timestamp(System.currentTimeMillis()));
                     permissionList.add(userPermission);
+                    newPermissionListStr += userPermission.getPermissionRole() + ", ";
                 }
             }
-
         }
+
         userPermissionDao.saveAll(permissionList);
         userPermissionDao.flush();
+        log.info("newPermissionList: " + newPermissionListStr);
     }
     private String getPermissionStr(String permissionStr){
         String str = null;
@@ -399,11 +545,11 @@ public class UserService {
     public HashMap<String, Object> getUserList(
             HashMap<String, Object> hs,
             Integer pageIndex, Integer pageSize,
-            String username, String name, Integer status, Integer isSubAadmin,String companyCode){
-        Integer totalRecords = userMapper.getUserListCount(pageIndex, pageSize, username, name, status, isSubAadmin,companyCode);
+            String username, String name, Integer status, Integer isSubAadmin,String companyCode,String roleName){
+        Integer totalRecords = userMapper.getUserListCount(pageIndex, pageSize, username, name, status, isSubAadmin,roleName,companyCode);
         hs.put("totalRecords",totalRecords);
         hs.put("totalPages",Math.ceil(totalRecords/pageSize));
-        hs.put("userList",userMapper.getUserList(pageIndex, pageSize, username, name, status, isSubAadmin,companyCode));
+        hs.put("userList",userMapper.getUserList(pageIndex, pageSize, username, name, status, isSubAadmin,roleName,companyCode));
         hs.put("code",0);
         return hs;
     }
@@ -597,11 +743,11 @@ public class UserService {
         return CommonUtils.getUserValue(byUsername);
     }
 
-    public HashMap<String, Object> getUserListLevel(HashMap<String, Object> hs, Integer pageIndex, Integer pageSize, String username, String name, Integer status, Integer isSubAdmin, String companyCode) {
-        Integer totalRecords = usersMapper.getUserListLevelCount(hs,pageIndex, pageSize, username, name, status, isSubAdmin,companyCode);
+    public HashMap<String, Object> getUserListLevel(HashMap<String, Object> hs, Integer pageIndex, Integer pageSize, String username, String name, Integer status, Integer isSubAdmin, String companyCode, String roleName) {
+        Integer totalRecords = usersMapper.getUserListLevelCount(hs,pageIndex, pageSize, username, name, status, isSubAdmin,companyCode,roleName);
         hs.put("totalRecords",totalRecords);
         hs.put("totalPages",Math.ceil(totalRecords/pageSize));
-        List<User> userList = usersMapper.getUserListLevel(hs, pageIndex, pageSize, username, name, status,  isSubAdmin,companyCode);
+        List<User> userList = usersMapper.getUserListLevel(hs, pageIndex, pageSize, username, name, status,  isSubAdmin,companyCode,roleName);
         hs.put("userList",userList);
         hs.put("code",0);
         return hs;
@@ -625,6 +771,10 @@ public class UserService {
     public Optional<User> getRolePermission(Integer id) {
         return  userDao.findById(id);
     }
+    public String getRolePermission(String roleName) {
+        return  userMapper.getRolePermission(roleName);
+    }
+
 
         /**
          * 获取角色
@@ -684,8 +834,31 @@ public class UserService {
         return roleDao.findByRoleName(roleName);
     }
 
+    public  HashMap<String,Object> getRole(){
+        List<String> roleList = userMapper.getRole();
+        HashMap<String,Object> roleMap = new HashMap<>();
+        for(int i = 0; i < roleList.size(); i ++){
+            roleMap.put(roleList.get(i),i);
+        }
+//        return userMapper.getRole();
+        return roleMap;
+    }
+
+    public  List<String> getRole1(){
+        return userMapper.getRole();
+    }
 
     public String getReviewer(String userName) {
         return usersMapper.getReviewer(userName);
+    }
+
+    public String checkPasswordTime(Timestamp passwordUpdateTime) {
+        String isOverdue = "0";
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        long diff = (currentTime.getTime() - passwordUpdateTime.getTime()) / (1000 * 60 * 60 * 24);
+        if(diff > 90){
+            isOverdue = "1";
+        }
+        return isOverdue;
     }
 }

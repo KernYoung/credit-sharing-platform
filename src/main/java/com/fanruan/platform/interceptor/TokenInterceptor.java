@@ -53,6 +53,11 @@ public class TokenInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         String tokenId = request.getParameter("tokenId");
 
+        if(requestURI.startsWith("/common/ZXB/downloadPDF/") || requestURI.contains("getAllBusinessInfoNoToken") ||
+                requestURI.contains("getApplyProgressListNoToken")){
+            return true;
+        }
+
         if(StringUtils.isNotBlank(tokenId)){
             Optional<OpenAPIToken> tokenOptional = openAPITokenDao.findByTokenId(tokenId);
             if(tokenOptional.isPresent()){
@@ -60,7 +65,8 @@ public class TokenInterceptor implements HandlerInterceptor {
                 String tokenKey = openAPIToken.getTokenKey();
                 String uri = openAPIToken.getUri();
                 boolean passwordValid = PasswordEncoder.isPasswordValid(authToken, tokenKey);
-               if(passwordValid&&StringUtils.contains(requestURI,uri)){
+//               if(passwordValid&&StringUtils.contains(requestURI,uri)){
+                if(passwordValid&&StringUtils.startsWith(requestURI,uri)){
                    call.setTokenId(openAPIToken.getTokenId());
                    call.setUri(requestURI);
                    call.setRequestMessage(getParams(request));

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,18 +54,28 @@ public class RiskPushTimer {
      * DESC :  编写定时任务，每天凌晨1点执行一次
      *
      */
-        @Scheduled(cron = "*/10 * * * * ?")
-//        @Scheduled(cron = "0 0/30 * * * ? ")
-    private void scheduleTask(){
-        //       TODO 定时查询库，如果有需要推送的数据则推送
-            zhongxinbaoTimer();
-            blackListTimer();
-
-        }
+//        @Scheduled(cron = "*/10 * * * * ?")
+////        @Scheduled(cron = "0 0/30 * * * ? ")
+//    private void scheduleTask(){
+//        //       TODO 定时查询库，如果有需要推送的数据则推送
+//            zhongxinbaoTimer();
+//            blackListTimer();
+//
+//        }
 
     private void blackListTimer() {
         List<BlackPush> blackPushList = blackPushDao.findAllByPushFlag("0");
         List<String> usernameList = CommonUtils.getUserNames(blackPushList);
+//        //一次执行700笔
+//        List<String> usernameList1 = new ArrayList<>();
+//        for(int i = 0; i < usernameList.size(); i++){
+//            if(i < 700){
+//                usernameList1.add(usernameList.get(i));
+//            }else{
+//                break;
+//            }
+//        }
+
         List<User> userList = userDao.findAllByUsernameIn(usernameList);
         Map<String,String> userIdNames = CommonUtils.getUserIds(userList);
         for(BlackPush blackPush:blackPushList){
@@ -77,6 +88,22 @@ public class RiskPushTimer {
             }
         }
     }
+
+//    private void blackListTimer() {
+//        List<BlackPush> blackPushList = blackPushDao.findAllByPushFlag("0");
+//        List<String> usernameList = CommonUtils.getUserNames(blackPushList);
+//        List<User> userList = userDao.findAllByUsernameIn(usernameList);
+//        Map<String,String> userIdNames = CommonUtils.getUserIds(userList);
+//        for(BlackPush blackPush:blackPushList){
+//            String user = userIdNames.get(blackPush.getUserName());
+//            boolean sendFlag = webSocket.sendInfo(user, blackPush.getPromptInfo());
+//            if(sendFlag){
+//                blackPush.setPushFlag("1");
+//                blackPush.setPushTime(new Timestamp(System.currentTimeMillis()));
+//                blackPushDao.saveAndFlush(blackPush);
+//            }
+//        }
+//    }
 
     private void zhongxinbaoTimer() {
         //这里发邮件通知报告已经到了，然后修改数据库中的邮件标识，站内信推送会挑选用户站内信标识是0但是邮件标识是1的，先发邮件后站内推送，邮件发送是最及时的

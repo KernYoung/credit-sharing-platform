@@ -1,2 +1,3 @@
-com\fanruan\platform\TestEmail.class
-com\fanruan\platform\CreditSharingPlatformApplicationTests.class
+com/fanruan/platform/CreditSharingPlatformApplicationTests.class
+com/fanruan/platform/TestEmail.class
+com/fanruan/platform/TestPostHttp.class

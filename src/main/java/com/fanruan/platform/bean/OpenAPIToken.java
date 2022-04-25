@@ -21,13 +21,10 @@ public class OpenAPIToken {
     @Column(name="TOKEN_ID")
     private String tokenId;
 
-
     @Column(name="TOKEN_KEY")
     private String tokenKey;
 
-
     @Column(name="URI")
     private String uri;
-
 
 }

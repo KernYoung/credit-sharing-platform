@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface TianYanChaJsonDao extends JpaRepository<TianYanChaJson,Integer> {
     Optional<TianYanChaJson> findById(Integer id);
     List<TianYanChaJson> findByNameAndJsonFlagOrderByUpdateTimeDesc(String name,String jsonFlag);
-    List<TianYanChaJson> findByNameAndIdAndAndJsonFlagOrderByUpdateTimeDesc(String name,String id,String jsonFlag);
+    List<TianYanChaJson> findByNameAndIdAndJsonFlagOrderByUpdateTimeDesc(String name,String id,String jsonFlag);
 }

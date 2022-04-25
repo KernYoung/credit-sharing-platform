@@ -363,94 +363,8 @@
     <resultMap id="getUserListLevelCountResultMap" type="java.lang.Integer">
         <result column="co" jdbcType="VARCHAR" property="co" />
     </resultMap>
-
     <select id="getUserListLevelCount" resultType="java.lang.Integer">
-<!--        with ds1 as(-->
-<!--        SELECT CODE,NAME,SCODE,SNAME FROM BIUSER.ODS_HR_ORG-->
-<!--        UNION-->
-<!--        SELECT CODE,NAME,SCODE,SNAME FROM BIUSER.INPUT_HR_ORG-->
-<!--        )-->
-<!--        SELECT count(1) as co FROM (-->
-<!--        SELECT M.* FROM (-->
-<!--        SELECT ROWNUM AS rowno,N.*-->
-<!--        FROM (-->
-<!--        SELECT-->
-<!--        USER_ID,USERNAME,PASSWORD,MOBILE,EMAIL,COMPANY_NAME,DEPT_NAME,COMPANY_CODE,DEPT_CODE,STATUS,NEWCOMPANY_FLAG,-->
-<!--        F_GET_PERMISSION_BY_USERID(user_id) as permissionRoles,-->
-<!--        CASE WHEN INSTR(F_GET_PERMISSION_BY_USERID(user_id),('sub_admin')) > 0 THEN 1 ELSE 0 END as isSubAdmin, NAME-->
-<!--        FROM CREDIT_USER-->
-<!--        WHERE COMPANY_CODE IN (-->
-<!--        SELECT CODE &#45;&#45;自身-->
-<!--        FROM ds1 A-->
-<!--        WHERE 1 = 1-->
-<!--        <if test="companyCode != null and companyCode != ''">-->
-<!--            and (A.SCODE = #{companyCode} )-->
-<!--        </if>UNION ALL-->
-<!--        SELECT-->
-<!--        CODE &#45;&#45;下级公司-->
-<!--        FROM ds1-->
-<!--        A-->
-<!--        WHERE 1 = 1-->
-<!--        <if test="companyCode != null and companyCode != ''">-->
-<!--            and (A.SCODE = #{companyCode} )-->
-<!--        </if>-->
-<!--        UNION ALL-->
-<!--        SELECT B.-->
-<!--        CODE &#45;&#45;下下级公司-->
-<!--        FROM ds1 A-->
-<!--        INNER-->
-<!--        JOIN ds1 B ON A.CODE=B.SCODE-->
-<!--        WHERE 1 = 1-->
-<!--        <if test="companyCode != null and companyCode != ''">-->
-<!--            and (A.SCODE = #{companyCode} )-->
-<!--        </if>-->
-<!--        UNION-->
-<!--        ALL-->
-<!--        SELECT C-->
-<!--        .CODE &#45;&#45;下下下级公司-->
-<!--        FROM-->
-<!--        ds1 A-->
-<!--        INNER-->
-<!--        JOIN ds1 B ON A.CODE=B.SCODE-->
-<!--        INNER-->
-<!--        JOIN ds1 C ON B.CODE=C.SCODE-->
-<!--        WHERE 1 = 1-->
-<!--        <if test="companyCode != null and companyCode != ''">-->
-<!--            and (A.SCODE = #{companyCode} )-->
-<!--        </if>-->
-<!--        UNION-->
-<!--        ALL-->
-<!--        SELECT-->
-<!--        D.CODE &#45;&#45;下下下下级公司-->
-<!--        FROM-->
-<!--        ds1 A-->
-<!--        INNER-->
-<!--        JOIN ds1 B ON A.CODE=B.SCODE-->
-<!--        INNER-->
-<!--        JOIN ds1 C ON B.CODE=C.SCODE-->
-<!--        INNER-->
-<!--        JOIN ds1 D ON C.CODE=D.SCODE-->
-<!--        WHERE 1 = 1-->
-<!--        <if test="companyCode != null and companyCode != ''">-->
-<!--            and (A.SCODE = #{companyCode} )-->
-<!--        </if>-->
-<!--        )-->
-<!--        <if test="status != null">-->
-<!--            and (STATUS = #{status} )-->
-<!--        </if>-->
-<!--        <if test="username != null and username!=''">-->
-<!--            and (USERNAME like '%'||#{username}||'%' )-->
-<!--        </if>-->
-<!--        ) N-->
-<!--        ) M-->
-<!--        WHERE 1 = 1-->
-<!--        <if test="isSubAdmin != null">-->
-<!--            and (M.isSubAdmin = #{isSubAdmin} )-->
-<!--        </if>-->
-<!--        <if test="name != null and name!=''">-->
-<!--            and (M.NAME like '%'||#{name}||'%' )-->
-<!--        </if>-->
-<!--        )-->
+
         with ds1 as(
         SELECT CODE,NAME,SCODE,SNAME FROM BIUSER.ODS_HR_ORG WHERE ENABLESTATE='2'
         UNION
@@ -463,11 +377,11 @@
         FROM (
         SELECT
         USER_ID,USERNAME,PASSWORD,MOBILE,EMAIL,ds1.NAME as COMPANY_NAME,DEPT_NAME,ds1.CODE as COMPANY_CODE,DEPT_CODE,STATUS,NEWCOMPANY_FLAG,
-      --  F_GET_PERMISSION_BY_USERID(user_id) as permissionRoles,
-       -- CASE WHEN INSTR(F_GET_PERMISSION_BY_USERID(user_id),('sub_admin')) > 0 THEN 1 ELSE 0 END as isSubAdmin,
+        --  F_GET_PERMISSION_BY_USERID(user_id) as permissionRoles,
+        -- CASE WHEN INSTR(F_GET_PERMISSION_BY_USERID(user_id),('sub_admin')) > 0 THEN 1 ELSE 0 END as isSubAdmin,
         U.ROLE_NAME as permissionRoles,
         CASE WHEN U.ROLE_NAME = '子管理员' THEN 1 ELSE 0 END as isSubAdmin,
-       U.NAME
+        U.NAME
         FROM CREDIT_USER U
         LEFT JOIN ds1
         on U.COMPANY_CODE = ds1.CODE
@@ -539,50 +453,40 @@
         ORDER BY isSubAdmin DESC,status desc
         ) N
         WHERE 1 = 1
-        <if test="isSubAdmin != null">
-            and (N.isSubAdmin = #{isSubAdmin})
+        <if test="roleName != null and roleName != '' ">
+            and (N.permissionRoles = #{roleName})
         </if>
         ) M
         ) C
     </select>
+<!--    <select id="getUserListLevelCount" resultType="java.lang.Integer">-->
 
-    <resultMap id="getUserListLevelResultMap" type="com.fanruan.platform.bean.User">
-        <result column="username" jdbcType="VARCHAR" property="username" />
-        <result column="password" jdbcType="VARCHAR" property="password" />
-        <result column="mobile" jdbcType="VARCHAR" property="mobile" />
-        <result column="email" jdbcType="VARCHAR" property="email" />
-        <result column="companyName" jdbcType="VARCHAR" property="companyName" />
-        <result column="deptName" jdbcType="VARCHAR" property="deptName" />
-        <result column="name" jdbcType="VARCHAR" property="name" />
-        <result column="companyCode" jdbcType="VARCHAR" property="companyCode" />
-        <result column="deptCode" jdbcType="VARCHAR" property="deptCode" />
-        <result column="status" jdbcType="VARCHAR" property="status" />
-        <result column="newcompanyFlag" jdbcType="VARCHAR" property="newcompanyFlag" />
-        <result column="permissionRoles" jdbcType="VARCHAR" property="permissionRoles" />
-        <result column="roleName" jdbcType="VARCHAR" property="roleName" />
-
-    </resultMap>
-
-    <select id="getUserListLevel" resultType="com.fanruan.platform.bean.User">
 <!--        with ds1 as(-->
-<!--        SELECT CODE,NAME,SCODE,SNAME FROM BIUSER.ODS_HR_ORG-->
+<!--        SELECT CODE,NAME,SCODE,SNAME FROM BIUSER.ODS_HR_ORG WHERE ENABLESTATE='2'-->
 <!--        UNION-->
-<!--        SELECT CODE,NAME,SCODE,SNAME FROM BIUSER.INPUT_HR_ORG-->
+<!--        SELECT CODE,NAME,SCODE,SNAME FROM BIUSER.INPUT_HR_ORG WHERE ENABLESTATE='1'-->
 <!--        )-->
+<!--        SELECT COUNT(1) as co-->
+<!--        FROM (-->
 <!--        SELECT M.* FROM (-->
 <!--        SELECT ROWNUM AS rowno,N.*-->
 <!--        FROM (-->
 <!--        SELECT-->
-<!--        USER_ID,USERNAME,PASSWORD,MOBILE,EMAIL,COMPANY_NAME,DEPT_NAME,COMPANY_CODE,DEPT_CODE,STATUS,NEWCOMPANY_FLAG,-->
-<!--        F_GET_PERMISSION_BY_USERID(user_id) as permissionRoles,-->
-<!--        CASE WHEN INSTR(F_GET_PERMISSION_BY_USERID(user_id),('sub_admin')) > 0 THEN 1 ELSE 0 END as isSubAdmin, NAME-->
-<!--        FROM CREDIT_USER-->
-<!--        WHERE COMPANY_CODE IN (-->
+<!--        USER_ID,USERNAME,PASSWORD,MOBILE,EMAIL,ds1.NAME as COMPANY_NAME,DEPT_NAME,ds1.CODE as COMPANY_CODE,DEPT_CODE,STATUS,NEWCOMPANY_FLAG,-->
+<!--      &#45;&#45;  F_GET_PERMISSION_BY_USERID(user_id) as permissionRoles,-->
+<!--       &#45;&#45; CASE WHEN INSTR(F_GET_PERMISSION_BY_USERID(user_id),('sub_admin')) > 0 THEN 1 ELSE 0 END as isSubAdmin,-->
+<!--        U.ROLE_NAME as permissionRoles,-->
+<!--        CASE WHEN U.ROLE_NAME = '子管理员' THEN 1 ELSE 0 END as isSubAdmin,-->
+<!--       U.NAME-->
+<!--        FROM CREDIT_USER U-->
+<!--        LEFT JOIN ds1-->
+<!--        on U.COMPANY_CODE = ds1.CODE-->
+<!--        WHERE  USER_ID!=1 AND COMPANY_CODE IN (-->
 <!--        SELECT CODE &#45;&#45;自身-->
 <!--        FROM ds1 A-->
 <!--        WHERE 1 = 1-->
 <!--        <if test="companyCode != null and companyCode != ''">-->
-<!--            and (A.SCODE = #{companyCode} )-->
+<!--            and (A.CODE = #{companyCode} )-->
 <!--        </if>UNION ALL-->
 <!--        SELECT-->
 <!--        CODE &#45;&#45;下级公司-->
@@ -639,112 +543,223 @@
 <!--        <if test="username != null and username!=''">-->
 <!--            and (USERNAME like '%'||#{username}||'%' )-->
 <!--        </if>-->
+<!--        <if test="name != null and name!=''">-->
+<!--            and (U.NAME like '%'||#{name}||'%' )-->
+<!--        </if>-->
+<!--        ORDER BY isSubAdmin DESC,status desc-->
 <!--        ) N-->
-<!--        ) M-->
 <!--        WHERE 1 = 1-->
 <!--        <if test="isSubAdmin != null">-->
-<!--            and (M.isSubAdmin = #{isSubAdmin} )-->
+<!--            and (N.isSubAdmin = #{isSubAdmin})-->
 <!--        </if>-->
-<!--        <if test="name != null and name!=''">-->
-<!--            and (M.NAME like '%'||#{name}||'%' )-->
-<!--        </if>-->
-<!--        AND rowno &lt;= #{pageIndex} * #{pageSize}-->
-<!--        AND rowno &gt; (#{pageIndex}-1) * #{pageSize}-->
-<!--        order by USERNAME-->
+<!--        ) M-->
+<!--        ) C-->
+<!--    </select>-->
+
+    <resultMap id="getUserListLevelResultMap" type="com.fanruan.platform.bean.User">
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="companyName" jdbcType="VARCHAR" property="companyName" />
+        <result column="deptName" jdbcType="VARCHAR" property="deptName" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="companyCode" jdbcType="VARCHAR" property="companyCode" />
+        <result column="deptCode" jdbcType="VARCHAR" property="deptCode" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="newcompanyFlag" jdbcType="VARCHAR" property="newcompanyFlag" />
+        <result column="permissionRoles" jdbcType="VARCHAR" property="permissionRoles" />
+        <result column="roleName" jdbcType="VARCHAR" property="roleName" />
+
+    </resultMap>
+    <select id="getUserListLevel" resultType="com.fanruan.platform.bean.User">
+
         with ds1 as(
         SELECT CODE,NAME,SCODE,SNAME FROM BIUSER.ODS_HR_ORG WHERE ENABLESTATE='2'
         UNION
         SELECT CODE,NAME,SCODE,SNAME FROM BIUSER.INPUT_HR_ORG WHERE ENABLESTATE='1'
         )
         SELECT M.* FROM (
-        SELECT ROWNUM AS rowno,N.*
-        FROM (
-        SELECT
-        USER_ID,USERNAME,PASSWORD,MOBILE,EMAIL,ds1.NAME AS COMPANY_NAME ,ROLE_NAME,DEPT_NAME,ds1.CODE AS COMPANY_CODE,DEPT_CODE,STATUS,NEWCOMPANY_FLAG,
-        --F_GET_PERMISSION_BY_USERID(user_id) as permissionRoles,
-        --CASE WHEN INSTR(F_GET_PERMISSION_BY_USERID(user_id),('sub_admin')) > 0 THEN 1 ELSE 0 END as isSubAdmin,
-        U.ROLE_NAME as permissionRoles,
-        CASE WHEN U.ROLE_NAME = '子管理员' THEN 1 ELSE 0 END as isSubAdmin,
-         U.NAME
-        FROM CREDIT_USER U
-        LEFT JOIN ds1
-        on U.COMPANY_CODE = ds1.CODE
-        WHERE  USER_ID!=1 AND COMPANY_CODE IN (
-        SELECT CODE
-        FROM ds1 A
-        WHERE 1 = 1
-        <if test="companyCode != null and companyCode != ''">
-            and (A.CODE = #{companyCode} )
-        </if>UNION ALL
-        SELECT
-        CODE
-        FROM ds1
-        A
-        WHERE 1 = 1
-        <if test="companyCode != null and companyCode != ''">
-            and (A.SCODE = #{companyCode} )
-        </if>
-        UNION ALL
-        SELECT B.
-        CODE
-        FROM ds1 A
-        INNER
-        JOIN ds1 B ON A.CODE=B.SCODE
-        WHERE 1 = 1
-        <if test="companyCode != null and companyCode != ''">
-            and (A.SCODE = #{companyCode} )
-        </if>
-        UNION
-        ALL
-        SELECT C
-        .CODE
-        FROM
-        ds1 A
-        INNER
-        JOIN ds1 B ON A.CODE=B.SCODE
-        INNER
-        JOIN ds1 C ON B.CODE=C.SCODE
-        WHERE 1 = 1
-        <if test="companyCode != null and companyCode != ''">
-            and (A.SCODE = #{companyCode} )
-        </if>
-        UNION
-        ALL
-        SELECT
-        D.CODE
-        FROM
-        ds1 A
-        INNER
-        JOIN ds1 B ON A.CODE=B.SCODE
-        INNER
-        JOIN ds1 C ON B.CODE=C.SCODE
-        INNER
-        JOIN ds1 D ON C.CODE=D.SCODE
-        WHERE 1 = 1
-        <if test="companyCode != null and companyCode != ''">
-            and (A.SCODE = #{companyCode} )
-        </if>
-        )
-        <if test="status != null">
-            and (STATUS = #{status} )
-        </if>
-        <if test="username != null and username!=''">
-            and (USERNAME like '%'||#{username}||'%' )
-        </if>
-        <if test="name != null and name!=''">
-            and (U.NAME like '%'||#{name}||'%' )
-        </if>
-        ORDER BY isSubAdmin DESC,status desc
-        ) N
-        WHERE 1 = 1
-        <if test="isSubAdmin != null">
-            and (N.isSubAdmin = #{isSubAdmin})
-        </if>
+            SELECT ROWNUM AS rowno,N.*
+            FROM (
+                SELECT
+                USER_ID,USERNAME,PASSWORD,MOBILE,EMAIL,ds1.NAME AS COMPANY_NAME ,ROLE_NAME,DEPT_NAME,ds1.CODE AS COMPANY_CODE,DEPT_CODE,STATUS,NEWCOMPANY_FLAG,
+                U.ROLE_NAME as permissionRoles,
+                CASE WHEN U.ROLE_NAME = '子管理员' THEN 1 ELSE 0 END as isSubAdmin,
+                U.NAME
+                FROM CREDIT_USER U
+                LEFT JOIN ds1
+                on U.COMPANY_CODE = ds1.CODE
+                WHERE  USER_ID!=1 AND COMPANY_CODE IN (
+                SELECT CODE
+                FROM ds1 A
+                WHERE 1 = 1
+                <if test="companyCode != null and companyCode != ''">
+                    and (A.CODE = #{companyCode} )
+                </if>UNION ALL
+                SELECT
+                CODE
+                FROM ds1
+                A
+                WHERE 1 = 1
+                <if test="companyCode != null and companyCode != ''">
+                    and (A.SCODE = #{companyCode} )
+                </if>
+                UNION ALL
+                SELECT B.
+                CODE
+                FROM ds1 A
+                INNER
+                JOIN ds1 B ON A.CODE=B.SCODE
+                WHERE 1 = 1
+                <if test="companyCode != null and companyCode != ''">
+                    and (A.SCODE = #{companyCode} )
+                </if>
+                UNION
+                ALL
+                SELECT C
+                .CODE
+                FROM
+                ds1 A
+                INNER
+                JOIN ds1 B ON A.CODE=B.SCODE
+                INNER
+                JOIN ds1 C ON B.CODE=C.SCODE
+                WHERE 1 = 1
+                <if test="companyCode != null and companyCode != ''">
+                    and (A.SCODE = #{companyCode} )
+                </if>
+                UNION
+                ALL
+                SELECT
+                D.CODE
+                FROM
+                ds1 A
+                INNER
+                JOIN ds1 B ON A.CODE=B.SCODE
+                INNER
+                JOIN ds1 C ON B.CODE=C.SCODE
+                INNER
+                JOIN ds1 D ON C.CODE=D.SCODE
+                WHERE 1 = 1
+                <if test="companyCode != null and companyCode != ''">
+                    and (A.SCODE = #{companyCode} )
+                </if>
+                )
+                <if test="status != null">
+                    and (STATUS = #{status} )
+                </if>
+                <if test="username != null and username!=''">
+                    and (USERNAME like '%'||#{username}||'%' )
+                </if>
+                <if test="name != null and name!=''">
+                    and (U.NAME like '%'||#{name}||'%' )
+                </if>
+                ORDER BY isSubAdmin DESC,status desc
+            ) N
+            WHERE 1 = 1
+            <if test="roleName != null and roleName != ''">
+                and (N.permissionRoles = #{roleName})
+            </if>
         ) M
         WHERE 1 = 1
         AND rowno &lt;= #{pageIndex} * #{pageSize}
         AND rowno &gt; (#{pageIndex}-1) * #{pageSize}
     </select>
+<!--    <select id="getUserListLevel" resultType="com.fanruan.platform.bean.User">-->
+
+<!--        with ds1 as(-->
+<!--        SELECT CODE,NAME,SCODE,SNAME FROM BIUSER.ODS_HR_ORG WHERE ENABLESTATE='2'-->
+<!--        UNION-->
+<!--        SELECT CODE,NAME,SCODE,SNAME FROM BIUSER.INPUT_HR_ORG WHERE ENABLESTATE='1'-->
+<!--        )-->
+<!--        SELECT M.* FROM (-->
+<!--        SELECT ROWNUM AS rowno,N.*-->
+<!--        FROM (-->
+<!--        SELECT-->
+<!--        USER_ID,USERNAME,PASSWORD,MOBILE,EMAIL,ds1.NAME AS COMPANY_NAME ,ROLE_NAME,DEPT_NAME,ds1.CODE AS COMPANY_CODE,DEPT_CODE,STATUS,NEWCOMPANY_FLAG,-->
+<!--        U.ROLE_NAME as permissionRoles,-->
+<!--        CASE WHEN U.ROLE_NAME = '子管理员' THEN 1 ELSE 0 END as isSubAdmin,-->
+<!--         U.NAME-->
+<!--        FROM CREDIT_USER U-->
+<!--        LEFT JOIN ds1-->
+<!--        on U.COMPANY_CODE = ds1.CODE-->
+<!--        WHERE  USER_ID!=1 AND COMPANY_CODE IN (-->
+<!--        SELECT CODE-->
+<!--        FROM ds1 A-->
+<!--        WHERE 1 = 1-->
+<!--        <if test="companyCode != null and companyCode != ''">-->
+<!--            and (A.CODE = #{companyCode} )-->
+<!--        </if>UNION ALL-->
+<!--        SELECT-->
+<!--        CODE-->
+<!--        FROM ds1-->
+<!--        A-->
+<!--        WHERE 1 = 1-->
+<!--        <if test="companyCode != null and companyCode != ''">-->
+<!--            and (A.SCODE = #{companyCode} )-->
+<!--        </if>-->
+<!--        UNION ALL-->
+<!--        SELECT B.-->
+<!--        CODE-->
+<!--        FROM ds1 A-->
+<!--        INNER-->
+<!--        JOIN ds1 B ON A.CODE=B.SCODE-->
+<!--        WHERE 1 = 1-->
+<!--        <if test="companyCode != null and companyCode != ''">-->
+<!--            and (A.SCODE = #{companyCode} )-->
+<!--        </if>-->
+<!--        UNION-->
+<!--        ALL-->
+<!--        SELECT C-->
+<!--        .CODE-->
+<!--        FROM-->
+<!--        ds1 A-->
+<!--        INNER-->
+<!--        JOIN ds1 B ON A.CODE=B.SCODE-->
+<!--        INNER-->
+<!--        JOIN ds1 C ON B.CODE=C.SCODE-->
+<!--        WHERE 1 = 1-->
+<!--        <if test="companyCode != null and companyCode != ''">-->
+<!--            and (A.SCODE = #{companyCode} )-->
+<!--        </if>-->
+<!--        UNION-->
+<!--        ALL-->
+<!--        SELECT-->
+<!--        D.CODE-->
+<!--        FROM-->
+<!--        ds1 A-->
+<!--        INNER-->
+<!--        JOIN ds1 B ON A.CODE=B.SCODE-->
+<!--        INNER-->
+<!--        JOIN ds1 C ON B.CODE=C.SCODE-->
+<!--        INNER-->
+<!--        JOIN ds1 D ON C.CODE=D.SCODE-->
+<!--        WHERE 1 = 1-->
+<!--        <if test="companyCode != null and companyCode != ''">-->
+<!--            and (A.SCODE = #{companyCode} )-->
+<!--        </if>-->
+<!--        )-->
+<!--        <if test="status != null">-->
+<!--            and (STATUS = #{status} )-->
+<!--        </if>-->
+<!--        <if test="username != null and username!=''">-->
+<!--            and (USERNAME like '%'||#{username}||'%' )-->
+<!--        </if>-->
+<!--        <if test="name != null and name!=''">-->
+<!--            and (U.NAME like '%'||#{name}||'%' )-->
+<!--        </if>-->
+<!--        ORDER BY isSubAdmin DESC,status desc-->
+<!--        ) N-->
+<!--        WHERE 1 = 1-->
+<!--        <if test="isSubAdmin != null">-->
+<!--            and (N.isSubAdmin = #{isSubAdmin})-->
+<!--        </if>-->
+<!--        ) M-->
+<!--        WHERE 1 = 1-->
+<!--        AND rowno &lt;= #{pageIndex} * #{pageSize}-->
+<!--        AND rowno &gt; (#{pageIndex}-1) * #{pageSize}-->
+<!--    </select>-->
 
     <resultMap id="getReviewerResultMap" type="java.lang.String">
         <result column="flag" jdbcType="VARCHAR" property="flag" />

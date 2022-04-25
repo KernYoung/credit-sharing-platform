@@ -34,10 +34,10 @@ public interface UsersMapper {
     Integer insertStep5(User user);
 
     List<User> getUserListLevel(HashMap<String, Object> hs, Integer pageIndex,Integer pageSize,
-                                String username,String name,Integer status,Integer isSubAdmin,String companyCode);
+                                String username,String name,Integer status,Integer isSubAdmin,String companyCode,String roleName);
 
     Integer getUserListLevelCount(HashMap<String, Object> hs, Integer pageIndex,Integer pageSize,
-                                  String username,String name,Integer status,Integer isSubAdmin,String companyCode);
+                                  String username,String name,Integer status,Integer isSubAdmin,String companyCode,String roleName);
 
     /** 获取是否存在信保审核专员*/
     String getReviewer(@Param(value="userName") String userName);

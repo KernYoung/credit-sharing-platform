@@ -22,9 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ElasticSearchService {
@@ -48,6 +46,7 @@ public class ElasticSearchService {
 
         return 0;
     }
+
 
     private Integer saveCompany(RestHighLevelClient client, Company company) {
         Map<String,Object> jsonMap = JSONObject.parseObject(JSON.toJSONString(company));
@@ -107,10 +106,30 @@ public class ElasticSearchService {
                 //半年以内的数据为有效数据
                 if(updateTime!=null&&(time-updateTime.getTime())<(180*24*60*60*1000L)){
                     companyList.add(company);
+
                 }
+//                if(updateTime!=null&&(time-updateTime.getTime())<(24*60*60*1000L)){
+//                    companyList.add(company);
+//                }
             }
         }
 
-        return companyList;
+        //排重
+        HashMap<Long, Company> companyMap = new HashMap<>();
+        for(Company company : companyList){
+
+            if(companyMap.containsKey(company.getId())
+                    && company.getUpdateTime().before(companyMap.get(company.getId()).getUpdateTime()) ) continue;
+
+            companyMap.put(company.getId(),company);
+        }
+
+        List<Company> companyListResult = new ArrayList<>();
+
+        for(Company company : companyMap.values()){
+            companyListResult.add(company);
+        }
+
+        return companyListResult;
     }
 }

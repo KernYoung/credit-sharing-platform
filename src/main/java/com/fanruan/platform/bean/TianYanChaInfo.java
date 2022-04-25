@@ -65,6 +65,6 @@ public class TianYanChaInfo {
     @Column(name="UPDATETIME")
     private String updateTime;
 
-
+//    private String resultStr;
 
 }

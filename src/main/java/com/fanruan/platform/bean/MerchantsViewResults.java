@@ -19,4 +19,5 @@ public class MerchantsViewResults {
     private String estiblishtime;
     private String fromtime;
     private String totime;
+    private String id;
 }

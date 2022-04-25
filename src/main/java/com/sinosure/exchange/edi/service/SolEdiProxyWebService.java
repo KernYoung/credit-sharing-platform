@@ -1,5 +1,8 @@
 package com.sinosure.exchange.edi.service;
 
+
+import org.springframework.beans.factory.annotation.Value;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.namespace.QName;
@@ -15,25 +18,25 @@ import javax.xml.ws.Service;
  *
  */
 @WebServiceClient(name = "SolEdiProxyWebService",
-                  //wsdlLocation = "http://10.0.130.28:14114/ediserver/ws_services/SolEdiProxyWebService?wsdl",
-        wsdlLocation = "http://10.0.105.3:8081/ediserver/ws_services/SolEdiProxyWebService?wsdl",
+                 wsdlLocation = "http://10.0.132.12:80/ediserver/ws_services/SolEdiProxyWebService?wsdl",
+//                  wsdlLocation = "http://10.0.105.3:8081/ediserver/ws_services/SolEdiProxyWebService?wsdl",
                   targetNamespace = "http://service.edi.exchange.sinosure.com")
 public class SolEdiProxyWebService extends Service {
-
     public final static URL WSDL_LOCATION;
-
     public final static QName SERVICE = new QName("http://service.edi.exchange.sinosure.com", "SolEdiProxyWebService");
     public final static QName SolEdiProxyWebServiceHttpPort = new QName("http://service.edi.exchange.sinosure.com", "SolEdiProxyWebServiceHttpPort");
+    public final static String Edi3Server = "http://10.0.132.12:80/ediserver/gateway.do";
+//    public final static String Edi3Server = "http://10.0.105.3:8081/ediserver/gateway.do";
     static {
         URL url = null;
         try {
-           // url = new URL("http://10.0.130.28:14114/ediserver/ws_services/SolEdiProxyWebService?wsdl");
-            url = new URL("http://10.0.105.3:8081/ediserver/ws_services/SolEdiProxyWebService?wsdl");
+            url = new URL("http://10.0.132.12:80/ediserver/ws_services/SolEdiProxyWebService?wsdl");
+//            url = new URL("http://10.0.105.3:8081/ediserver/ws_services/SolEdiProxyWebService?wsdl");
         } catch (MalformedURLException e) {
             java.util.logging.Logger.getLogger(SolEdiProxyWebService.class.getName())
                 .log(java.util.logging.Level.INFO,
-                    // "Can not initialize the default wsdl from {0}", "http://10.0.130.28:14114/ediserver/ws_services/SolEdiProxyWebService?wsdl");
-                        "Can not initialize the default wsdl from {0}", "http://10.0.105.3:8081/ediserver/ws_services/SolEdiProxyWebService?wsdl");
+                     "Can not initialize the default wsdl from {0}", "http://10.0.132.12:80/ediserver/ws_services/SolEdiProxyWebService?wsdl");
+//             "Can not initialize the default wsdl from {0}", "http://10.0.105.3:8081/ediserver/ws_services/SolEdiProxyWebService?wsdl");
         }
         WSDL_LOCATION = url;
     }

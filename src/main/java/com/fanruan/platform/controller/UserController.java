@@ -2,8 +2,10 @@ package com.fanruan.platform.controller;
 
 import com.fanruan.platform.bean.*;
 import com.fanruan.platform.constant.CommonUtils;
+import com.fanruan.platform.dao.UserFocusDao;
 import com.fanruan.platform.mapper.PdfMapper;
 import com.fanruan.platform.mapper.UserMapper;
+import com.fanruan.platform.service.CommonService;
 import com.fanruan.platform.service.CompanyService;
 import com.fanruan.platform.service.UserService;
 import com.fanruan.platform.util.MD5Util;
@@ -12,6 +14,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +31,8 @@ import java.util.*;
 @RequestMapping
 public class UserController{
 
-
+    @Autowired
+    private UserFocusDao userFocusDao;
     @Autowired
     private UserService userService;
 
@@ -35,6 +41,8 @@ public class UserController{
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CommonService  commonService;
 
     @RequestMapping(value = "/user/login",method = RequestMethod.POST)
     @ResponseBody
@@ -42,10 +50,23 @@ public class UserController{
         String username=(String)para.get("username");
         String password=(String)para.get("password");
         String loginType=(String)para.get("loginType");
+        String sign=(String)para.get("sign");
+        //log4j 测试
+//        Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
+//        logger.log(Level.valueOf("info"),"log4j test!");
         HashMap<String,Object> hs=new HashMap<>();
         User user = null;
-        if(loginType!=null){
-            user = userService.getUserCheck(username,null);
+        String isInterface  = null;
+        if(loginType!=null || sign !=null){
+            if(sign !=null && sign !=""){
+             isInterface = MD5Util.MD5(username+"44bce5ef-873e-4689-b515-a1ef9775aa82");
+             if(sign.equals(isInterface)){
+                 user = userService.getUserCheck(username,null);
+             }
+            }else {
+                user = userService.getUserCheck(username,null);
+            }
+
         }else {
             if(StringUtils.isBlank(username)||StringUtils.isBlank(password)){
                 hs.put("code","1");
@@ -74,6 +95,23 @@ public class UserController{
             return objectMapper.writeValueAsString(hs);
         }
 
+        String rolePermission = "";
+        if(user.getRoleName() != null && !user.getRoleName().equals("")){
+            rolePermission = userService.getRolePermission(user.getRoleName());
+            rolePermission = rolePermission.contains("访问日志权限") ? "访问日志权限" : "";
+        }
+        user.setPermissionRoles(rolePermission);
+
+        //新增密码过期校验 (Kern on 20210616)
+        String isOverdue = "0";
+        if(!username.equals("ytdsrpa")){//英特机器人账号：ytdsrpa，特殊处理，不做密码过期校验
+            if(user.getPasswordUpdateTime() != null){
+                isOverdue = userService.checkPasswordTime(user.getPasswordUpdateTime());
+            }else{
+                isOverdue = "1";
+            }
+        }
+
         String token= TokenUtil.sign(user);
         hs.put("code","0");
         hs.put("msg","登录成功");
@@ -83,6 +121,8 @@ public class UserController{
         hs.put("userId",user.getUserId());
         hs.put("companyCode",user.getCompanyCode());
         hs.put("companyName",user.getCompanyName());
+        hs.put("permissionRoles",user.getPermissionRoles());
+        hs.put("isOverdue",isOverdue);
         request.getSession().setAttribute("username", username);
         ObjectMapper objectMapper=new ObjectMapper();
         return objectMapper.writeValueAsString(hs);
@@ -181,7 +221,9 @@ public class UserController{
         Integer pageIndex = CommonUtils.getIntegerValue(para.get("pageIndex"));
         Integer pageSize = CommonUtils.getIntegerValue(para.get("pageSize"));
         String operator = (String)para.get("operator");
-        Integer isSubAdmin = CommonUtils.getIntegerValue(para.get("isSubAdmin"));
+//        Integer isSubAdmin = CommonUtils.getIntegerValue(para.get("isSubAdmin"));
+        String roleName = (String)para.get("isSubAdmin");
+        Integer isSubAdmin = roleName.equals("子管理员") ? 1 : 0;
         String username = (String)para.get("username");
         String name = (String)para.get("name");
         String companyCode = (String)para.get("companyCode");
@@ -197,10 +239,10 @@ public class UserController{
 //            userList = (List<User> )hs.get("userList");
 //        }
         if(isLevel){
-            hs = userService.getUserListLevel(hs,pageIndex,pageSize,username,name,status,isSubAdmin,companyCode);
+            hs = userService.getUserListLevel(hs,pageIndex,pageSize,username,name,status,isSubAdmin,companyCode,roleName);
             userList = (List<User> )hs.get("userList");
         }else{
-            hs = userService.getUserList(hs,pageIndex,pageSize,username,name,status,isSubAdmin,companyCode);
+            hs = userService.getUserList(hs,pageIndex,pageSize,username,name,status,isSubAdmin,companyCode,roleName);
             userList = (List<User>)hs.get("userList");
         }
         userList = userService.fillUpdatePermissionNew(hs,userList,operator);
@@ -317,11 +359,16 @@ public class UserController{
     @ResponseBody
     public String getCareList(@RequestBody Map<String,Object> param) throws JsonProcessingException {
         Integer userId = CommonUtils.getIntegerValue(param.get("userId"));
-        String relations =  userService.getCareCompanySet(userId);
+        Integer pageIndex = CommonUtils.getIntegerValue(param.get("pageIndex"));
+        Integer pageSize = CommonUtils.getIntegerValue(param.get("pageSize"));
+        String relations =  userService.getCareCompanySet(userId,pageIndex,pageSize);
+        List<UserFocus> userFocusList = userFocusDao.findAllByUserId(userId);
+
         HashMap<String,Object> hs=new HashMap<>();
         hs.put("code","0");
         hs.put("msg","");
         hs.put("careList",relations);
+        hs.put("total",userFocusList.size());
         ObjectMapper objectMapper=new ObjectMapper();
         return objectMapper.writeValueAsString(hs);
     }
@@ -392,7 +439,6 @@ public class UserController{
             return objectMapper.writeValueAsString(hs);
         }
 
-
         if(!role.isPresent()){
             hs.put("code",1);
             hs.put("msg","未查询到角色信息");
@@ -418,8 +464,20 @@ public class UserController{
             hs.put("msg","");
             hs.put("allRole",permissions);
             return objectMapper.writeValueAsString(hs);
+    }
 
+    @RequestMapping(value = "/user/getRole",method = RequestMethod.POST)
+    @ResponseBody
+    public String getRole() throws JsonProcessingException {
+        HashMap<String,Object> hs = new HashMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+//        HashMap<String,Object> allRole = userService.getRole();
+        List<String> allRole = userService.getRole1();
 
+        hs.put("code",0);
+        hs.put("msg","");
+        hs.put("allRole",allRole);
+        return objectMapper.writeValueAsString(hs);
     }
 
     @RequestMapping(value = "/user/saveOrEditRole",method = RequestMethod.POST)

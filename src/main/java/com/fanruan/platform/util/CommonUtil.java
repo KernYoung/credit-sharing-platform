@@ -27,4 +27,5 @@ public class CommonUtil {
   public static final String ZHONG_CHEN_XIN_MONITORING_API_KEY = "c11e09663ffa47adbac90fbd73f56f7e";
   public static final String ZHONG_CHEN_XIN_MONITORING_ACOUNT = "zjgmapi";
 
+  public static final String ZCX_PDF_FTP_PATH = "/home/ftpuser/zcxpdf/";
 }

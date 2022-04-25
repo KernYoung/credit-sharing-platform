@@ -6,6 +6,7 @@ import com.fanruan.platform.constant.CommonUtils;
 import com.fanruan.platform.htmlToPdf.HtmlToPdfUtils;
 import com.fanruan.platform.service.CompanyService;
 import com.fanruan.platform.service.UserService;
+import com.fanruan.platform.util.CommonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -17,8 +18,13 @@ import com.sinosure.exchange.edi.service.EdiException_Exception;
 import com.sinosure.exchange.edi.service.SolEdiProxyWebService;
 import com.sinosure.exchange.edi.service.SolEdiProxyWebServicePortType;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
@@ -36,9 +42,10 @@ import java.util.Optional;
 
 @RestController
 public class ReportController {
-
-    @Autowired
-    private UserService userService;
+    /**
+     * 日志对象
+     */
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HtmlToPdfUtils.class);
 
     @Autowired
     private CompanyService companyService;
@@ -118,7 +125,6 @@ public class ReportController {
         return objectMapper.writeValueAsString(hs);
     }
 
-
     @RequestMapping(value = "/company/zhongChengXin/getRegionRatingHtml", method = RequestMethod.POST)
     @ResponseBody
     public String getRegionRatingHtml( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
@@ -134,36 +140,13 @@ public class ReportController {
         return objectMapper.writeValueAsString(hs);
     }
 
-
-
-    @RequestMapping(value = "/company/zhongChengXin/getLatestFinancialDeminingHtml", method = RequestMethod.POST)
-    @ResponseBody
-    public String getLatestFinancialDeminingHtml( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
-        HashMap<String,Object> hs=new HashMap<>();
-        ObjectMapper objectMapper=new ObjectMapper();
-        File temp = null;
-        try {
-            temp = File.createTempFile("financialDemining_", ".html");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String creditCode = (String)param.get("creditCode") ;
-        if(StringUtils.isBlank(creditCode)){
-            hs.put("code","1");
-            hs.put("msg","参数creditCode不能为空");
-            return objectMapper.writeValueAsString(hs);
-        }
-        String reportType = "财务排雷";
-        Company company = companyService.findCompanyByCode(creditCode);
-//        List<Report> reportList = companyService.getReportList(company,reportType);
-//        if(CollectionUtils.isEmpty(reportList)){
-            requestNewFinancialDeminingHtml(response, param, hs, company);
-//        }else {
-//            getDataBaseReportHtml(response, hs, temp, reportList);
-//        }
-        return objectMapper.writeValueAsString(hs);
-    }
-
+    /**
+     * 产业企业信用评价
+     * @param response
+     * @param param
+     * @return
+     * @throws JsonProcessingException
+     */
     @RequestMapping(value = "/company/zhongChengXin/getLatestLiteRatingHtml", method = RequestMethod.POST)
     @ResponseBody
     public String getLatestLiteRatingHtml( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
@@ -192,64 +175,13 @@ public class ReportController {
         return objectMapper.writeValueAsString(hs);
     }
 
-
-
-    @RequestMapping(value = "/company/zhongChengXin/getLatestRiskScreenHtml", method = RequestMethod.POST)
-    @ResponseBody
-    public String getLatestRiskScreenHtml( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
-        HashMap<String,Object> hs=new HashMap<>();
-        ObjectMapper objectMapper=new ObjectMapper();
-        File temp = null;
-        try {
-            temp = File.createTempFile("riskScreenHtml_", ".html");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String creditCode = (String)param.get("creditCode") ;
-        if(StringUtils.isBlank(creditCode)){
-            hs.put("code","1");
-            hs.put("msg","参数creditCode不能为空");
-            return objectMapper.writeValueAsString(hs);
-        }
-        String reportType = "风险初筛";
-        Company company = companyService.findCompanyByCode(creditCode);
-        List<Report> reportList = companyService.getReportList(company,reportType);
-        if(CollectionUtils.isEmpty(reportList)){
-            requestNewRiskScreenHtml(response, param, hs, company);
-        }else {
-            getDataBaseReportHtml(response, hs, temp, reportList);
-        }
-        return objectMapper.writeValueAsString(hs);
-    }
-
-    @RequestMapping(value = "/company/zhongChengXin/getLatestRegionRatingHtml", method = RequestMethod.POST)
-    @ResponseBody
-    public String getLatestRegionRatingHtml( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
-        HashMap<String,Object> hs=new HashMap<>();
-        ObjectMapper objectMapper=new ObjectMapper();
-        File temp = null;
-        try {
-            temp = File.createTempFile("regionRatingHtml_", ".html");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String creditCode = (String)param.get("creditCode") ;
-        if(StringUtils.isBlank(creditCode)){
-            hs.put("code","1");
-            hs.put("msg","参数creditCode不能为空");
-            return objectMapper.writeValueAsString(hs);
-        }
-        String reportType = "区域信用评价";
-        Company company = companyService.findCompanyByCode(creditCode);
-        List<Report> reportList = companyService.getReportList(company,reportType);
-        if(CollectionUtils.isEmpty(reportList)){
-            requestNewRegionRatingHtml(response, param, hs, company);
-        }else {
-            getDataBaseReportHtml(response, hs, temp, reportList);
-        }
-        return objectMapper.writeValueAsString(hs);
-    }
-
+    /**
+     * 城投企业信用评价
+     * @param response
+     * @param param
+     * @return
+     * @throws JsonProcessingException
+     */
     @RequestMapping(value = "/company/zhongChengXin/getLatestCityInvRatingHtml", method = RequestMethod.POST)
     @ResponseBody
     public String getLatestCityInvRatingHtml( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
@@ -278,48 +210,114 @@ public class ReportController {
         return objectMapper.writeValueAsString(hs);
     }
 
-
-    @RequestMapping(value = "/company/zhongChengXin/getReportPDF", method = RequestMethod.POST)
+    /**
+     * 区域信用评价
+     * @param response
+     * @param param
+     * @return
+     * @throws JsonProcessingException
+     */
+    @RequestMapping(value = "/company/zhongChengXin/getLatestRegionRatingHtml", method = RequestMethod.POST)
     @ResponseBody
-    public String getReportPDF( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
+    public String getLatestRegionRatingHtml( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
         HashMap<String,Object> hs=new HashMap<>();
         ObjectMapper objectMapper=new ObjectMapper();
-        String fileName = (String)param.get("fileName") ;
-        if(StringUtils.isBlank(fileName)){
-            return null;
-        }
-        Report report = companyService.getReport(fileName);
+        File temp = null;
         try {
-            String[] split = fileName.split("\\.");
-            File tempHtml = File.createTempFile(split[0],"."+split[1]);
-            String absolutePath = tempHtml.getParentFile().getAbsolutePath()+"/";
-
-            if(report!=null){
-                byte[] reportHtml = report.getReportHtml();
-                FileOutputStream fileOutputStream = new FileOutputStream(tempHtml);
-                fileOutputStream.write(reportHtml);
-                fileOutputStream.flush();
-                String name = split[0]+".pdf";
-                String exePath = environment.getProperty("wkhtmltopdf_path");
-                boolean flag = HtmlToPdfUtils.convert(tempHtml.getAbsolutePath(), absolutePath, exePath, name, "",tempHtml.getAbsolutePath(),4);
-                File file = new File(absolutePath + "/" + name);
-                if(!file.exists()){
-                    return null;
-                }
-                InputStream is = new BufferedInputStream(new FileInputStream(file));
-                response.addHeader("Content-Disposition", "attachment;filename=" + new String(name.getBytes("UTF-8"), "ISO-8859-1"));
-                ServletOutputStream outputStream = response.getOutputStream();
-                response.setContentType("application/octet-stream");
-                IOUtils.copy(is,outputStream,1024);
-                hs.put("code","0");
-            }
-        } catch (Exception e) {
+            temp = File.createTempFile("regionRatingHtml_", ".html");
+        } catch (IOException e) {
             e.printStackTrace();
+        }
+        String creditCode = (String)param.get("creditCode") ;
+        if(StringUtils.isBlank(creditCode)){
             hs.put("code","1");
-            hs.put("msg","文件下载出错");
+            hs.put("msg","参数creditCode不能为空");
+            return objectMapper.writeValueAsString(hs);
+        }
+        String reportType = "区域信用评价";
+        Company company = companyService.findCompanyByCode(creditCode);
+        List<Report> reportList = companyService.getReportList(company,reportType);
+        if(CollectionUtils.isEmpty(reportList)){
+            requestNewRegionRatingHtml(response, param, hs, company);
+        }else {
+            getDataBaseReportHtml(response, hs, temp, reportList);
         }
         return objectMapper.writeValueAsString(hs);
     }
+
+    /**
+     * 风险初筛
+     * @param response
+     * @param param
+     * @return
+     * @throws JsonProcessingException
+     */
+    @RequestMapping(value = "/company/zhongChengXin/getLatestRiskScreenHtml", method = RequestMethod.POST)
+    @ResponseBody
+    public String getLatestRiskScreenHtml( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
+        HashMap<String,Object> hs=new HashMap<>();
+        ObjectMapper objectMapper=new ObjectMapper();
+        File temp = null;
+        try {
+            temp = File.createTempFile("riskScreenHtml_", ".html");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String creditCode = (String)param.get("creditCode") ;
+        if(StringUtils.isBlank(creditCode)){
+            hs.put("code","1");
+            hs.put("msg","参数creditCode不能为空");
+            return objectMapper.writeValueAsString(hs);
+        }
+        String reportType = "风险初筛";
+        Company company = companyService.findCompanyByCode(creditCode);
+        List<Report> reportList = companyService.getReportList(company,reportType);
+        if(CollectionUtils.isEmpty(reportList)){
+            requestNewRiskScreenHtml(response, param, hs, company);
+        }else {
+            getDataBaseReportHtml(response, hs, temp, reportList);
+        }
+        return objectMapper.writeValueAsString(hs);
+    }
+
+    /**
+     * 财务排雷
+     * @param response
+     * @param param
+     * @return
+     * @throws JsonProcessingException
+     */
+    @RequestMapping(value = "/company/zhongChengXin/getLatestFinancialDeminingHtml", method = RequestMethod.POST)
+    @ResponseBody
+    public String getLatestFinancialDeminingHtml( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
+        HashMap<String,Object> hs=new HashMap<>();
+        ObjectMapper objectMapper=new ObjectMapper();
+        File temp = null;
+        try {
+            temp = File.createTempFile("financialDemining_", ".html");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String creditCode = (String)param.get("creditCode") ;
+        if(StringUtils.isBlank(creditCode)){
+            hs.put("code","1");
+            hs.put("msg","参数creditCode不能为空");
+            return objectMapper.writeValueAsString(hs);
+        }
+        String reportType = "财务排雷";
+        Company company = companyService.findCompanyByCode(creditCode);
+//        List<Report> reportList = companyService.getReportList(company,reportType);
+//        if(CollectionUtils.isEmpty(reportList)){
+        requestNewFinancialDeminingHtml(response, param, hs, company);
+//        }else {
+//            getDataBaseReportHtml(response, hs, temp, reportList);
+//        }
+        return objectMapper.writeValueAsString(hs);
+    }
+
+
+
+
 
     private void requestNewFinancialDeminingHtml(HttpServletResponse response, Map<String, Object> param, HashMap<String, Object> hs, Company company) {
         InputStream is = companyService.getFinancialDeminingHtml(company,param);
@@ -520,6 +518,160 @@ public class ReportController {
         return objectMapper.writeValueAsString(hs);
     }
 
+
+//    @RequestMapping(value = "/company/zhongChengXin/getReportFromFTP", method = RequestMethod.POST)
+//    @ResponseBody
+//    public String getReportFromFTP( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
+//        HashMap<String,Object> hs=new HashMap<>();
+//        ObjectMapper objectMapper=new ObjectMapper();
+//        String fileName = (String)param.get("fileName") ;
+//        log.info("fileName: " + fileName);
+//        if(StringUtils.isBlank(fileName)){
+//            return null;
+//        }
+//        Report report = companyService.getReport(fileName);
+//        try {
+//            String[] split = fileName.split("\\.");
+//            if(report!=null){
+//                String name = split[0]+".pdf";
+//                File file = new File("/Users/yangwenqiang/Temp/zcxPDF/" + name);
+////                File file = new File(CommonUtil.ZCX_PDF_FTP_PATH + name);
+//                if(!file.exists()){
+//                    File sourceFile = new File("/Users/yangwenqiang/Temp/" + name);
+//                    FileUtils.copyFile(sourceFile, file);
+////                    return null;
+//                }
+//
+//                if(!file.exists()) return null;
+//                InputStream is = new BufferedInputStream(new FileInputStream(file));
+//                response.addHeader("Content-Disposition", "attachment;filename=" + new String(name.getBytes("UTF-8"), "ISO-8859-1"));
+//                ServletOutputStream outputStream = response.getOutputStream();
+//                response.setContentType("application/octet-stream");
+//                IOUtils.copy(is,outputStream,1024);
+//                hs.put("code","0");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            hs.put("code","1");
+//            hs.put("msg","文件下载出错");
+//        }
+//        return objectMapper.writeValueAsString(hs);
+//    }
+
+    @RequestMapping(value = "/company/zhongChengXin/getReportPDF", method = RequestMethod.POST)
+    @ResponseBody
+    public String getReportPDF( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
+        HashMap<String,Object> hs = new HashMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String fileName = (String)param.get("fileName") ;
+        log.info("fileName: " + fileName);
+        if(StringUtils.isBlank(fileName)) return null;
+
+        Report report = companyService.getReport(fileName);
+        if(report == null) return null;
+
+        try {
+            String[] split = fileName.split("\\.");
+            String namePDF = split[0]+".pdf";
+
+            File outPDF = new File(CommonUtil.ZCX_PDF_FTP_PATH + namePDF);
+            log.info("zcxPathPDF: " + CommonUtil.ZCX_PDF_FTP_PATH);
+            if(!outPDF.exists()){
+                File tempHtml = File.createTempFile(split[0],"."+split[1], new File(CommonUtil.ZCX_PDF_FTP_PATH));
+                String absolutePath = tempHtml.getParentFile().getAbsolutePath()+"/";
+                log.info("absolutePath: " + absolutePath);
+                byte[] reportHtml = report.getReportHtml();
+                FileOutputStream fileOutputStream = new FileOutputStream(tempHtml);
+                fileOutputStream.write(reportHtml);
+                fileOutputStream.flush();
+                log.info("pdfName: " + namePDF);
+                String exePath = environment.getProperty("wkhtmltopdf_path");
+                log.info("exePath: " + exePath);
+                log.info("outPut: " + tempHtml.getAbsolutePath());
+                HtmlToPdfUtils.convert(tempHtml.getAbsolutePath(), absolutePath, exePath, namePDF, "",tempHtml.getAbsolutePath(),4);
+                outPDF = new File(CommonUtil.ZCX_PDF_FTP_PATH + namePDF);
+
+                boolean isDelete = tempHtml.delete();
+                if(isDelete) log.info("html is deleted: " + tempHtml.getName());
+            }
+
+            if(!outPDF.exists()) return null;
+
+            InputStream is = new BufferedInputStream(new FileInputStream(outPDF));
+            response.addHeader("Content-Disposition", "attachment;filename=" + new String(namePDF.getBytes("UTF-8"), "ISO-8859-1"));
+            ServletOutputStream outputStream = response.getOutputStream();
+            response.setContentType("application/octet-stream");
+            IOUtils.copy(is,outputStream,1024);
+            hs.put("code","0");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            hs.put("code","1");
+            hs.put("msg","文件下载出错");
+        }
+        return objectMapper.writeValueAsString(hs);
+    }
+
+//    @RequestMapping(value = "/company/zhongChengXin/getReportPDF", method = RequestMethod.POST)
+//    @ResponseBody
+//    public String getReportPDF( HttpServletResponse response,@RequestBody Map<String,Object> param) throws JsonProcessingException {
+//        HashMap<String,Object> hs=new HashMap<>();
+//        ObjectMapper objectMapper=new ObjectMapper();
+//        String fileName = (String)param.get("fileName") ;
+//        log.info("fileName: " + fileName);
+//        if(StringUtils.isBlank(fileName)){
+//            return null;
+//        }
+//        Report report = companyService.getReport(fileName);
+//        try {
+//            String[] split = fileName.split("\\.");
+//            File tempHtml = File.createTempFile(split[0],"."+split[1]);
+//            String absolutePath = tempHtml.getParentFile().getAbsolutePath()+"/";
+//            log.info("absolutePath: " + absolutePath);
+//            if(report!=null){
+//                byte[] reportHtml = report.getReportHtml();
+//                FileOutputStream fileOutputStream = new FileOutputStream(tempHtml);
+//                fileOutputStream.write(reportHtml);
+//                fileOutputStream.flush();
+//                String name = split[0]+".pdf";
+//                log.info("pdfName: " + name);
+//                String exePath = environment.getProperty("wkhtmltopdf_path");
+//                log.info("exePath: " + exePath);
+//                log.info("outPut: " + tempHtml.getAbsolutePath());
+//                boolean flag = HtmlToPdfUtils.convert(tempHtml.getAbsolutePath(), absolutePath, exePath, name, "",tempHtml.getAbsolutePath(),4);
+//                File file = new File(absolutePath + "/" + name);
+//                if(!file.exists()){
+//                    return null;
+//                }
+//                InputStream is = new BufferedInputStream(new FileInputStream(file));
+//                response.addHeader("Content-Disposition", "attachment;filename=" + new String(name.getBytes("UTF-8"), "ISO-8859-1"));
+//                ServletOutputStream outputStream = response.getOutputStream();
+//                response.setContentType("application/octet-stream");
+//                IOUtils.copy(is,outputStream,1024);
+//                hs.put("code","0");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            hs.put("code","1");
+//            hs.put("msg","文件下载出错");
+//        }
+//        return objectMapper.writeValueAsString(hs);
+//    }
+
+    @RequestMapping(value = "/report/zhongChengXin/reportExist", method = RequestMethod.POST)
+    @ResponseBody
+    public String reportExist(@RequestBody Map<String,Object> param) throws JsonProcessingException {
+        HashMap<String,Object> hs=new HashMap<>();
+        ObjectMapper objectMapper=new ObjectMapper();
+        String creditCode = (String)param.get("creditCode") ;
+        String reportType = (String)param.get("reportType") ;
+
+        boolean existFlag = companyService.reportExist(reportType, creditCode);
+
+        hs.put("existFlag",existFlag);
+
+        return objectMapper.writeValueAsString(hs);
+    }
 
 
 }

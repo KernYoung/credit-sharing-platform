@@ -17,4 +17,7 @@ public interface CompanyDao extends JpaRepository<Company,Integer> {
 
     Optional<Company> findTop1ByCompanyName(String companyName);
 
+    List<Company> findAllByIdIn(List<Long> idList);
+//    List<Company> findAllByIdInOrderByIdUpdateTimeDesc(List<Long> idList);
+    List<Company> findAllByCompanyNameInOrderByUpdateTime(List<String> CompanyName);
 }
