@@ -10,8 +10,8 @@
     <!-- %logger{36} 表示 Logger 名字最长36个字符 -->
     <property name="LOG_PATTERN" value="%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36}  - %msg%n" />
     <!-- 定义日志存储的路径，不要配置相对路径 -->
-<!--    <property name="FILE_PATH" value="/Users/yangwenqiang" />-->
-     <property name="FILE_PATH" value="/mnt/apache-tomcat-8.5.68" />
+    <property name="FILE_PATH" value="/Users/yangwenqiang" />
+<!--     <property name="FILE_PATH" value="/mnt/apache-tomcat-8.5.68" />-->
     <!--项目名称-->
     <property name="FILE_NAME" value="Credit" />
     <property name="DATE" value="$${date:yyyy-MM-dd}" />

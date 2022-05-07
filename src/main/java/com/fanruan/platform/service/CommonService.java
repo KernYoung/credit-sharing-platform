@@ -1195,7 +1195,10 @@ public class CommonService {
             }else if(isOverUsage == -2){
                 return "失败，未能获取到接口已使用数量！jsonFlag: " + jsonFlag + ",companyName: " + companyName;
             }
+            log.info("requestUrl: " + requestUrl);
+            log.info("paramStr: " + paramStr);
             dataInput = requestTianYanChaAPI(paramMap,requestUrl);
+            log.info("result: " + dataInput);
             dataOutput = dataInput;
         }else{
             dataInput = "";
@@ -1209,11 +1212,11 @@ public class CommonService {
     }
 
     private String requestTianYanChaAPI(Map<String,String> paramMap,String uri) {
-        String md5Hex = DigestUtils.md5Hex(CommonUtil.TIAN_YAN_CHA_USERNAME+CommonUtil.TIAN_YAN_CHA_KEY);
+//        String md5Hex = DigestUtils.md5Hex(CommonUtil.TIAN_YAN_CHA_USERNAME+CommonUtil.TIAN_YAN_CHA_KEY);
         StringBuffer sb = new StringBuffer(CommonUtil.TIAN_YAN_CHA+uri);
-        sb.append("username="+CommonUtil.TIAN_YAN_CHA_USERNAME)
-                .append("&authId="+CommonUtil.TIAN_YAN_CHA_AUTHID)
-                .append("&sign="+md5Hex);
+//        sb.append("username="+CommonUtil.TIAN_YAN_CHA_USERNAME)
+//                .append("&authId="+CommonUtil.TIAN_YAN_CHA_AUTHID)
+//                .append("&sign="+md5Hex);
         for(Map.Entry<String,String> kv:paramMap.entrySet()){
             String key = kv.getKey();
             String value = kv.getValue();
@@ -1233,6 +1236,32 @@ public class CommonService {
         }
         return dataStr;
     }
+
+//    private String requestTianYanChaAPI(Map<String,String> paramMap,String uri) {
+//        String md5Hex = DigestUtils.md5Hex(CommonUtil.TIAN_YAN_CHA_USERNAME+CommonUtil.TIAN_YAN_CHA_KEY);
+//        StringBuffer sb = new StringBuffer(CommonUtil.TIAN_YAN_CHA+uri);
+//        sb.append("username="+CommonUtil.TIAN_YAN_CHA_USERNAME)
+//                .append("&authId="+CommonUtil.TIAN_YAN_CHA_AUTHID)
+//                .append("&sign="+md5Hex);
+//        for(Map.Entry<String,String> kv:paramMap.entrySet()){
+//            String key = kv.getKey();
+//            String value = kv.getValue();
+//            sb.append("&").append(key).append("=").append(value);
+//        }
+////        .append("&name="+company.getCompanyName())
+//        HttpGet get = new HttpGet(sb.toString());
+//        get.setHeader("Authorization", CommonUtil.TIAN_YAN_CHA_AUTH);
+//        HttpClient client = new DefaultHttpClient();
+//        HttpResponse rese = null;
+//        String dataStr = null;
+//        try {
+//            rese = client.execute(get);
+//            dataStr = EntityUtils.toString(rese.getEntity());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return dataStr;
+//    }
 
     public List<OpenAPI> getTokenList(String companyName, String uri, String interfaceName, Integer status, Integer pageIndex, Integer pageSize) {
         return commonsMapper.getTokenList(companyName, uri, interfaceName, status, pageIndex, pageSize);

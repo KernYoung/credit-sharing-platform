@@ -562,7 +562,7 @@ public class CompanyService {
         Map reportParam = new HashMap();
         String areaCode = (String)param.get("areaCode");
         String level = (String)param.get("level");
-        String interfaceType = "区域信用评价";
+        String interfaceType = "查询区域详细信息";
         reportParam.put("areaCode",areaCode );
         reportParam.put("level", level);
         JSONObject jsonObject = getRestApi(reportUrl, reportParam);

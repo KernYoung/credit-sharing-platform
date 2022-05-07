@@ -1254,6 +1254,7 @@
         SELECT * FROM
         (SELECT ROW_NUMBER() OVER(PARTITION BY report_type ORDER BY update_time DESC)rn, t.*FROM CREDIT_REPORT t
          where 1 = 1
+            and t.pdf_name is not null
         <if test="creditCode != null and creditCode !=''">
             and ( t.credit_code  = #{creditCode})
         </if>
