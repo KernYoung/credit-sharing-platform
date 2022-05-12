@@ -5758,5 +5758,28 @@
         AND ENT_TOKENID = #{tokenIdPrefix}
     </select>
 
+    <select id="getClientNoMaintainList" resultType="com.fanruan.platform.bean.ClientNoMaintain">
+        SELECT O.CODE AS COMPANY_CODE, O.NAME AS COMPANY_NAME, G.COMPANYCODE AS COMPANY_CODE_SUPERIOR,
+               G.COMPANYNAME AS COMPANY_NAME_SUPERIOR,  'HR系统' AS DATA_SOURCE, I.CLIENTNO AS CLIENT_NO
+        FROM ODS_HR_ORG O
+        LEFT JOIN DIM_ORG G ON O.CODE = G.SUBCOMPANYCODE
+        LEFT JOIN INPUT_HR_ZXB_CLIENT I ON O.CODE = I.CODE
+        UNION
+        SELECT O.CODE AS COMPANY_CODE, O.NAME AS COMPANY_NAME, '' AS COMPANY_CODE_SUPERIOR,
+               '' AS COMPANY_NAME_SUPERIOR,  '手工填报' AS DATA_SOURCE, I.CLIENTNO AS CLIENT_NO
+        FROM INPUT_HR_ORG O
+        LEFT JOIN INPUT_HR_ZXB_CLIENT I ON O.CODE = I.CODE
+        WHERE 1 = 1
+
+        <if test="companyName != null and companyName != ''">
+            AND COMPANY_NAME LIKE '%'||#{companyName}||'%'
+        </if>
+        <if test="dataSource != null and dataSource != ''">
+            AND DATA_SOURCE = #{dataSource}
+        </if>
+
+        ORDER BY COMPANY_CODE, COMPANY_CODE_SUPERIOR
+    </select>
+
 </mapper>
 

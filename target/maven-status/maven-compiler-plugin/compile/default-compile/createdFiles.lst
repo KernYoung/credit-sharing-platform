@@ -168,6 +168,7 @@ com/sinosure/exchange/edi/service/GetEdiSpecialFeeRate.class
 com/sinosure/exchange/edi/service/DoEdiPlnoticeResponse.class
 com/sinosure/exchange/edi/service/DoEdiShipmentApply.class
 com/fanruan/platform/bean/User.class
+com/fanruan/platform/bean/ClientNoMaintain.class
 com/fanruan/platform/bean/InitialScreeningOfMerchants.class
 com/sinosure/exchange/edi/po/BuyerCodeApproveInfo.class
 com/sinosure/exchange/edi/po/BuyerQuotaInfo.class

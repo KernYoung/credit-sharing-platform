@@ -2828,6 +2828,24 @@ public class CommonController {
         return objectMapper.writeValueAsString(hs);
     }
 
+    @RequestMapping(value = "/common/getClientNoMaintainList",method = RequestMethod.POST)
+    @ResponseBody
+    public String getClientNoMaintainList(@RequestBody Map<String,Object> param) throws JsonProcessingException {
+        HashMap<String,Object> hs = new HashMap<>();
+        ObjectMapper objectMapper=new ObjectMapper();
 
+        String companyName = (String)param.get("companyName");
+        String dataSource = (String)param.get("dataSource");
+        Integer pageIndex = CommonUtils.getIntegerValue(param.get("pageIndex"));
+        Integer pageSize = CommonUtils.getIntegerValue(param.get("pageSize"));
+
+        List<ClientNoMaintain> clientNoMaintainList = commonService.getClientNoMaintainList(companyName,dataSource, pageIndex,pageSize);
+        Integer totalRecords = commonService.getClientNoMaintainListTotalCount(companyName,dataSource);
+
+        hs.put("code",0);
+        hs.put("interfaceUsedLimit",clientNoMaintainList);
+        hs.put("totalRecords",totalRecords);
+        return objectMapper.writeValueAsString(hs);
+    }
 
 }

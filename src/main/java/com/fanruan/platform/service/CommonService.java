@@ -1195,10 +1195,9 @@ public class CommonService {
             }else if(isOverUsage == -2){
                 return "失败，未能获取到接口已使用数量！jsonFlag: " + jsonFlag + ",companyName: " + companyName;
             }
-            log.info("requestUrl: " + requestUrl);
-            log.info("paramStr: " + paramStr);
+
             dataInput = requestTianYanChaAPI(paramMap,requestUrl);
-            log.info("result: " + dataInput);
+            log.info("request result: " + dataInput);
             dataOutput = dataInput;
         }else{
             dataInput = "";
@@ -1222,8 +1221,10 @@ public class CommonService {
             String value = kv.getValue();
             sb.append("&").append(key).append("=").append(value);
         }
+
 //        .append("&name="+company.getCompanyName())
         HttpGet get = new HttpGet(sb.toString());
+        log.info("request str: " + get);
         get.setHeader("Authorization", CommonUtil.TIAN_YAN_CHA_AUTH);
         HttpClient client = new DefaultHttpClient();
         HttpResponse rese = null;
@@ -1372,5 +1373,13 @@ public class CommonService {
 
     public void deleteCreditOpenApi(String tokenId) {
         commonsMapper.deleteCreditOpenAPI(tokenId);
+    }
+
+    public List<ClientNoMaintain> getClientNoMaintainList(String companyName, String dataSource, Integer pageIndex, Integer pageSize) {
+        return commonsMapper.getClientNoMaintainList(companyName, dataSource, pageIndex, pageSize);
+    }
+
+    public Integer getClientNoMaintainListTotalCount(String companyName, String dataSource) {
+        return commonsMapper.getClientNoMaintainListTotalCount(companyName, dataSource);
     }
 }

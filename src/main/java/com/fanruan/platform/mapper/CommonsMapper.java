@@ -247,4 +247,8 @@ public interface CommonsMapper {
     List<OpenAPIRelation> getCreditApiRelation(String tokenIdPrefix);
 
     void deleteCreditOpenAPI(String tokenId);
+
+    List<ClientNoMaintain> getClientNoMaintainList(String companyName, String dataSource, Integer pageIndex, Integer pageSize);
+
+    Integer getClientNoMaintainListTotalCount(String companyName, String dataSource);
 }

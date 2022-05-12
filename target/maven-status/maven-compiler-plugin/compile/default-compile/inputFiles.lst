@@ -119,6 +119,7 @@
 /Users/yangwenqiang/SourceCode/CreditSharingPlatform/credit-sharing-platform/src/main/java/com/sinosure/exchange/edi/service/GetEdiBasicFeeRateResponse.java
 /Users/yangwenqiang/SourceCode/CreditSharingPlatform/credit-sharing-platform/src/main/java/com/sinosure/exchange/edi/po/ArrayOfEdiExpObject.java
 /Users/yangwenqiang/SourceCode/CreditSharingPlatform/credit-sharing-platform/src/main/java/com/sinosure/exchange/edi/po/ArrayOfDomReceiptApplyInfo.java
+/Users/yangwenqiang/SourceCode/CreditSharingPlatform/credit-sharing-platform/src/main/java/com/fanruan/platform/bean/ClientNoMaintain.java
 /Users/yangwenqiang/SourceCode/CreditSharingPlatform/credit-sharing-platform/src/main/java/com/fanruan/platform/bean/RecordInterfaceCall.java
 /Users/yangwenqiang/SourceCode/CreditSharingPlatform/credit-sharing-platform/src/main/java/com/sinosure/exchange/edi/po/ArrayOfEDIInfoStructure.java
 /Users/yangwenqiang/SourceCode/CreditSharingPlatform/credit-sharing-platform/src/main/java/com/sinosure/exchange/edi/po/DomTotalDeclareApproveInfo.java

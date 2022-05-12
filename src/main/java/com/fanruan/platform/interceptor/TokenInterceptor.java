@@ -52,8 +52,8 @@ public class TokenInterceptor implements HandlerInterceptor {
         String authToken = request.getHeader("X-AURORA-TOKEN");
         String requestURI = request.getRequestURI();
         String tokenId = request.getParameter("tokenId");
-
-        if(requestURI.startsWith("/common/ZXB/downloadPDF/") || requestURI.contains("getAllBusinessInfoNoToken") ||
+        System.out.println(requestURI);
+        if(requestURI.startsWith("//common/ZXB/downloadPDF/") || requestURI.startsWith("/common/ZXB/downloadPDF/") ||requestURI.contains("getAllBusinessInfoNoToken") ||
                 requestURI.contains("getApplyProgressListNoToken")){
             return true;
         }

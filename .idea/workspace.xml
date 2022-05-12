@@ -5,27 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="68a577fd-5ec6-4546-8577-d018169738b6" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/bean/ClientNoMaintain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/interceptor/TokenInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/interceptor/TokenInterceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/mapper/CommonsMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/mapper/CommonsMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j2.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/mapping/CommonsMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapping/CommonsMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application-uat.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application-uat.yml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/controller/CommonController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/controller/CommonController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/interceptor/TokenInterceptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/interceptor/TokenInterceptor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/mapper/CommonsMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/mapper/CommonsMapper.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/service/CommonService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/service/CommonService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/service/CompanyService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/service/CompanyService.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/log4j2.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mapping/CommonsMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapping/CommonsMapper.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.war" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.war" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.war.original" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.war.original" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/application-uat.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/application-uat.yml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/controller/CommonController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/controller/CommonController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/interceptor/TokenInterceptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/interceptor/TokenInterceptor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/mapper/CommonsMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/mapper/CommonsMapper.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/service/CommonService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/service/CommonService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/service/CompanyService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/service/CompanyService.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/log4j2.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/mapping/CommonsMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/mapping/CommonsMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,6 +115,16 @@
         <option name="vmOptionsForImporter" value="-Xmx768m" />
       </MavenImportingSettings>
     </option>
+    <option name="enabledProfiles">
+      <list>
+        <option value="uat" />
+      </list>
+    </option>
+    <option name="disabledProfiles">
+      <list>
+        <option value="dev" />
+      </list>
+    </option>
   </component>
   <component name="ProjectId" id="1n5INqnVXMgISSL29V9Nzpz8UXi" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -188,6 +203,17 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -402,7 +428,7 @@
       <workItem from="1650016779165" duration="947000" />
       <workItem from="1650018883842" duration="186355000" />
       <workItem from="1650878286595" duration="46298000" />
-      <workItem from="1651825699748" duration="4138000" />
+      <workItem from="1651825699748" duration="29714000" />
     </task>
     <task id="LOCAL-00001" summary="将申请数据落库">
       <created>1611216222411</created>
@@ -418,7 +444,14 @@
       <option name="project" value="LOCAL" />
       <updated>1650884175322</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="1.天眼查API请求中去除username、authId、sign参数&#10;2.新增日志记录：请求下发接口的url、参数和结果。">
+      <created>1651906048423</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1651906048423</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -427,7 +460,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="将申请数据落库" />
     <MESSAGE value="更版 20220425" />
-    <option name="LAST_COMMIT_MESSAGE" value="更版 20220425" />
+    <MESSAGE value="1.天眼查API请求中去除username、authId、sign参数&#10;2.新增日志记录：请求下发接口的url、参数和结果。" />
+    <option name="LAST_COMMIT_MESSAGE" value="1.天眼查API请求中去除username、authId、sign参数&#10;2.新增日志记录：请求下发接口的url、参数和结果。" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1058,11 +1092,6 @@
           <option name="timeStamp" value="723" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
-          <line>933</line>
-          <option name="timeStamp" value="734" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/ReportController.java</url>
           <line>89</line>
           <option name="timeStamp" value="739" />
@@ -1324,7 +1353,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java</url>
-          <line>1286</line>
+          <line>1287</line>
           <option name="timeStamp" value="961" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1369,7 +1398,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java</url>
-          <line>1337</line>
+          <line>1338</line>
           <option name="timeStamp" value="978" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1589,8 +1618,58 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java</url>
-          <line>1225</line>
-          <option name="timeStamp" value="1085" />
+          <line>1226</line>
+          <option name="timeStamp" value="1086" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CompanyController.java</url>
+          <line>253</line>
+          <option name="timeStamp" value="1087" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
+          <line>848</line>
+          <option name="timeStamp" value="1089" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
+          <line>1013</line>
+          <option name="timeStamp" value="1090" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/UserController.java</url>
+          <line>343</line>
+          <option name="timeStamp" value="1091" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
+          <line>854</line>
+          <option name="timeStamp" value="1092" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
+          <line>939</line>
+          <option name="timeStamp" value="1093" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
+          <line>1069</line>
+          <option name="timeStamp" value="1094" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java</url>
+          <line>1562</line>
+          <option name="timeStamp" value="1095" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
+          <line>925</line>
+          <option name="timeStamp" value="1097" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
+          <line>1084</line>
+          <option name="timeStamp" value="1098" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
