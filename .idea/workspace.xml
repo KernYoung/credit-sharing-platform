@@ -5,32 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="68a577fd-5ec6-4546-8577-d018169738b6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/bean/ClientNoMaintain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/controller/CommonController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/interceptor/TokenInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/interceptor/TokenInterceptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/mapper/CommonsMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/mapper/CommonsMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CommonService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapping/CommonsMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapping/CommonsMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/controller/CommonController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/controller/CommonController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/interceptor/TokenInterceptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/interceptor/TokenInterceptor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/mapper/CommonsMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/mapper/CommonsMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fanruan/platform/service/CommonService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fanruan/platform/service/CommonService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/log4j2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapping/CommonsMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapping/CommonsMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.war" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.war" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.war.original" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT.war.original" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/controller/CommonController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/controller/CommonController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/interceptor/TokenInterceptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/interceptor/TokenInterceptor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/mapper/CommonsMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/mapper/CommonsMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/service/CommonService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/com/fanruan/platform/service/CommonService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/log4j2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/mapping/CommonsMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/credit-sharing-platform-0.0.1-SNAPSHOT/WEB-INF/classes/mapping/CommonsMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -203,17 +178,6 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -428,7 +392,8 @@
       <workItem from="1650016779165" duration="947000" />
       <workItem from="1650018883842" duration="186355000" />
       <workItem from="1650878286595" duration="46298000" />
-      <workItem from="1651825699748" duration="29714000" />
+      <workItem from="1651825699748" duration="31581000" />
+      <workItem from="1652321590635" duration="318000" />
     </task>
     <task id="LOCAL-00001" summary="将申请数据落库">
       <created>1611216222411</created>
@@ -451,7 +416,14 @@
       <option name="project" value="LOCAL" />
       <updated>1651906048423</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="交接">
+      <created>1652317929064</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1652317929064</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -461,7 +433,8 @@
     <MESSAGE value="将申请数据落库" />
     <MESSAGE value="更版 20220425" />
     <MESSAGE value="1.天眼查API请求中去除username、authId、sign参数&#10;2.新增日志记录：请求下发接口的url、参数和结果。" />
-    <option name="LAST_COMMIT_MESSAGE" value="1.天眼查API请求中去除username、authId、sign参数&#10;2.新增日志记录：请求下发接口的url、参数和结果。" />
+    <MESSAGE value="交接" />
+    <option name="LAST_COMMIT_MESSAGE" value="交接" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
