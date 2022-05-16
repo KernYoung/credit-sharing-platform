@@ -200,7 +200,7 @@ public class UserController{
         String name = (String)para.get("name");
         Integer status = CommonUtils.getIntegerValue(para.get("status"));
         HashMap<String,Object> hs=new HashMap<>();
-        //测试提交
+        //测试提交git
         List<User> userList = null;
         if(StringUtils.equals(operator,"admin")){
             userList = userService.searchUserList(hs,pageIndex,pageSize,username,name,status);
