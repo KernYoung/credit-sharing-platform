@@ -53,14 +53,14 @@ public class WebConfiguration implements WebMvcConfigurer {
         excludePath.add("/user/login");
         excludePath.add("/common/logCreditOper");
         excludePath.add("/error**");
-        excludePath.add("/swagger-resources/**");
+//        excludePath.add("/swagger-resources/**");
         excludePath.add("/webjars/**");
-        excludePath.add("/v2/**");
-        excludePath.add("/v3/**");
-        excludePath.add("/swagger-ui.html/**");
-        excludePath.add("/swagger-ui/index.html/**");
-        excludePath.add("/swagger-ui/**");
-        excludePath.add("/swagger/**");
+//        excludePath.add("/v2/**");
+//        excludePath.add("/v3/**");
+//        excludePath.add("/swagger-ui.html/**");
+//        excludePath.add("/swagger-ui/index.html/**");
+//        excludePath.add("/swagger-ui/**");
+//        excludePath.add("/swagger/**");
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(excludePath);

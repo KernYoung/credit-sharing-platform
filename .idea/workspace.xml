@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68a577fd-5ec6-4546-8577-d018169738b6" name="Default Changelist" comment="">
+    <list default="true" id="68a577fd-5ec6-4546-8577-d018169738b6" name="Default Changelist" comment="交接">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/config/WebConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fanruan/platform/config/WebConfiguration.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +93,7 @@
     </option>
     <option name="enabledProfiles">
       <list>
-        <option value="uat" />
+        <option value="prod" />
       </list>
     </option>
     <option name="disabledProfiles">
@@ -178,6 +179,17 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -393,7 +405,9 @@
       <workItem from="1650018883842" duration="186355000" />
       <workItem from="1650878286595" duration="46298000" />
       <workItem from="1651825699748" duration="31581000" />
-      <workItem from="1652321590635" duration="318000" />
+      <workItem from="1652321590635" duration="8270000" />
+      <workItem from="1652435164394" duration="1138000" />
+      <workItem from="1652664420546" duration="2245000" />
     </task>
     <task id="LOCAL-00001" summary="将申请数据落库">
       <created>1611216222411</created>
@@ -423,7 +437,14 @@
       <option name="project" value="LOCAL" />
       <updated>1652317929064</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="交接">
+      <created>1652322061439</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1652322061439</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1636,13 +1657,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
-          <line>925</line>
-          <option name="timeStamp" value="1097" />
+          <line>1084</line>
+          <option name="timeStamp" value="1098" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
-          <line>1084</line>
-          <option name="timeStamp" value="1098" />
+          <line>989</line>
+          <option name="timeStamp" value="1099" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/fanruan/platform/service/CompanyService.java</url>
+          <line>930</line>
+          <option name="timeStamp" value="1100" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
