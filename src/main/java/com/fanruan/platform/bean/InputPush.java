@@ -45,7 +45,7 @@ public class InputPush {
         /**
          *
          */
-        @Column(name="PROMPTINFO")
+        @Column(name="PROMPTINFO",columnDefinition="Clob")
         private String  promptinfo;
         /**
          *
