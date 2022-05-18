@@ -29,7 +29,7 @@ public class BlackPush {
     @Column(name="RESULT")
     private String result;
 
-    @Column(name="PROMPTINFO")
+    @Column(name="PROMPTINFO",columnDefinition="Clob")
     private String promptInfo;
 
 
