@@ -294,10 +294,10 @@ public class UserService {
             }
 
             User result = userDao.saveAndFlush(user);
-
-            if(isNew){//新增用户同步到FR
-                insertUserToFr(user);
-            }
+            //确认过不同步用户0519
+//            if(isNew){//新增用户同步到FR
+//                insertUserToFr(user);
+//            }
 
             updatePermission(operator, result.getUserId(), permissionRoles);
 
