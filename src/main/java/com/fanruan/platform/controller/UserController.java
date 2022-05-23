@@ -228,6 +228,12 @@ public class UserController{
         String username = (String)para.get("username");
         String name = (String)para.get("name");
         String companyCode = (String)para.get("companyCode");
+        if(companyCode==null||companyCode.equals("")){
+            List<UserCompany> companyList = commonService.getUserCompany(operator);
+            if(companyList!=null&&!companyList.equals("")){
+                companyCode = companyList.get(0).getCode();
+            }
+        }
         Boolean isLevel = (Boolean)para.get("isLevel");
         Integer status = CommonUtils.getIntegerValue(para.get("status"));
         HashMap<String,Object> hs=new HashMap<>();
