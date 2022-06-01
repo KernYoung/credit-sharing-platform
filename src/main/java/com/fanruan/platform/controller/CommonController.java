@@ -2043,6 +2043,30 @@ public class CommonController {
         return objectMapper.writeValueAsString(hs);
     }
 
+    @RequestMapping(value = "/common/ZCX/downloadPDF/{pdfName}", method = RequestMethod.GET)
+    @ResponseBody
+    public String getJsondownloadZcxPDF(@PathVariable("pdfName") String pdfName, HttpServletResponse response) throws IOException {
+
+        HashMap<String,Object> hs=new HashMap<>();
+        ObjectMapper objectMapper=new ObjectMapper();
+        String fileNameUat = "/home/ftpuser/zcxpdf" + pdfName;
+        File file = new File(fileNameUat);
+        try {
+            //加载文件
+            InputStream is = new BufferedInputStream(new FileInputStream(file));
+            response.addHeader("Content-Disposition", "attachment;filename=" + new String(fileNameUat.getBytes("UTF-8"), "ISO-8859-1"));
+            ServletOutputStream outputStream = response.getOutputStream();
+            response.setContentType("application/octet-stream");
+            IOUtils.copy(is,outputStream,1024);
+            hs.put("code","0");
+        } catch (Exception e) {
+            e.printStackTrace();
+            hs.put("code","1");
+            hs.put("msg","文件下载出错");
+        }
+        return objectMapper.writeValueAsString(hs);
+    }
+
     @RequestMapping(value = "/common/ZXB/getEdiMessages", method = RequestMethod.POST)
     @ResponseBody
     public String getEdiMessages( @RequestBody Map<String,Object> param) throws JsonProcessingException, ServiceException {

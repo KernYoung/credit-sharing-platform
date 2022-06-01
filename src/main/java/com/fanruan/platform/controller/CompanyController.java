@@ -993,6 +993,32 @@ public class CompanyController {
         return objectMapper.writeValueAsString(hs);
     }
 
+    @RequestMapping(value = "/company/ZCX/getPDF/{pdfName}", method = RequestMethod.GET)
+    @ResponseBody
+    public String getZcxPDF(@PathVariable("pdfName") String pdfName, HttpServletResponse response) throws JsonProcessingException {
+        HashMap<String,Object> hs=new HashMap<>();
+        ObjectMapper objectMapper=new ObjectMapper();
+        String noticeSerialno = pdfName;
+        String filePath = "/home/ftpuser/zcxpdf/";
+//        String filePath = "/Users/yangwenqiang/Temp/";
+        String fileName = noticeSerialno;
+        File file = new File(filePath+fileName);
+        try {
+            //加载文件
+            InputStream is = new BufferedInputStream(new FileInputStream(file));
+            response.addHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("UTF-8"), "ISO-8859-1"));
+            ServletOutputStream outputStream = response.getOutputStream();
+            response.setContentType("application/octet-stream");
+            IOUtils.copy(is,outputStream,1024);
+            hs.put("code","0");
+        } catch (Exception e) {
+            e.printStackTrace();
+            hs.put("code","1");
+            hs.put("msg","文件下载出错");
+        }
+        return objectMapper.writeValueAsString(hs);
+    }
+
     @RequestMapping(value = "/company/getNewCompany", method = RequestMethod.POST)
     @ResponseBody
     public String getNewCompany( @RequestBody Map<String,Object> param) throws JsonProcessingException {
