@@ -53,7 +53,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         String tokenId = request.getParameter("tokenId");
         System.out.println(requestURI);
-        if(requestURI.startsWith("//common/ZXB/downloadPDF/") || requestURI.startsWith("/common/ZXB/downloadPDF/") ||requestURI.contains("getAllBusinessInfoNoToken") ||
+        if(requestURI.startsWith("//common/ZXB/downloadPDF/") || requestURI.startsWith("/common/ZXB/downloadPDF/")|| requestURI.startsWith("//company/ZCX/getPDF/") || requestURI.startsWith("/company/ZCX/getPDF/") ||requestURI.contains("getAllBusinessInfoNoToken") ||
                 requestURI.contains("getApplyProgressListNoToken")){
             return true;
         }
