@@ -4,10 +4,10 @@ server:
 spring:
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver
-    url: jdbc:oracle:thin:@10.0.130.27:1521:orcl
+    url: jdbc:oracle:thin:@10.0.130.84:1521:orcl
 #    url: jdbc:oracle:thin:@10.0.119.2:1521:orcl
-    username: CREDITUSER
-    password: GMzx2021
+    username: BIUSER
+    password: GMfr2020
 #    username: biuser
 #    password: GMfr2020
 
