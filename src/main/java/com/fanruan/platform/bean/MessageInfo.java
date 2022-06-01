@@ -24,7 +24,7 @@ public class MessageInfo {
     @Column(name = "PUSH_FLAG")
     private String pushFlag;
 
-    @Column(name = "PROMPTINFO",columnDefinition="Clob")
+    @Column(name = "PROMPTINFO")
     private String promptinfo;
 
     @Column(name = "PUSH_TIME")
