@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fanruan.platform.mapper.VisitLogMapper">
+    <select id="getUserVisit" resultType="com.fanruan.platform.bean.UserVisit" parameterType="com.fanruan.platform.bean.ReportParameter">
+        select to_char(Q_DATE,'YYYY-MM-DD') billDate
+        ,count(distinct ID) visitNum
+        ,count(distinct USER_NAME) visitUserNum
+        ,count(distinct TO_PATH) visitPageNum
+        from (
+        select a.* from LOG_CREDIT_OPER a
+        left join credit_user b on a.user_code = b.username
+        left join DIM_ORG c on b.company_name = c.subcompanyname
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            AND ${companyName}
+        </if>
+        <if test="startDate!=null and startDate!=''">
+            AND to_char(Q_DATE,'YYYY-MM')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM')
+        </if>
+        <if test="endDate!=null and endDate!=''">
+            AND to_char(Q_DATE,'YYYY-MM')&lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM')
+        </if>
+        )
+        where USER_NAME IS NOT NULL
+        group by to_char(Q_DATE,'YYYY-MM-DD')
+
+    </select>
+
+    <select id="getUserVisitList" resultType="com.fanruan.platform.bean.UserVisitList">
+        select distinct B.NAME AS USERNAME,b.username userCode,user_code,a.user_code || '('|| b.NAME ||')' as name,c.companyname,c.subcompanyname,count(a.ID) ID,count(distinct a.TO_PATH) PAGE,max(a.Q_DATE)  AS TIME
+        from (
+        select a.* from LOG_CREDIT_OPER a
+        left join credit_user b on a.user_code = b.username
+        left join DIM_ORG c on b.company_name = c.subcompanyname
+        where 1=1
+        <if test="startDate!=null and startDate!=''">
+        and to_char(Q_DATE,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        <if test="endDate!=null and endDate!=''">
+        and to_char(Q_DATE,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        <if test="companyName!=null and companyName!=''">
+            AND ${companyName}
+        </if>
+        ) a
+        left join credit_user b on a.USER_CODE = b.username
+        left join DIM_org c on b.company_name = c.subcompanyname
+        where 1=1
+        and a.USER_NAME is not null and name is not null
+        group by b.NAME,c.companyname,c.subcompanyname,a.user_code,b.username
+        ORDER BY c.companyname,ID DESC
+
+    </select>
+
+    <select id="getUseUserCompanyName" resultType="map">
+    select count(*) as userNumber,b.companyname as companyName FROM CREDIT_USER A LEFT JOIN DIM_ORG B on a.company_name = b.subcompanyname  WHERE STATUS = 1
+group by b.companyname
+    </select>
+
+    <select id="getUserBehavior" resultType="com.fanruan.platform.bean.UserBehavior">
+        select rownum no,USERNAME,operationTime,visitResource,pageName from (select A.ID
+        ,A.USER_NAME USERNAME
+        ,A.Q_DATE operationTime
+        ,A.TO_PATH visitResource
+        ,CASE
+        WHEN A.TO_PATH='/ZxbApplyList'
+        THEN '信保报告审核'
+        WHEN A.TO_PATH='/'
+        THEN '登录页'
+        WHEN A.TO_PATH||NVL(A.TO_PAGE_NAME,'0')='/iframePage0'
+        THEN '访问日志'
+        ELSE TO_PAGE_NAME
+        END AS pageName
+        from (
+        select a.* from LOG_CREDIT_OPER a
+        left join credit_user b on a.user_code = b.username
+        left join DIM_ORG c on b.company_name = c.subcompanyname
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            AND ${companyName}
+        </if>
+        <if test="userCode!=null and userCode!=''">
+            AND b.username=#{userCode}
+        </if>
+        ) A
+        where 1=1
+
+        <if test="startDate!=null and startDate!=''">
+            and to_char(A.Q_DATE,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        <if test="endDate!=null and endDate!=''">
+            and to_char(A.Q_DATE,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+
+        AND NOT EXISTS(SELECT * FROM (
+        select a.* from LOG_CREDIT_OPER a
+        left join credit_user b on a.user_code = b.username
+        left join DIM_ORG c on b.company_name = c.subcompanyname
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            AND ${companyName}
+        </if>
+        <if test="userCode!=null and userCode!=''">
+            AND b.username=#{userCode}
+        </if>
+        ) B WHERE NVL(A.USER_NAME,'0')='0' AND A.TO_PATH = '/')
+        order by A.Q_DATE desc)
+    </select>
+    <select id="getLogMonthActive" resultType="com.fanruan.platform.bean.LogMonthActive">
+       WITH ds1 as(
+        select
+        count(*) as 启用用户,
+        b.companyname,
+        c.shortname,
+        CASE WHEN c.shortname IN('浙商资产','浙江东方') THEN '金融' WHEN b.part='制造' THEN '其他' ELSE b.part END AS part  FROM CREDIT_USER A
+        LEFT JOIN DIM_ORG B on a.company_name = b.subcompanyname
+        LEFT JOIN DIM_ORG C on b.companyname= c.subcompanyname
+        WHERE STATUS = 1
+        group by b.companyname,c.shortname,CASE WHEN c.shortname IN('浙商资产','浙江东方') THEN '金融' WHEN b.part='制造' THEN '其他' ELSE b.part END
+        ),
+        ds2 as(
+        select distinct
+        c.companyname,
+        c.companycode,
+        count(a.ID) 访问次数,
+        count(distinct a.user_code) 访问人数
+        from (
+        select a.* from LOG_CREDIT_OPER a
+        left join credit_user b on a.user_code = b.username
+        left join DIM_ORG c on b.company_name = c.subcompanyname
+        where 1=1
+        ) a
+        left join credit_user b on a.USER_CODE = b.username
+        left join DIM_org c on b.company_name = c.subcompanyname
+        where 1=1
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+            <if test="endDate!=null and endDate!=''">
+                and SUBSTR(to_char(a.Q_DATE,'YYYY-MM-DD'),1,7)=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+            </if>
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            <if test="endDate!=null and endDate!=''">
+                and SUBSTR(to_char(a.Q_DATE,'YYYY-MM-DD'),1,7)&lt;=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+            </if>
+            <if test="startDate!=null and startDate!=''">
+                and SUBSTR(to_char(a.Q_DATE,'YYYY-MM-DD'),1,7)&gt;=SUBSTR(to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+            </if>
+        </if>
+        and a.USER_NAME is not null and name is not null
+        group by c.companyname,c.companycode
+        )
+        SELECT
+        ds1.shortname companyName,
+        CASE ds1.SHORTNAME WHEN  '浙江东方' THEN 1
+        WHEN  '浙商资产' THEN 2
+        WHEN  '浙金信托' THEN 3
+        WHEN  '大地期货' THEN 4
+        WHEN  '中韩人寿' THEN 5
+        WHEN  '浙江粮油' THEN 6
+        WHEN  '浙江土畜' THEN 7
+        WHEN  '浙纺公司' THEN 8
+        WHEN  '浙江化工' THEN 9
+        WHEN  '中大技术' THEN 10
+        WHEN  '东方机电' THEN 11
+        WHEN  '国贸云商' THEN 12
+        WHEN  '国际供应链公司' THEN 13
+        WHEN  '省中医药集团' THEN 14
+        WHEN  '英特集团' THEN 15
+        WHEN  '康恩贝' THEN 16
+        WHEN  '集团本部' THEN 17
+        WHEN  '国贸资产' THEN 18
+        ELSE 19 END AS  OID,
+        nvl(DS1.PART,'其他')  AS businessSegments,
+        CASE part WHEN  '金融' THEN 1
+        WHEN  '商贸' THEN 2
+        WHEN  '医药' THEN 3
+        ELSE 4 END AS  FID,
+        NVL(启用用户,0) AS userNum,
+        NVL(访问次数,0) AS visitNum,
+        NVL(访问人数,0) AS activeUserNum,
+        case when NVL(启用用户,0)=0 then null else NVL(访问人数,0)/NVL(启用用户,0) end as activeUserRatio,
+        case when NVL(访问人数,0)=0 then null else  NVL(访问次数,0)/NVL(访问人数,0) end  as acticeVisitRatio
+        FROM ds1 left join ds2 on ds1.companyname=ds2.companyname
+        where ds1.companyname IS NOT NULL
+        ORDER BY FID ,OID
+    </select>
+<!--
+    <select id="getLogMonthTotal" resultType="com.fanruan.platform.bean.LogMonthUse" resultMap="map">
+            select
+count(*) as userNum,
+count(case when ROLE_NAME='子管理员' THEN 1 END) as subAdmin,
+count(DISTINCT b.subcompanyname ) AS companyNum
+ FROM CREDIT_USER A
+LEFT JOIN DIM_ORG B on a.company_name = b.subcompanyname
+WHERE STATUS = 1
+    </select>
+    -->
+
+    <select id="getLogMonthUse" resultType="com.fanruan.platform.bean.LogMonthUse">
+        with m0 as(
+        select
+        b.companyname,
+        c.shortname,
+        CASE WHEN b.part='制造' THEN '其他'   WHEN b.companyname='浙江东方金融控股集团股份有限公司' THEN '金融' ELSE b.part END AS part FROM CREDIT_USER A
+        LEFT JOIN DIM_ORG B on a.company_name = b.subcompanyname
+        LEFT JOIN DIM_ORG C on b.companyname= c.subcompanyname
+        WHERE STATUS = 1
+        group by b.companyname,c.shortname,CASE WHEN b.part='制造' THEN '其他'  WHEN b.companyname='浙江东方金融控股集团股份有限公司' THEN '金融' ELSE b.part END
+        ),
+        m1 as(
+        SELECT
+        count(*) as 客商初筛,companyname
+        FROM (select a.*,d.companyname from ODS_TYC_GSINFO a LEFT JOIN(
+        select *
+        from (select ROW_NUMBER() OVER(PARTITION BY custom_name ORDER BY UPDATETIME asc) rn,a.*
+        from INPUT_CUSTOM_HAND a )
+        where rn = 1
+        ) b on a.input_name = b.custom_name
+        left join CREDIT_USER c on b.updateby = c.username
+        LEFT JOIN dim_org d on c.company_name = d.subcompanyname
+        where 1=1
+        and to_char(b.updatetime,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(b.updatetime,'YYYY-MM-DD')&gt;=to_char(to_date(#{tStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(b.updatetime,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        ) I
+        WHERE   INPUT_NAME IS NOT NULL
+        GROUP BY companyname
+        <!--天眼查客商初筛-->
+
+        ),
+        m2 as(
+        SELECT O.COMPANYNAME,COUNT(ID) as 天眼查使用 FROM CREDIT_COMPANY_EXTEND  E LEFT JOIN CREDIT_USER C ON E.UPDATEBY=C.USER_ID
+        LEFT JOIN DIM_ORG O ON O.SUBCOMPANYCODE =C.COMPANY_CODE
+        WHERE to_char(E.UPDATE_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(E.UPDATE_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{tStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(E.UPDATE_TIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        GROUP BY O.COMPANYNAME
+        <!--天眼查使用-->
+
+
+        ),
+        m3 as(
+        select SUM(CASE WHEN A.REPORT_TYPE='风险初筛' THEN 10 ELSE 2 END) AS 中诚信使用,c.companyname
+        from (select * from CREDIT_REPORT where UPDATE_BY <![CDATA[!= ]]>'null' )A left join CREDIT_USER B
+        on A.UPDATE_BY=B.USER_ID
+        left join DIM_ORG c on b.company_name = c.subcompanyname
+        where to_char(A.UPDATE_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and  to_char(A.UPDATE_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{zStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(A.UPDATE_TIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        GROUP BY c.companyname
+        <!--中诚信使用-->
+
+        ),
+        m4 as(
+        SELECT
+        C.companyname,
+        count(distinct P.NOTICESERIALNO ) AS 中信保使用
+        FROM ODS_ZXB_PDF P
+        INNER JOIN (SELECT NOTICESERIALNO,MAX(UPDATETIME) MAXTIME FROM ODS_ZXB_PDF  GROUP BY NOTICESERIALNO) D ON D.MAXTIME=P.UPDATETIME
+        INNER JOIN ODS_ZXB_REPORTAPPROVE R ON R.NOTICESERIALNO=P.NOTICESERIALNO
+        INNER JOIN LOG_ZXB_APPLY A ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
+        INNER  JOIN CREDIT_USER B ON A.UPDATEBY=B.USERNAME
+        INNER join DIM_ORG c on b.company_name = c.subcompanyname
+        WHERE ORDERSTATE='0'
+        and to_char(P.updatetime,'YYYY-MM-DD')&gt;=to_char(to_date(#{bStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        AND to_char(P.UPDATETIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        AND to_char(P.UPDATETIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        GROUP BY
+        C.companyname
+        <!--中信保使用-->
+
+        ),
+        m51 as(
+        SELECT CASE WHEN A.COMPANY IN ('浙江省国际贸易集团有限公司2','浙江省国际贸易集团有限公司1')
+        THEN '浙江省国际贸易集团有限公司'
+        ELSE A.COMPANY END as COMPANYNAME
+        ,COUNT( * )  AS 天眼查API
+        FROM (
+        SELECT
+        ENTNAME AS COMPANY
+        ,
+        CASE SUBSTR(TOKEN_ID,4,1)
+        WHEN '1'
+        THEN '中诚信'
+        WHEN '2'
+        THEN '天眼查'
+        WHEN '4'
+        THEN '天眼查'
+        END AS API
+        ,SUBSTR(REQUEST_TIME,1,7) AS RE
+        FROM
+        LOG_INTERFACE_REPORT L
+        LEFT JOIN CREDIT_API_RELATION R ON SUBSTR(TOKEN_ID,1,3)=ENT_TOKENID
+        WHERE
+        L.TOKEN_ID IS NOT NULL
+        AND  SUBSTR(REQUEST_TIME,1,10) &gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        AND   SUBSTR(REQUEST_TIME,1,10)&gt;=to_char(to_date(#{tStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        AND  SUBSTR(REQUEST_TIME,1,10) &lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+
+        ) A
+        WHERE
+        API ='天眼查'
+
+        GROUP BY
+        A.COMPANY
+        <!--API调用-->
+        ),
+        m52 as(
+        SELECT CASE WHEN A.COMPANY IN ('浙江省国际贸易集团有限公司2','浙江省国际贸易集团有限公司1')
+        THEN '浙江省国际贸易集团有限公司'
+        ELSE A.COMPANY END as COMPANYNAME
+        ,COUNT( * )*10  AS 中诚信API
+        FROM (
+        SELECT
+        ENTNAME AS COMPANY
+        ,
+        CASE SUBSTR(TOKEN_ID,4,1)
+        WHEN '1'
+        THEN '中诚信'
+        WHEN '2'
+        THEN '天眼查'
+        WHEN '4'
+        THEN '天眼查'
+        END AS API
+        ,SUBSTR(REQUEST_TIME,1,7) AS RE
+        FROM
+        LOG_INTERFACE_REPORT L
+        LEFT JOIN CREDIT_API_RELATION R ON SUBSTR(TOKEN_ID,1,3)=ENT_TOKENID
+        WHERE
+        L.TOKEN_ID IS NOT NULL
+        AND  SUBSTR(REQUEST_TIME,1,10) &gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        AND  SUBSTR(REQUEST_TIME,1,10) &gt;=to_char(to_date(#{zStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        AND  SUBSTR(REQUEST_TIME,1,10)&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        ) A
+        WHERE
+        API ='中诚信'
+
+        GROUP BY
+        A.COMPANY
+        <!--API调用-->
+
+
+        ),
+        m6 as(
+
+        SELECT
+        DS1.COMPANYNAME,count(*) as 天眼查推送
+        from ODS_TYC_PUSHSTRUCT o
+        left join (select * from (
+        select a.*
+        ,b.name
+        ,TO_CHAR(TO_TIMESTAMP(d.updatetime,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as updatetime,c.companyname
+        from CREDIT_FOCUS_RELATIONS a
+        left join credit_user b on a.user_id = b.user_id
+        left join DIM_ORG c
+        on b.company_name = c. subcompanyname
+        left join log_tyc_concern d
+        on b.username = d.updateby and d.entname = a.company_name
+        )
+        where 1=1
+        and RELATIONS LIKE '%"tianyancha":1%') ds1
+        on o.COMPANYNAME=ds1.COMPANY_NAME
+        where  to_char(o.UPDATETIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(o.UPDATETIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{tStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        AND to_char(o.UPDATETIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        group by ds1.COMPANYNAME
+        <!--预警推送-->
+
+
+        ),
+        ds1 as(select * from (
+        select a.*
+        ,b.name
+        ,TO_CHAR(TO_TIMESTAMP(d.updatetime,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as updatetime,c.companyname
+        from CREDIT_FOCUS_RELATIONS a
+        left join credit_user b on a.user_id = b.user_id
+        left join DIM_ORG c
+        on b.company_name = c. subcompanyname
+        left join log_zcx_concern d
+        on b.username = d.updateby and d.entname = a.company_name
+        )
+        where 1=1
+        and RELATIONS LIKE '%"zhongchengxin":1%'
+        ),
+        ds2 as(
+        SELECT
+        DS1.COMPANYNAME,
+        count(*) as  NUM from ODS_ZCX_NEWSPUBOPINION o
+        left join ds1
+        on o.ENTERPRISE_NAME=ds1.COMPANY_NAME
+        where TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &lt;=#{endDate} and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &gt;=#{startDate}
+        and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &gt;=#{zStart}
+        group by DS1.COMPANYNAME
+        UNION ALL
+        SELECT
+        DS1.COMPANYNAME,
+        count(*) as  NUM from ODS_ZCX_RISKEVENT o
+        left join ds1
+        on o.ENTERPRISE_NAME=ds1.COMPANY_NAME
+        where TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &lt;=#{endDate} and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &gt;=#{startDate}
+        and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &gt;=#{zStart}
+        group by DS1.COMPANYNAME
+        ),
+        m7 as(
+        SELECT  COMPANYNAME,SUM(NUM) as 中诚信推送  FROM ds2 group by COMPANYNAME
+        <!--风险事件&新闻舆情-->
+
+        ),
+        m8 as(
+        select COMPANYNAME,COUNT(DISTINCT COMPANY_NAME) as 天眼查关注 from (
+        select a.*,b.name,TO_CHAR(TO_TIMESTAMP(d.updatetime,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as updatetime,c.companyname from CREDIT_FOCUS_RELATIONS a left join credit_user b on a.user_id = b.user_id
+        left join DIM_ORG c on b.company_name = c. subcompanyname
+        left join log_tyc_concern d on b.username = d.updateby and d.entname = a.company_name
+
+        )
+        where 1=1 and substr(updatetime,1,10)&gt;=SUBSTR(to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,10)
+        AND substr(updatetime,1,10)&lt;=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,10)
+        and RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANYNAME
+        <!--天眼查关注-->
+
+        ),
+        m9 as(
+        select COMPANYNAME,COUNT(DISTINCT COMPANY_NAME)*100 as 中诚信关注 from (
+        select a.*
+        ,b.name
+        ,TO_CHAR(TO_TIMESTAMP(d.updatetime,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as updatetime,c.companyname
+        from CREDIT_FOCUS_RELATIONS a
+        left join credit_user b on a.user_id = b.user_id
+        left join DIM_ORG c
+        on b.company_name = c. subcompanyname
+        left join log_zcx_concern d
+        on b.username = d.updateby and d.entname = a.company_name
+
+        )
+        where 1=1  and substr(updatetime,1,10)&gt;=SUBSTR(to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,10)
+        AND substr(updatetime,1,10)&lt;=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,10)
+        and RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANYNAME
+
+        <!--中诚信关注-->
+        )
+        SELECT
+        m0.COMPANYNAME,
+        m0.SHORTNAME,
+        CASE m0.SHORTNAME WHEN  '浙江东方' THEN 1
+        WHEN  '浙商资产' THEN 2
+        WHEN  '浙金信托' THEN 3
+        WHEN  '大地期货' THEN 4
+        WHEN  '中韩人寿' THEN 5
+        WHEN  '浙江粮油' THEN 6
+        WHEN  '浙江土畜' THEN 7
+        WHEN  '浙纺公司' THEN 8
+        WHEN  '浙江化工' THEN 9
+        WHEN  '中大技术' THEN 10
+        WHEN  '东方机电' THEN 11
+        WHEN  '国贸云商' THEN 12
+        WHEN  '国际供应链公司' THEN 13
+        WHEN  '省中医药集团' THEN 14
+        WHEN  '英特集团' THEN 15
+        WHEN  '康恩贝' THEN 16
+        WHEN  '集团总部' THEN 17
+        WHEN  '国贸资产' THEN 18
+        ELSE 19 END AS  OID,
+        CASE WHEN  SHORTNAME ='东方金控' THEN '金融' ELSE nvl(m0.PART,'其他') END AS PART,
+        CASE part WHEN  '金融' THEN 1
+        WHEN  '商贸' THEN 2
+        WHEN  '医药' THEN 3
+        ELSE 4 END AS  FID,
+        客商初筛,天眼查使用,中诚信使用,中信保使用,天眼查API,中诚信API,天眼查关注,中诚信关注,天眼查推送,中诚信推送
+        FROM M0
+        LEFT JOIN M1 ON m0.COMPANYNAME=m1.COMPANYNAME
+        LEFT JOIN M2 ON m0.COMPANYNAME=m2.COMPANYNAME
+        LEFT JOIN M3 ON m0.COMPANYNAME=m3.COMPANYNAME
+        LEFT JOIN M4 ON m0.COMPANYNAME=m4.COMPANYNAME
+        LEFT JOIN M51 ON m0.COMPANYNAME=m51.COMPANYNAME
+        LEFT JOIN M52 ON m0.COMPANYNAME=m52.COMPANYNAME
+        LEFT JOIN M6 ON m0.COMPANYNAME=m6.COMPANYNAME
+        LEFT JOIN M7 ON m0.COMPANYNAME=m7.COMPANYNAME
+        LEFT JOIN M8 ON m0.COMPANYNAME=m8.COMPANYNAME
+        LEFT JOIN M9 ON m0.COMPANYNAME=m9.COMPANYNAME
+        WHERE m0.COMPANYNAME is not null
+        ORDER BY FID,OID
+    </select>
+
+</mapper>
