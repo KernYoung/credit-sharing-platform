@@ -35,9 +35,12 @@ public final class DataSource {
 	private DruidDataSource init() {
 		DruidDataSource druidDataSource = new DruidDataSource();
 		druidDataSource.setDriverClassName("oracle.jdbc.OracleDriver");
-		druidDataSource.setUsername("CREDITUSER");
-		druidDataSource.setPassword("GMzx2021");
-		druidDataSource.setUrl("jdbc:oracle:thin:@10.0.130.27:1521:orcl");
+		//druidDataSource.setUsername("CREDITUSER");
+		//druidDataSource.setPassword("GMzx2021");
+		//druidDataSource.setUrl("jdbc:oracle:thin:@10.0.130.27:1521:orcl");
+		druidDataSource.setUsername("BIUSER");
+		druidDataSource.setPassword("GMfr2020");
+		druidDataSource.setUrl("jdbc:oracle:thin:@10.0.130.84:1521:orcl");
 		// 初始化连接大小
 		druidDataSource.setInitialSize(1);
 		// 连接池最大使用连接数量
