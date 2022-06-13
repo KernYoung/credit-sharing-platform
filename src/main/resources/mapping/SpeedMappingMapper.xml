@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fanruan.platform.mapper.SpeedMappingMapper" >
+  <resultMap id="BaseResultMap" type="com.fanruan.platform.bean.SpeedMapping" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="CONTINENT" property="continent" jdbcType="VARCHAR" />
+    <result column="NATION_CODE" property="nationCode" jdbcType="VARCHAR" />
+    <result column="NATION_NAME" property="nationName" jdbcType="VARCHAR" />
+    <result column="REPORT_TYPE" property="reportType" jdbcType="VARCHAR" />
+    <result column="SPEED" property="speed" jdbcType="VARCHAR" />
+    <result column="RESPONSE_DAYS" property="responseDays" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    rownum r,ID, CONTINENT, NATION_CODE, NATION_NAME, REPORT_TYPE, SPEED, RESPONSE_DAYS, REMARK
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from DIM_ZXB_SPEED_MAPPING
+    where ID = #{ID,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from DIM_ZXB_SPEED_MAPPING
+    where ID = #{ID,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.fanruan.platform.bean.SpeedMapping" >
+    insert into DIM_ZXB_SPEED_MAPPING (ID, CONTINENT, NATION_CODE, 
+      NATION_NAME, REPORT_TYPE, SPEED, 
+      RESPONSE_DAYS, REMARK)
+    values (#{id,jdbcType=VARCHAR}, #{continent,jdbcType=VARCHAR}, #{nationCode,jdbcType=VARCHAR},
+      #{nationName,jdbcType=VARCHAR}, #{reportType,jdbcType=VARCHAR}, #{speed,jdbcType=VARCHAR},
+      #{responseDays,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fanruan.platform.bean.SpeedMapping" >
+    insert into DIM_ZXB_SPEED_MAPPING
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ID != null" >
+        ID,
+      </if>
+      <if test="CONTINENT != null" >
+        CONTINENT,
+      </if>
+      <if test="NATION_CODE != null" >
+        NATION_CODE,
+      </if>
+      <if test="NATION_NAME != null" >
+        NATION_NAME,
+      </if>
+      <if test="REPORT_TYPE != null" >
+        REPORT_TYPE,
+      </if>
+      <if test="SPEED != null" >
+        SPEED,
+      </if>
+      <if test="RESPONSE_DAYS != null" >
+        RESPONSE_DAYS,
+      </if>
+      <if test="REMARK != null" >
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ID != null" >
+        #{ID,jdbcType=VARCHAR},
+      </if>
+      <if test="CONTINENT != null" >
+        #{CONTINENT,jdbcType=VARCHAR},
+      </if>
+      <if test="NATION_CODE != null" >
+        #{NATION_CODE,jdbcType=VARCHAR},
+      </if>
+      <if test="NATION_NAME != null" >
+        #{NATION_NAME,jdbcType=VARCHAR},
+      </if>
+      <if test="REPORT_TYPE != null" >
+        #{REPORT_TYPE,jdbcType=VARCHAR},
+      </if>
+      <if test="SPEED != null" >
+        #{SPEED,jdbcType=VARCHAR},
+      </if>
+      <if test="RESPONSE_DAYS != null" >
+        #{RESPONSE_DAYS,jdbcType=VARCHAR},
+      </if>
+      <if test="REMARK != null" >
+        #{REMARK,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fanruan.platform.bean.SpeedMapping" >
+    update DIM_ZXB_SPEED_MAPPING
+    <set >
+      <if test="CONTINENT != null" >
+        CONTINENT = #{CONTINENT,jdbcType=VARCHAR},
+      </if>
+      <if test="NATION_CODE != null" >
+        NATION_CODE = #{NATION_CODE,jdbcType=VARCHAR},
+      </if>
+      <if test="NATION_NAME != null" >
+        NATION_NAME = #{NATION_NAME,jdbcType=VARCHAR},
+      </if>
+      <if test="REPORT_TYPE != null" >
+        REPORT_TYPE = #{REPORT_TYPE,jdbcType=VARCHAR},
+      </if>
+      <if test="SPEED != null" >
+        SPEED = #{SPEED,jdbcType=VARCHAR},
+      </if>
+      <if test="RESPONSE_DAYS != null" >
+        RESPONSE_DAYS = #{RESPONSE_DAYS,jdbcType=VARCHAR},
+      </if>
+      <if test="REMARK != null" >
+        REMARK = #{REMARK,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fanruan.platform.bean.SpeedMapping" >
+    update DIM_ZXB_SPEED_MAPPING
+    set CONTINENT = #{continent,jdbcType=VARCHAR},
+      NATION_CODE = #{nationCode,jdbcType=VARCHAR},
+      NATION_NAME = #{nationName,jdbcType=VARCHAR},
+      REPORT_TYPE = #{reportType,jdbcType=VARCHAR},
+      SPEED = #{speed,jdbcType=VARCHAR},
+      RESPONSE_DAYS = #{responseDays,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="listByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select * from (select
+    <include refid="Base_Column_List" />
+    from DIM_ZXB_SPEED_MAPPING
+    <where >
+    1=1
+      <if test="id!= null" >
+        and ID = #{id}
+      </if>
+      <if test="continent!= null" >
+        and CONTINENT = #{continent}
+      </if>
+      <if test="nationCode!= null" >
+        and NATION_CODE = #{nationCode}
+      </if>
+      <if test="nationName!= null" >
+        and NATION_NAME = #{nationName}
+      </if>
+      <if test="reportType!= null" >
+        and REPORT_TYPE = #{reportType}
+      </if>
+      <if test="speed!= null" >
+        and SPEED = #{speed}
+      </if>
+      <if test="responseDays!= null" >
+        and RESPONSE_DAYS = #{responseDays}
+      </if>
+      <if test="remark!= null" >
+        and REMARK = #{remark}
+      </if>
+    </where>
+    and rownum&lt;= #{pageIndex} * #{pageSize}) where r&gt;= (#{pageIndex}-1) * #{pageSize}
+  </select>
+</mapper>
