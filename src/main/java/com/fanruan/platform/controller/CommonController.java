@@ -1,17 +1,15 @@
 package com.fanruan.platform.controller;
 
+import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSONObject;
 import com.fanruan.platform.bean.*;
 import com.fanruan.platform.constant.CommonUtils;
 import com.fanruan.platform.dao.NationCodeDao;
 import com.fanruan.platform.etl.RiskPushTimer;
-import com.fanruan.platform.service.CommonService;
-import com.fanruan.platform.service.CompanyService;
-import com.fanruan.platform.service.InputPointsService;
-import com.fanruan.platform.service.UserService;
-import com.fanruan.platform.util.CommonUtil;
-import com.fanruan.platform.util.DateUtil;
-import com.fanruan.platform.util.MD5Util;
+import com.fanruan.platform.mapper.HrZxbClientMapper;
+import com.fanruan.platform.service.*;
+import com.fanruan.platform.util.*;
+import com.fanruan.platform.util.excel.ExcelListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
@@ -22,6 +20,7 @@ import com.sinosure.exchange.edi.po.EntrustInput;
 import com.sinosure.exchange.edi.service.EdiException_Exception;
 import com.sinosure.exchange.edi.service.SolEdiProxyWebService;
 import com.sinosure.exchange.edi.service.SolEdiProxyWebServicePortType;
+import net.bytebuddy.asm.Advice;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -79,6 +78,9 @@ public class CommonController {
 
     @Autowired
     private CompanyService companyService;
+    @Autowired
+    private SpeedMappingService speedMappingService;
+
 
     @RequestMapping(value = "/common/getArea", method = RequestMethod.POST)
     @ResponseBody
@@ -1703,6 +1705,170 @@ public class CommonController {
         return objectMapper.writeValueAsString(hs);
     }
 
+    /**
+     * 国家申请速度映射表保存
+     * @param param
+     * @return
+     * @throws JsonProcessingException
+     */
+    @RequestMapping(value = "/common/ZXB/SaveSpeedMapping", method = RequestMethod.POST)
+    @ResponseBody
+    public  String saveSpeedMapping(@RequestBody Map<String,Object> param) throws Exception{
+        SpeedMapping speedMapping = setSpeedMapping(param);
+        try {
+           String json = speedMappingService.saveSpeedMapping(speedMapping);
+           return json;
+        }catch (Exception e){
+            String json = ReturnJson.getJson("1",e.getMessage(),null);
+            return json;
+        }
+    }
+
+    public String path = "C:\\Users\\Administrator\\Desktop\\契约锁";
+
+    @RequestMapping(value = "/common/ZXB/uploadSpeedMapping", method = RequestMethod.POST)
+    @ResponseBody
+    public String uploadSpeedMapping(HttpServletRequest request, @RequestParam("file") MultipartFile file) throws Exception{
+
+        try {
+            if(file.isEmpty()){
+                return ReturnJson.getJson("1","文件为空",null);
+            }
+            List<SpeedMapping> list = EasyExcel.read(file.getInputStream()).head(SpeedMapping.class).sheet(0).doReadSync();
+            speedMappingService.uploadSpeedMapping(list);
+            int size = list==null?0:list.size();
+            return ReturnJson.getJson("0","导入成功"+size+"条数据",null);
+        }catch (Exception e){
+            return ReturnJson.getJson("1","导入失败"+e.getMessage(),null);
+        }
+    }
+
+
+    /**
+     * 国家申请速度映射表查询
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/common/ZXB/getSpeedMapping", method = RequestMethod.POST)
+    @ResponseBody
+    public  String getSpeedMapping(@RequestBody Map<String,Object> param) throws Exception{
+
+        try {
+//            SpeedMapping speedMapping = setSpeedMapping(param);
+            return speedMappingService.getSpeedMapping(param);
+        }catch (Exception e){
+            String json = ReturnJson.getJson("1",e.getMessage(),null);
+            return json;
+        }
+    }
+
+    /**
+     * 组织机构维护
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/common/ZXB/SaveHrOrg", method = RequestMethod.POST)
+    @ResponseBody
+    public  String saveHrOrg(@RequestBody Map<String,Object> param) throws Exception{
+
+        try {
+            return   speedMappingService.saveHrOrg(param);
+        }catch (Exception e){
+            String json = ReturnJson.getJson("1",e.getMessage(),null);
+            return json;
+        }
+    }
+
+    /**
+     * 组织机构维护
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/common/ZXB/getHrOrg", method = RequestMethod.POST)
+    @ResponseBody
+    public  String getHrOrg(@RequestBody Map<String,Object> param) throws Exception{
+
+        try {
+            return   speedMappingService.getHrOrg(param);
+        }catch (Exception e){
+            String json = ReturnJson.getJson("1",e.getMessage(),null);
+            return json;
+        }
+    }
+
+    /**
+     * 组织机构树结构
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/common/ZXB/getHrOrgLevel", method = RequestMethod.POST)
+    @ResponseBody
+    public  String getHrOrgLevel(@RequestBody Map<String,Object> param) throws Exception{
+
+        try {
+            return   speedMappingService.getHrOrg(param);
+        }catch (Exception e){
+            String json = ReturnJson.getJson("1",e.getMessage(),null);
+            return json;
+        }
+    }
+
+
+
+    /**
+     * 信保代码维护
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/common/ZXB/SaveXbMapping", method = RequestMethod.POST)
+    @ResponseBody
+    public  String SaveXbMapping(@RequestBody Map<String,Object> param) throws Exception{
+
+        try {
+            String json = speedMappingService.saveXbMapping(param);
+            return json;
+        }catch (Exception e){
+            String json = ReturnJson.getJson("1",e.getMessage(),null);
+            return json;
+        }
+    }
+    /**
+     * 信保代码查询
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/common/ZXB/getXbMapping", method = RequestMethod.POST)
+    @ResponseBody
+    public String getXbMapping(@RequestBody Map<String,Object> param) throws Exception{
+        try {
+            String json = speedMappingService.getXbMapping(param);
+            return json;
+        }catch (Exception e){
+            String json = ReturnJson.getJson("1",e.getMessage(),null);
+            return json;
+        }
+    }
+
+
+    private  SpeedMapping setSpeedMapping(Map<String,Object> param){
+        SpeedMapping speedMapping = new SpeedMapping();
+        speedMapping.setId(param.get("id")==null?"":param.get("id").toString());
+        speedMapping.setContinent(param.get("continent")==null?"":param.get("continent").toString());
+        speedMapping.setNationCode(param.get("nationCode")==null?"":param.get("nationCode").toString());
+        speedMapping.setNationName(param.get("nationName")==null?"":param.get("nationName").toString());
+        speedMapping.setRemark(param.get("remark")==null?"":param.get("remark").toString());
+        speedMapping.setReportType(param.get("reportType")==null?"":param.get("reportType").toString());
+        speedMapping.setResponseDays(param.get("responseDays")==null?"":param.get("responseDays").toString());
+        speedMapping.setSpeed(param.get("speed")==null?"":param.get("speed").toString());
+        return speedMapping;
+    }
+
 
     /**
      * 信保报告申请接口入口
@@ -1718,6 +1884,15 @@ public class CommonController {
         String clientNo = "";
         String reportCorpCountryCode = "";
         Integer userId = null;
+
+        /**
+         * 校验国家紧急程度
+         */
+        if(commonService.onCheckSpeedMapping(param)){
+            hs.put("returnMsg","该紧急程度不能申请!");
+            hs.put("returnCode","500");
+            return objectMapper.writeValueAsString(hs);
+        }
 
         String userName = (String)param.get("userName");
         String reportBuyerNo = (String)param.get("reportBuyerNo");

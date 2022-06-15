@@ -8,6 +8,8 @@ import java.util.Map;
 public interface SpeedMappingMapper {
     int deleteByPrimaryKey(String ID);
 
+    int deleteAll();
+
     int insert(SpeedMapping record);
 
     int insertSelective(SpeedMapping record);
@@ -17,6 +19,8 @@ public interface SpeedMappingMapper {
     int updateByPrimaryKeySelective(SpeedMapping record);
 
     int updateByPrimaryKey(SpeedMapping record);
+
+    int insertBatch(List<SpeedMapping> list);
 
     List<SpeedMapping> listByMap(Map<String, Object> params);
 }

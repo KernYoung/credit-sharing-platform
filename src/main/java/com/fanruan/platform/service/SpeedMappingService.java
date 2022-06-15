@@ -9,6 +9,7 @@ import com.fanruan.platform.mapper.SpeedMappingMapper;
 import com.fanruan.platform.util.ReturnJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -115,8 +116,18 @@ public class SpeedMappingService {
         hrOrgMapper.updateByPrimaryKeySelective(hrOrg);
         return ReturnJson.getJson("0","保存成功",null);
     }
-
-
+    @Transactional(rollbackFor=Exception.class)
+    public String uploadSpeedMapping(List<SpeedMapping> list) throws Exception{
+        if(list!=null&&list.size()>0){
+            speedMappingMapper.deleteAll();
+            for (SpeedMapping speedMapping:
+                    list) {
+                speedMapping.setId(UUID.randomUUID().toString());
+            }
+            speedMappingMapper.insertBatch(list);
+        }
+        return null;
+    }
     public void onCheck(SpeedMapping speedMapping) throws Exception{
         //校验是否有相同的国家和紧急程度
         String nation_name = speedMapping.getNationName();//国家

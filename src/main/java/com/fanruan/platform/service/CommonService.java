@@ -7,6 +7,7 @@ import com.fanruan.platform.controller.CommonController;
 import com.fanruan.platform.dao.*;
 import com.fanruan.platform.mapper.CommonMapper;
 import com.fanruan.platform.mapper.CommonsMapper;
+import com.fanruan.platform.mapper.SpeedMappingMapper;
 import com.fanruan.platform.util.CommonUtil;
 import com.fanruan.platform.util.DateUtil;
 import com.google.common.collect.Lists;
@@ -71,6 +72,9 @@ public class CommonService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    SpeedMappingMapper speedMappingMapper;
 
     @Deprecated
     public List<BlackList> getBlackList() {//废弃
@@ -922,6 +926,38 @@ public class CommonService {
 
     public Integer getUserId(String userName) {
         return CommonUtils.getIntegerValue(commonsMapper.getUserId(userName));
+    }
+
+    /**
+     * 校验申请的紧急程度
+     * @param param
+     * @return
+     */
+    public boolean onCheckSpeedMapping(Map<String,Object> param){
+        boolean flag = false;
+        String reportCorpCountryCode = param.get("reportCorpCountryCode")==null?"":
+                param.get("reportCorpCountryCode").toString();
+        String speed = param.get("speed")==null?"":
+                param.get("speed").toString();
+        String speedName = "";
+        if("1".equals(speed)){
+            speedName="一般";
+        }else if("2".equals(speed)){
+            speedName="加急";
+        }else if("3".equals(speed)){
+            speedName="特急";
+        }
+        Map<String,Object> queryParam = new HashMap<>();
+        queryParam.put("nationCode",reportCorpCountryCode);
+        queryParam.put("speed",speedName);
+        queryParam.put("pageIndex","1");
+        queryParam.put("pageSize","10");
+        List<SpeedMapping> list = speedMappingMapper.listByMap(queryParam);
+        if(null==list||0==list.size()){
+            flag = true;
+        }
+
+        return flag;
     }
 
     public List<InputPush> getApplyInfo(String userName) {

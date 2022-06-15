@@ -375,6 +375,15 @@ public class CompanyController {
         HashMap<String,Object> hs=new HashMap<>();
         Integer userId = CommonUtils.getIntegerValue(param.get("userId")) ;
         User user = userService.getUserById(userId);
+        /**
+         * 校验国家紧急程度
+         */
+        if(commonService.onCheckSpeedMapping(param)){
+            hs.put("returnMsg","请检查国家对应紧急程度");
+            hs.put("returnCode","500");
+            ObjectMapper objectMapper=new ObjectMapper();
+            return objectMapper.writeValueAsString(hs);
+        }
 
         //jina
         List<String> reportApplyUserNameList = commonService.getReportApplyUserNameList(user.getUsername());

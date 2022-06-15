@@ -24,6 +24,11 @@
     delete from DIM_ZXB_SPEED_MAPPING
     where ID = #{ID,jdbcType=VARCHAR}
   </delete>
+
+  <delete id="deleteAll"  >
+    delete from DIM_ZXB_SPEED_MAPPING
+  </delete>
+
   <insert id="insert" parameterType="com.fanruan.platform.bean.SpeedMapping" >
     insert into DIM_ZXB_SPEED_MAPPING (ID, CONTINENT, NATION_CODE, 
       NATION_NAME, REPORT_TYPE, SPEED, 
@@ -32,6 +37,22 @@
       #{nationName,jdbcType=VARCHAR}, #{reportType,jdbcType=VARCHAR}, #{speed,jdbcType=VARCHAR},
       #{responseDays,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
   </insert>
+
+  <insert id="insertBatch" parameterType="java.util.List" >
+    insert into DIM_ZXB_SPEED_MAPPING
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+    ID, CONTINENT, NATION_CODE,
+      NATION_NAME, REPORT_TYPE, SPEED,
+      RESPONSE_DAYS, REMARK
+    </trim>
+    <foreach collection="list" close="" index="index" item="item" open="" separator="union all">
+      select  #{item.id,jdbcType=VARCHAR}, #{item.continent,jdbcType=VARCHAR}, #{item.nationCode,jdbcType=VARCHAR},
+      #{item.nationName,jdbcType=VARCHAR}, #{item.reportType,jdbcType=VARCHAR}, #{item.speed,jdbcType=VARCHAR},
+      #{item.responseDays,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}  from dual
+    </foreach>
+
+  </insert>
+
   <insert id="insertSelective" parameterType="com.fanruan.platform.bean.SpeedMapping" >
     insert into DIM_ZXB_SPEED_MAPPING
     <trim prefix="(" suffix=")" suffixOverrides="," >

@@ -30,6 +30,8 @@ public class SolEdiProxyWebService extends Service {
     static {
         URL url = null;
         try {
+            //132 测试
+            //105生产
             url = new URL("http://10.0.132.12:80/ediserver/ws_services/SolEdiProxyWebService?wsdl");
 //            url = new URL("http://10.0.105.3:8081/ediserver/ws_services/SolEdiProxyWebService?wsdl");
         } catch (MalformedURLException e) {
