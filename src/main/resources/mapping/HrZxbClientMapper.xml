@@ -22,28 +22,51 @@
     where code = #{code,jdbcType=VARCHAR}
   </update>
 
+    <select id="getCount" resultType="Integer" parameterType="java.util.Map">
+        select count(*) from
+        ( select rownum r,c.* from (
+        select INPUT_HR_ZXB_CLIENT.code code,g.companycode companyCode,g.companyname
+        companyName,INPUT_HR_ZXB_CLIENT.Name name,INPUT_HR_ZXB_CLIENT.Company_Type company_type from INPUT_HR_ZXB_CLIENT
+        LEFT JOIN DIM_ORG G ON INPUT_HR_ZXB_CLIENT.CODE=G.SUBCOMPANYCODE
+        where 1=1
+        <if test="code != null">
+            and code = #{code,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null">
+            and Name = #{name,jdbcType=VARCHAR}
+        </if>
+        ) c
+
+        ) where
+        1=1
+
+
+
+    </select>
+
   <select id="listByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >
 select * from
-   ( select rownum r,c.* from (SELECT CODE code,G.COMPANYCODE companyCode,G.COMPANYNAME companyName,name,'HR系统' AS company_type
-  FROM ODS_HR_ORG O
-  LEFT JOIN DIM_ORG G ON O.CODE=G.SUBCOMPANYCODE
-
-   UNION
-  SELECT CODE code,
-     '' AS companyCode,
-     '' AS  companyName,
-     name,
-     '手工填报' AS company_type
-  FROM INPUT_HR_ORG
-   ORDER BY COMPANYCODE,CODE) c
-    where 1=1
+   ( select rownum r,c.* from (
+      select INPUT_HR_ZXB_CLIENT.code code,g.companycode companyCode,INPUT_HR_ZXB_CLIENT.Clientno clientNo,g.companyname companyName,INPUT_HR_ZXB_CLIENT.Name name,INPUT_HR_ZXB_CLIENT.Company_Type company_type    from INPUT_HR_ZXB_CLIENT
+      LEFT JOIN DIM_ORG G ON INPUT_HR_ZXB_CLIENT.CODE=G.SUBCOMPANYCODE) c
+      where 1=1
       <if test="code != null" >
           and code = #{code,jdbcType=VARCHAR}
       </if>
       <if test="name != null" >
-          and name = #{name,jdbcType=VARCHAR}
+          and Name = #{name,jdbcType=VARCHAR}
       </if>
-     and rownum &lt;= #{pageIndex} * #{pageSize}
-    ) where  r &gt;= (#{pageIndex}-1) * #{pageSize}
+
+      <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
+          and rownum &lt;= #{pageIndex} * #{pageSize}
+      </if>
+
+    )  where
+     1=1
+      <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
+          and  r &gt;= (#{pageIndex}-1) * #{pageSize}
+      </if>
+
+
   </select>
 </mapper>

@@ -27,7 +27,7 @@ public class UserVisitList {
     //访问页面次数合计
     public Integer visitPageTotalNum;
     //最新访问时间
-    public Integer lastVisitTime;
+    public String lastVisitTime;
 
     public Object getAttributeValue(String key){
         if("companyName".equals(key)){

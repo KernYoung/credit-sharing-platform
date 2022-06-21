@@ -6,6 +6,7 @@ import com.fanruan.platform.bean.SpeedMapping;
 import com.fanruan.platform.mapper.HrOrgMapper;
 import com.fanruan.platform.mapper.HrZxbClientMapper;
 import com.fanruan.platform.mapper.SpeedMappingMapper;
+import com.fanruan.platform.util.DateUtil;
 import com.fanruan.platform.util.ReturnJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,14 +57,18 @@ public class SpeedMappingService {
         HrZxbClient hrZxbClient = new HrZxbClient();
         hrZxbClient.setClientNo(param.get("clientNo")==null?"":param.get("clientNo").toString());
         hrZxbClient.setCode(param.get("code")==null?"":param.get("code").toString());
-        hrZxbClient.setCompanyType(param.get("companyType")==null?"":param.get("companyType").toString());
+        if("".equals(hrZxbClient.getCode())||"".equals(hrZxbClient.getClientNo())){
+            return ReturnJson.getJson("1","信保代码为空",null);
+        }
         hrZxbClientMapper.updateByPrimaryKeySelective(hrZxbClient);
         return ReturnJson.getJson("0","保存成功",null);
     }
 
     public String getXbMapping(Map<String,Object> param) throws Exception{
+        int size = hrZxbClientMapper.getCount(param);
         List<HrZxbClient> hrZxbClientList = hrZxbClientMapper.listByMap(param);
-        return ReturnJson.getJson("0","查询工程",hrZxbClientList);
+//        int size = hrZxbClientList==null?0:hrZxbClientList.size();
+        return ReturnJson.getJson1("0","查询工程",hrZxbClientList,size);
     }
 
     /**
@@ -73,23 +78,41 @@ public class SpeedMappingService {
      * @throws Exception
      */
     public String getHrOrg(Map<String,Object> param) throws Exception{
-        List<HrOrg> hrOrgList = hrOrgMapper.listByMap(param);
+        String sCode = param.get("code")==null?"":param.get("code").toString();
+        HrOrg org = new HrOrg();
+        if(sCode.equals("")){
+            org.setCode(null);
+        }else{
+            org.setCode(sCode);
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("code",org.getCode());
+        List<HrOrg> orgVOs = hrOrgMapper.listByMap(params);
+        if(orgVOs==null||orgVOs.size()==0){
+            return ReturnJson.getJson("1","查询为空",null);
+        }
+        HrOrg org1 = new HrOrg();
+        org1.setSCode(org.getCode());
+        List<HrOrg> hrOrgList = getTreeData(org1);
         return ReturnJson.getJson("0","保存成功",hrOrgList);
     }
 
-    public String getHrOrgLevel() throws Exception{
-        List<HrOrg> treeData = new ArrayList<>();
 
-        return null;
-    }
+    public List<HrOrg> getTreeData(HrOrg hrOrg){
+        Map<String, Object> params = new HashMap<>();
+        params.put("sCode",hrOrg.getSCode());
+        //当前组
+        List<HrOrg> hrOrgs = hrOrgMapper.listByMap(params);
+        if(hrOrgs!=null&&hrOrgs.size()>0){
+            HrOrg hrOrg1 = new HrOrg();
+            for (int i = 0; i < hrOrgs.size(); i++) {
+                hrOrg1.setSCode(hrOrgs.get(i).getCode());
+                List<HrOrg> hrOrgs1 = getTreeData(hrOrg1);
+                hrOrgs.get(i).setChildHrOrg(hrOrgs1);
+            }
+        }
 
-    public void getTreeData(String orgCode,List<HrOrg> allHrOrg){
-        //当前组织
-        Map<String,Object> param = new HashMap<>();
-        param.put("code",orgCode);
-        List<HrOrg> hrOrgList = hrOrgMapper.listByMap(param);
-        HrOrg hrOrg = hrOrgList.get(0);
-
+        return hrOrgs;
     }
 
 
@@ -101,6 +124,10 @@ public class SpeedMappingService {
      * @throws Exception
      */
     public String saveHrOrg(Map<String,Object> param) throws Exception{
+        String orgType = param.get("orgType")==null?"":param.get("orgType").toString();
+        if(orgType!=null&&!orgType.equals("手工")){
+            return ReturnJson.getJson("0","来源为HR系统不能修改和增加",null);
+        }
         HrOrg hrOrg = new HrOrg();
         hrOrg.setCode(param.get("code")==null?"":param.get("code").toString());
         hrOrg.setName(param.get("name")==null?"":param.get("name").toString());
@@ -110,10 +137,17 @@ public class SpeedMappingService {
         hrOrg.setShortName(param.get("shortName")==null?"":param.get("shortName").toString());
         hrOrg.setSCode(param.get("sCode")==null?"":param.get("sCode").toString());
         hrOrg.setSName(param.get("sName")==null?"":param.get("sName").toString());
-        hrOrg.setUpdateTimeBy(param.get("updateTimeBy")==null?"":param.get("updateTimeBy").toString());
+        String time = DateUtil.trans2StandardFormat(new Date());
+        hrOrg.setUpdateTimeBy(param.get("updateTimeBy")== null?time:param.get("updateTimeBy").toString());
         hrOrg.setPkOrg(param.get("pkOrg")==null?"":param.get("pkOrg").toString());
         hrOrg.setRule(param.get("rule")==null?"":param.get("rule").toString());
-        hrOrgMapper.updateByPrimaryKeySelective(hrOrg);
+        if(hrOrg.getPkOrg()==null||hrOrg.getPkOrg().equals("")){
+            hrOrg.setPkOrg(UUID.randomUUID().toString());
+            hrOrgMapper.insert(hrOrg);
+        }else{
+            hrOrgMapper.updateByPrimaryKeySelective(hrOrg);
+        }
+
         return ReturnJson.getJson("0","保存成功",null);
     }
     @Transactional(rollbackFor=Exception.class)

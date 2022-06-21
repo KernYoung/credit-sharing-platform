@@ -32,14 +32,14 @@
   </delete>
   <insert id="insert" parameterType="com.fanruan.platform.bean.HrOrg" >
     insert into INPUT_HR_ORG (CODE, NAME, SPK_ORG, 
-      ENABLESTATE, SHORTNAME, SCODE, 
+      ENABLESTATE, SHORTNAME, SCODE,
       SNAME, TS, DR, UPDATETIME, 
       UPDATETIMEBY, PK_ORG, RULE
       )
-    values (#{CODE,jdbcType=VARCHAR}, #{NAME,jdbcType=VARCHAR}, #{SPK_ORG,jdbcType=VARCHAR}, 
-      #{ENABLESTATE,jdbcType=DECIMAL}, #{SHORTNAME,jdbcType=VARCHAR}, #{SCODE,jdbcType=VARCHAR}, 
-      #{SNAME,jdbcType=VARCHAR}, #{TS,jdbcType=VARCHAR}, #{DR,jdbcType=DECIMAL}, #{UPDATETIME,jdbcType=OTHER}, 
-      #{UPDATETIMEBY,jdbcType=VARCHAR}, #{PK_ORG,jdbcType=VARCHAR}, #{RULE,jdbcType=VARCHAR}
+    values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{spkOrg,jdbcType=VARCHAR},
+      #{enableState,jdbcType=DECIMAL}, #{shortName,jdbcType=VARCHAR}, #{sCode,jdbcType=VARCHAR},
+      #{sName,jdbcType=VARCHAR}, #{ts,jdbcType=VARCHAR}, #{dr,jdbcType=DECIMAL}, #{updateTime,jdbcType=VARCHAR},
+      #{updateTimeBy,jdbcType=VARCHAR}, #{pkOrg,jdbcType=VARCHAR}, #{rule,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.fanruan.platform.bean.HrOrg" >
@@ -130,44 +130,44 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.fanruan.platform.bean.HrOrg" >
     update INPUT_HR_ORG
     <set >
-      <if test="NAME != null" >
-        NAME = #{NAME,jdbcType=VARCHAR},
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="SPK_ORG != null" >
-        SPK_ORG = #{SPK_ORG,jdbcType=VARCHAR},
+      <if test="spkOrg != null" >
+        SPK_ORG = #{spkOrg,jdbcType=VARCHAR},
       </if>
-      <if test="ENABLESTATE != null" >
-        ENABLESTATE = #{ENABLESTATE,jdbcType=DECIMAL},
+      <if test="enableState != null" >
+        ENABLESTATE = #{enableState,jdbcType=DECIMAL},
       </if>
-      <if test="SHORTNAME != null" >
-        SHORTNAME = #{SHORTNAME,jdbcType=VARCHAR},
+      <if test="shortName != null" >
+        SHORTNAME = #{shortName,jdbcType=VARCHAR},
       </if>
-      <if test="SCODE != null" >
-        SCODE = #{SCODE,jdbcType=VARCHAR},
+      <if test="sCode != null" >
+        SCODE = #{sCode,jdbcType=VARCHAR},
       </if>
-      <if test="SNAME != null" >
-        SNAME = #{SNAME,jdbcType=VARCHAR},
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
       </if>
-      <if test="TS != null" >
-        TS = #{TS,jdbcType=VARCHAR},
+      <if test="sName != null" >
+        SNAME = #{sName,jdbcType=VARCHAR},
       </if>
-      <if test="DR != null" >
-        DR = #{DR,jdbcType=DECIMAL},
+      <if test="ts != null" >
+        TS = #{ts,jdbcType=VARCHAR},
       </if>
-      <if test="UPDATETIME != null" >
-        UPDATETIME = #{UPDATETIME,jdbcType=OTHER},
+      <if test="dr != null" >
+        DR = #{dr,jdbcType=DECIMAL},
       </if>
-      <if test="UPDATETIMEBY != null" >
-        UPDATETIMEBY = #{UPDATETIMEBY,jdbcType=VARCHAR},
+      <if test="updateTime != null" >
+        UPDATETIME = #{updateTime,jdbcType=OTHER},
       </if>
-      <if test="PK_ORG != null" >
-        PK_ORG = #{PK_ORG,jdbcType=VARCHAR},
+      <if test="updateTimeBy != null" >
+        UPDATETIMEBY = #{updateTimeBy,jdbcType=VARCHAR},
       </if>
-      <if test="RULE != null" >
-        RULE = #{RULE,jdbcType=VARCHAR},
+      <if test="rule != null" >
+        RULE = #{rule,jdbcType=VARCHAR},
       </if>
     </set>
-    where CODE = #{CODE,jdbcType=VARCHAR}
+    where pk_org = #{pkOrg,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fanruan.platform.bean.HrOrg" >
     update INPUT_HR_ORG
@@ -186,53 +186,27 @@
     where CODE = #{CODE,jdbcType=VARCHAR}
   </update>
   <select id="listByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select
-    <include refid="Base_Column_List" />
-    from INPUT_HR_ORG
-    <where >
-      <if test="CODE!= null" >
-        and CODE = #{CODE}
-      </if>
-      <if test="NAME!= null" >
-        and NAME = #{NAME}
-      </if>
-      <if test="SPK_ORG!= null" >
-        and SPK_ORG = #{SPK_ORG}
-      </if>
-      <if test="ENABLESTATE!= null" >
-        and ENABLESTATE = #{ENABLESTATE}
-      </if>
-      <if test="SHORTNAME!= null" >
-        and SHORTNAME = #{SHORTNAME}
-      </if>
-      <if test="SCODE!= null" >
-        and SCODE = #{SCODE}
-      </if>
-      <if test="SNAME!= null" >
-        and SNAME = #{SNAME}
-      </if>
-      <if test="TS!= null" >
-        and TS = #{TS}
-      </if>
-      <if test="DR!= null" >
-        and DR = #{DR}
-      </if>
-      <if test="UPDATETIME!= null" >
-        and UPDATETIME = #{UPDATETIME}
-      </if>
-      <if test="UPDATETIMEBY!= null" >
-        and UPDATETIMEBY = #{UPDATETIMEBY}
-      </if>
-      <if test="PK_ORG!= null" >
-        and PK_ORG = #{PK_ORG}
-      </if>
-      <if test="RULE!= null" >
-        and RULE = #{RULE}
-      </if>
-    </where>
-    <if test="pageOrder != null" >
-      order by #{pageOrder}
+      select * from (  select rownum r,c.* from (SELECT CODE code,NAME name,SHORTNAME shortName,SCODE sCode,SNAME sName,'NC' orgType,enableState FROM ODS_HR_ORG
+    UNION ALL
+    SELECT CODE code,NAME name,SHORTNAME shortName,SCODE sCode,SNAME sName, '手工' orgType,enableState FROM INPUT_HR_ORG
+    ORDER BY CODE) c where 1=1
+        <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
+          and rownum &lt;= #{pageIndex} * #{pageSize}
+        </if>
+        )
+       where  1=1
+       <if test="sCode!=null and sCode!=''">
+         and scode=#{sCode,jdbcType=VARCHAR}
+       </if>
+    <if test="code!=null and code!=''">
+      and code=#{code,jdbcType=VARCHAR}
     </if>
-    limit #{pageStart}, #{pageRows}
+
+        <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
+          and  r &gt;= (#{pageIndex}-1) * #{pageSize}
+        </if>
   </select>
+
+
+
 </mapper>

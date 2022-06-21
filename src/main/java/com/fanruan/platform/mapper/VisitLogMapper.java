@@ -16,6 +16,11 @@ public interface VisitLogMapper {
      * @return
      */
     public List<UserVisit> getUserVisit(ReportParameter reportParameter);
+
+    /**
+     *
+     */
+    public List<Map<String,Object>> getCompanyList(ReportParameter reportParameter);
     /**
      * 获取用户访问统计明细
      * @param reportParameter

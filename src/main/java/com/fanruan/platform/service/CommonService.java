@@ -937,6 +937,10 @@ public class CommonService {
         boolean flag = false;
         String reportCorpCountryCode = param.get("reportCorpCountryCode")==null?"":
                 param.get("reportCorpCountryCode").toString();
+        if(reportCorpCountryCode==null||reportCorpCountryCode.equals("")){
+//            param.put("speed",null);
+            return flag;
+        }
         String speed = param.get("speed")==null?"":
                 param.get("speed").toString();
         String speedName = "";

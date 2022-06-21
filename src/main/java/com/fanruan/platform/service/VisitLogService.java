@@ -33,6 +33,24 @@ public class VisitLogService {
         return usreVisitList;
     }
 
+    public List<String> getCompanyList(Map<String,Object> rpVO){
+        String userName = rpVO.get("userName")==null?"":rpVO.get("userName").toString();
+        ReportParameter rp = new ReportParameter();
+        rp.setUserName(userName);
+        List<String> companyNames = new ArrayList<>();
+        List list = visitLogMapper.getCompanyList(rp);
+        if(list!=null&&list.size()>0){
+            for (int i = 0; i < list.size(); i++) {
+                Map<String,Object> map = (Map<String,Object>)list.get(i);
+                String name = map.get("NAME")==null?"":map.get("NAME").toString();
+                if(!"".equals(name)){
+                    companyNames.add(name);
+                }
+            }
+        }
+        return companyNames;
+    }
+
     /**
      * 用户行为查询
      * @param rpVO
@@ -64,7 +82,7 @@ public class VisitLogService {
                 //处理成员公司启用总数
                 if(list!=null&&list.size()>0){
                     for (int j = 0; j < list.size(); j++) {
-                        Map<String,Object> map = list.get(i);
+                        Map<String,Object> map = list.get(j);
                         if(map.get("COMPANYNAME")==null)
                             continue;
                         String queryCompanyName = map.get("COMPANYNAME").toString();

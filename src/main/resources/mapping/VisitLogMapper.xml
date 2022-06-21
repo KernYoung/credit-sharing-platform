@@ -26,8 +26,15 @@
 
     </select>
 
+    <select id="getCompanyList" resultType="java.util.HashMap">
+        select distinct(name) name,code from (SELECT CODE,NAME,SHORTNAME,SCODE,SNAME FROM ODS_HR_ORG
+        UNION ALL
+        SELECT CODE,NAME,SHORTNAME,SCODE,SNAME FROM INPUT_HR_ORG
+        ORDER BY CODE) where (scode='010' or code='010')   order by code asc
+    </select>
+
     <select id="getUserVisitList" resultType="com.fanruan.platform.bean.UserVisitList">
-        select distinct B.NAME AS USERNAME,b.username userCode,user_code,a.user_code || '('|| b.NAME ||')' as name,c.companyname,c.subcompanyname,count(a.ID) ID,count(distinct a.TO_PATH) PAGE,max(a.Q_DATE)  AS TIME
+        select distinct B.NAME AS USERNAME,b.username userCode,user_code,a.user_code || '('|| b.NAME ||')' as name,c.companyname,c.subcompanyname,count(a.ID) visitNum,count(distinct a.TO_PATH) visitPageNum,max(a.Q_DATE)  AS lastVisitTime
         from (
         select a.* from LOG_CREDIT_OPER a
         left join credit_user b on a.user_code = b.username
@@ -48,7 +55,7 @@
         where 1=1
         and a.USER_NAME is not null and name is not null
         group by b.NAME,c.companyname,c.subcompanyname,a.user_code,b.username
-        ORDER BY c.companyname,ID DESC
+        ORDER BY c.companyname,visitNum DESC
 
     </select>
 

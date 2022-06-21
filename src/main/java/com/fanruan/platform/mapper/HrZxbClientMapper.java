@@ -11,4 +11,6 @@ public interface HrZxbClientMapper {
 
 
     List<HrZxbClient> listByMap(Map<String, Object> params);
+
+    int getCount(Map<String, Object> params);
 }

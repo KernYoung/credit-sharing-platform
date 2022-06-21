@@ -20,6 +20,8 @@ public class HrOrg {
 
     private String ts;
 
+    private String orgType;
+
     private Integer dr;
 
     private String updateTime;

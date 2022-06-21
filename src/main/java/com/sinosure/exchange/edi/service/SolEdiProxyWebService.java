@@ -18,26 +18,31 @@ import javax.xml.ws.Service;
  *
  */
 @WebServiceClient(name = "SolEdiProxyWebService",
-                 wsdlLocation = "http://10.0.132.12:80/ediserver/ws_services/SolEdiProxyWebService?wsdl",
-//                  wsdlLocation = "http://10.0.105.3:8081/ediserver/ws_services/SolEdiProxyWebService?wsdl",
+//                 wsdlLocation = "http://10.0.132.12:80/ediserver/ws_services/SolEdiProxyWebService?wsdl",
+                  wsdlLocation = "http://10.0.105.3:8081/ediserver/ws_services/SolEdiProxyWebService?wsdl",
                   targetNamespace = "http://service.edi.exchange.sinosure.com")
 public class SolEdiProxyWebService extends Service {
+    public final static String uri = "http://10.0.132.12:80";
+    //    public final static uri = "http://10.0.132.12:80";
     public final static URL WSDL_LOCATION;
+
     public final static QName SERVICE = new QName("http://service.edi.exchange.sinosure.com", "SolEdiProxyWebService");
     public final static QName SolEdiProxyWebServiceHttpPort = new QName("http://service.edi.exchange.sinosure.com", "SolEdiProxyWebServiceHttpPort");
-    public final static String Edi3Server = "http://10.0.132.12:80/ediserver/gateway.do";
+//    public final static String Edi3Server = "http://10.0.132.12:80/ediserver/gateway.do";
 //    public final static String Edi3Server = "http://10.0.105.3:8081/ediserver/gateway.do";
+    public final static String Edi3Server = uri+"/ediserver/gateway.do";
     static {
         URL url = null;
         try {
             //132 测试
             //105生产
-            url = new URL("http://10.0.132.12:80/ediserver/ws_services/SolEdiProxyWebService?wsdl");
+//            url = new URL("http://10.0.132.12:80/ediserver/ws_services/SolEdiProxyWebService?wsdl");
 //            url = new URL("http://10.0.105.3:8081/ediserver/ws_services/SolEdiProxyWebService?wsdl");
+            url = new URL(uri+"/ediserver/ws_services/SolEdiProxyWebService?wsdl");
         } catch (MalformedURLException e) {
             java.util.logging.Logger.getLogger(SolEdiProxyWebService.class.getName())
-                .log(java.util.logging.Level.INFO,
-                     "Can not initialize the default wsdl from {0}", "http://10.0.132.12:80/ediserver/ws_services/SolEdiProxyWebService?wsdl");
+                .log(java.util.logging.Level.INFO,"Can not initialize the default wsdl from {0}",url.toString());
+//                     "Can not initialize the default wsdl from {0}", "http://10.0.132.12:80/ediserver/ws_services/SolEdiProxyWebService?wsdl");
 //             "Can not initialize the default wsdl from {0}", "http://10.0.105.3:8081/ediserver/ws_services/SolEdiProxyWebService?wsdl");
         }
         WSDL_LOCATION = url;

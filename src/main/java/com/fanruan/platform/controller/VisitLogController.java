@@ -6,6 +6,7 @@ import com.fanruan.platform.bean.UserVisit;
 import com.fanruan.platform.bean.UserVisitList;
 import com.fanruan.platform.service.VisitLogService;
 import com.fanruan.platform.util.DateUtil;
+import com.fanruan.platform.util.ReturnJson;
 import com.fanruan.platform.util.SqlUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,6 +38,14 @@ public class VisitLogController {
         ReportParameter rpVo = getReportParameter(para);
         List<UserVisit> userVisitList =  visitLogService.getUserVisit(rpVo);
         String json = getJson("0","查询成功",userVisitList);
+        return json;
+    }
+    @RequestMapping(value = "/visitLog/getCompanyList",method = RequestMethod.POST)
+    @ResponseBody
+    public String getCompanyList(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
+
+        List<String> listName = visitLogService.getCompanyList(para);
+        String json = ReturnJson.getJson("0","查询成功",listName);
         return json;
     }
 
