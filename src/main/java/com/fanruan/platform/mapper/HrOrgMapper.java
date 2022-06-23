@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface HrOrgMapper {
-    int deleteByPrimaryKey(String CODE);
+    int deleteByPrimaryKey(String pk_org);
 
     int insert(HrOrg record);
 
@@ -19,4 +19,7 @@ public interface HrOrgMapper {
     int updateByPrimaryKey(HrOrg record);
 
     List<HrOrg> listByMap(Map<String, Object> params);
+    //查询启用
+    List<HrOrg> listByMap1(Map<String, Object> params);
+
 }

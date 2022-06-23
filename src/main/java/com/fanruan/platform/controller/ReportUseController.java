@@ -44,18 +44,18 @@ public class ReportUseController {
         //处理日期，如果开始日期和结束日期一样，开始日期为当月第一天，结束日期为当月最后一天
         String startDate = para.get("startDate").toString();
         String endDate = para.get("endDate").toString();
-        if(startDate.equals(endDate)){
-            int year = Integer.valueOf(startDate.substring(0,4));
-            int month = Integer.valueOf(startDate.substring(5,7));
-            String lastDay = DateUtil.getLastDayOfMonth(year,month);
-            startDate = startDate.substring(0,7)+"-01";
-            endDate = lastDay;
-            rpVo.setStartDate(startDate);
-            rpVo.setEndDate(endDate);
-        }else{
+//        if(startDate.equals(endDate)){
+//            int year = Integer.valueOf(startDate.substring(0,4));
+//            int month = Integer.valueOf(startDate.substring(5,7));
+//            String lastDay = DateUtil.getLastDayOfMonth(year,month);
+//            startDate = startDate.substring(0,7)+"-01";
+//            endDate = lastDay;
+//            rpVo.setStartDate(startDate);
+//            rpVo.setEndDate(endDate);
+//        }else{
             rpVo.setStartDate(para.get("startDate").toString());
             rpVo.setEndDate(para.get("endDate").toString());
-        }
+//        }
         String companyName = para.get("companyName")==null?"":para.get("companyName").toString();
         //将公司转换成可以in 查询
         List<String> companyNameList = new ArrayList<String>();
@@ -84,6 +84,8 @@ public class ReportUseController {
         rpVo.setQStart(qStart);
         String flag = para.get("flag")==null?"":para.get("flag").toString();
         rpVo.setFlag(flag);
+        String source = para.get("source")==null?"":para.get("source").toString();
+        rpVo.setSource(source);
         return rpVo;
     }
 
@@ -181,7 +183,7 @@ public class ReportUseController {
     @ResponseBody
     public String getTycFilterCustomerList(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
         ReportParameter rpVO = new ReportParameter();
-        rpVO = dealReportParameter(para,"d.companyName");
+        rpVO = dealReportParameter(para,"RES_ENAIL(B.COMPANY_NAME)");
         String json = reportUseService.getTycFilterCustomerList(rpVO);
         return json;
     }
@@ -197,7 +199,7 @@ public class ReportUseController {
     @ResponseBody
     public String getCustomFilter(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
         ReportParameter rpVO = new ReportParameter();
-        rpVO = dealReportParameter(para,"d.companyName");
+        rpVO = dealReportParameter(para,"RES_ENAIL(B.COMPANY_NAME)");
         String json = reportUseService.getCustomFilter(rpVO);
         return json;
     }

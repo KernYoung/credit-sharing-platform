@@ -1797,6 +1797,24 @@ public class CommonController {
             return json;
         }
     }
+    /**
+     * 组织机构维护查询启用
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/common/ZXB/getHrOrgEnable", method = RequestMethod.POST)
+    @ResponseBody
+    public  String getHrOrgEnable(@RequestBody Map<String,Object> param) throws Exception{
+
+        try {
+            return   speedMappingService.getHrOrgEnable(param);
+        }catch (Exception e){
+            String json = ReturnJson.getJson("1",e.getMessage(),null);
+            return json;
+        }
+    }
+
 
     /**
      * 组织机构树结构

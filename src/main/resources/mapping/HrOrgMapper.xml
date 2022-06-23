@@ -7,8 +7,8 @@
     <result column="SPK_ORG" property="spkOrg" jdbcType="VARCHAR" />
     <result column="ENABLESTATE" property="enableState" jdbcType="INTEGER" />
     <result column="SHORTNAME" property="shortName" jdbcType="VARCHAR" />
-    <result column="SCODE" property="sCode" jdbcType="VARCHAR" />
-    <result column="SNAME" property="sName" jdbcType="VARCHAR" />
+    <result column="SCODE" property="scode" jdbcType="VARCHAR" />
+    <result column="SNAME" property="sname" jdbcType="VARCHAR" />
     <result column="TS" property="ts" jdbcType="VARCHAR" />
     <result column="DR" property="dr" jdbcType="INTEGER" />
     <result column="UPDATETIME" property="updateTime" jdbcType="OTHER" />
@@ -28,7 +28,7 @@
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from INPUT_HR_ORG
-    where CODE = #{CODE,jdbcType=VARCHAR}
+    where pk_org = #{pkOrg,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.fanruan.platform.bean.HrOrg" >
     insert into INPUT_HR_ORG (CODE, NAME, SPK_ORG, 
@@ -37,8 +37,8 @@
       UPDATETIMEBY, PK_ORG, RULE
       )
     values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{spkOrg,jdbcType=VARCHAR},
-      #{enableState,jdbcType=DECIMAL}, #{shortName,jdbcType=VARCHAR}, #{sCode,jdbcType=VARCHAR},
-      #{sName,jdbcType=VARCHAR}, #{ts,jdbcType=VARCHAR}, #{dr,jdbcType=DECIMAL}, #{updateTime,jdbcType=VARCHAR},
+      #{enableState,jdbcType=DECIMAL}, #{shortName,jdbcType=VARCHAR}, #{scode,jdbcType=VARCHAR},
+      #{sname,jdbcType=VARCHAR}, #{ts,jdbcType=VARCHAR}, #{dr,jdbcType=DECIMAL}, #{updateTime,jdbcType=VARCHAR},
       #{updateTimeBy,jdbcType=VARCHAR}, #{pkOrg,jdbcType=VARCHAR}, #{rule,jdbcType=VARCHAR}
       )
   </insert>
@@ -130,40 +130,40 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.fanruan.platform.bean.HrOrg" >
     update INPUT_HR_ORG
     <set >
-      <if test="name != null" >
+      <if test="name != null and name!=''" >
         NAME = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="spkOrg != null" >
+      <if test="spkOrg != null and spkOrg!=''" >
         SPK_ORG = #{spkOrg,jdbcType=VARCHAR},
       </if>
-      <if test="enableState != null" >
+      <if test="enableState != null and enableState!=''" >
         ENABLESTATE = #{enableState,jdbcType=DECIMAL},
       </if>
-      <if test="shortName != null" >
+      <if test="shortName != null and shortName!=''" >
         SHORTNAME = #{shortName,jdbcType=VARCHAR},
       </if>
-      <if test="sCode != null" >
-        SCODE = #{sCode,jdbcType=VARCHAR},
+      <if test="scode != null and scode!=''" >
+        SCODE = #{scode,jdbcType=VARCHAR},
       </if>
-      <if test="code != null" >
+      <if test="code != null and code!=''" >
         code = #{code,jdbcType=VARCHAR},
       </if>
-      <if test="sName != null" >
-        SNAME = #{sName,jdbcType=VARCHAR},
+      <if test="sname != null and sname!=''" >
+        SNAME = #{sname,jdbcType=VARCHAR},
       </if>
-      <if test="ts != null" >
+      <if test="ts != null and ts!=''" >
         TS = #{ts,jdbcType=VARCHAR},
       </if>
-      <if test="dr != null" >
+      <if test="dr != null and dr!=''" >
         DR = #{dr,jdbcType=DECIMAL},
       </if>
-      <if test="updateTime != null" >
+      <if test="updateTime != null and updateTime!=''" >
         UPDATETIME = #{updateTime,jdbcType=OTHER},
       </if>
-      <if test="updateTimeBy != null" >
+      <if test="updateTimeBy != null and updateTimeBy!=''" >
         UPDATETIMEBY = #{updateTimeBy,jdbcType=VARCHAR},
       </if>
-      <if test="rule != null" >
+      <if test="rule != null and rule!=''" >
         RULE = #{rule,jdbcType=VARCHAR},
       </if>
     </set>
@@ -186,17 +186,19 @@
     where CODE = #{CODE,jdbcType=VARCHAR}
   </update>
   <select id="listByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >
-      select * from (  select rownum r,c.* from (SELECT CODE code,NAME name,SHORTNAME shortName,SCODE sCode,SNAME sName,'NC' orgType,enableState FROM ODS_HR_ORG
+    select * from (  select rownum r,c.* from (
+    SELECT CODE,NAME,SHORTNAME,SCODE,SNAME, '手工' orgType,ENABLESTATE,PK_ORG  FROM INPUT_HR_ORG where nvl(dr,0)=0
+
     UNION ALL
-    SELECT CODE code,NAME name,SHORTNAME shortName,SCODE sCode,SNAME sName, '手工' orgType,enableState FROM INPUT_HR_ORG
-    ORDER BY CODE) c where 1=1
+    SELECT CODE ,NAME ,SHORTNAME ,SCODE ,SNAME ,'NC' orgType,ENABLESTATE,PK_ORG FROM ODS_HR_ORG) c
+     order by code)
+   where 1=1
         <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
           and rownum &lt;= #{pageIndex} * #{pageSize}
         </if>
-        )
-       where  1=1
-       <if test="sCode!=null and sCode!=''">
-         and scode=#{sCode,jdbcType=VARCHAR}
+
+       <if test="scode!=null and scode!=''">
+         and scode=#{scode,jdbcType=VARCHAR}
        </if>
     <if test="code!=null and code!=''">
       and code=#{code,jdbcType=VARCHAR}
@@ -205,6 +207,31 @@
         <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
           and  r &gt;= (#{pageIndex}-1) * #{pageSize}
         </if>
+  </select>
+
+
+  <select id="listByMap1" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select * from (  select rownum r,c.* from (
+    SELECT CODE,NAME,SHORTNAME,SCODE,SNAME, '手工' orgType,ENABLESTATE,PK_ORG  FROM INPUT_HR_ORG where nvl(dr,0)=0
+
+    UNION ALL
+    SELECT CODE ,NAME ,SHORTNAME ,SCODE ,SNAME ,'NC' orgType,ENABLESTATE,PK_ORG FROM ODS_HR_ORG) c
+    order by code)
+     where 1=1
+    <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
+      and rownum &lt;= #{pageIndex} * #{pageSize}
+    </if>
+    <if test="scode!=null and scode!=''">
+      and scode=#{scode,jdbcType=VARCHAR}
+    </if>
+    <if test="code!=null and code!=''">
+      and code=#{code,jdbcType=VARCHAR}
+    </if>
+    and ENABLESTATE in('1','2')
+
+    <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
+      and  r &gt;= (#{pageIndex}-1) * #{pageSize}
+    </if>
   </select>
 
 

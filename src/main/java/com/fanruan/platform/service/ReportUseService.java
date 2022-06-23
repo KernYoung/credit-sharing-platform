@@ -153,7 +153,7 @@ public class ReportUseService {
               total.setUserNumber(totalUserNum);
               //中诚信共享求和
             Map<String,Object> zcxShare = reportUseMapper.getZxcShareSum(rpVO);
-            Integer shareNum  = zcxShare.get("num")==null?0:new Integer(zcxShare.get("num").toString());
+            Integer shareNum  = zcxShare.get("NUM")==null?0:new Integer(zcxShare.get("NUM").toString());
             total.setShareNumber(shareNum);
              zcxReportUses.add(total);
 //        }
@@ -195,6 +195,22 @@ public class ReportUseService {
      */
     public String getMonitoring(ReportParameter rpVO) throws Exception{
         List<Monitoring> monitoring  = reportUseMapper.getMonitoring(rpVO);
+        //按公司名称排序
+        if(monitoring!=null&&monitoring.size()>0){
+            List<String> namelist = new ArrayList<>();
+            int no = 0;
+            for (int i = 0; i < monitoring.size(); i++) {
+                String companyName = monitoring.get(i).getGzCompanyName();
+                if(namelist.contains(companyName)){
+                    monitoring.get(i).setNo(no+"");
+                }else{
+                    no++;
+                    namelist.add(companyName);
+                    monitoring.get(i).setNo(no+"");
+
+                }
+            }
+        }
         ObjectMapper objectMapper=new ObjectMapper();
         HashMap<String,Object> hs=new HashMap<>();
         hs.put("code","0");
@@ -257,10 +273,10 @@ public class ReportUseService {
         khFilter.setNum("100万次");
         khFilter.setSurplusNum("--");
 
-//        if(rpVO.getCompanyName()!=null){
-//            companyName =rpVO.getCompanyName().replaceAll("c.companyName","d.companyName");
-//        }
-//        rpVO.setCompanyName(companyName);
+        if(rpVO.getCompanyName()!=null){
+            companyName =rpVO.getCompanyName().replaceAll("c.companyName","RES_ENAIL(B.COMPANY_NAME)");
+        }
+        rpVO.setCompanyName(companyName);
         Map<String,Object> tycFilter = reportUseMapper.getTycFilterCustomer(rpVO);
         num = getInteger(tycFilter.get("NUM"));
         khFilter.setUserNum(num);

@@ -24,6 +24,8 @@ public class ReportParameter {
     public String qStart;
     //当月和非当月
     public String flag;
+    //数据来源
+    public String source;
 
 
 }

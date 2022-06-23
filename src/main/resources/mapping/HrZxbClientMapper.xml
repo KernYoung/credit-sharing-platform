@@ -23,22 +23,29 @@
   </update>
 
     <select id="getCount" resultType="Integer" parameterType="java.util.Map">
-        select count(*) from
-        ( select rownum r,c.* from (
-        select INPUT_HR_ZXB_CLIENT.code code,g.companycode companyCode,g.companyname
-        companyName,INPUT_HR_ZXB_CLIENT.Name name,INPUT_HR_ZXB_CLIENT.Company_Type company_type from INPUT_HR_ZXB_CLIENT
-        LEFT JOIN DIM_ORG G ON INPUT_HR_ZXB_CLIENT.CODE=G.SUBCOMPANYCODE
-        where 1=1
-        <if test="code != null">
-            and code = #{code,jdbcType=VARCHAR}
-        </if>
-        <if test="name != null">
-            and Name = #{name,jdbcType=VARCHAR}
-        </if>
-        ) c
 
-        ) where
-        1=1
+        select count(*)
+        from (SELECT  CODE,G.COMPANYCODE,G.COMPANYNAME,NAME,'HR系统' AS TAP
+        FROM ODS_HR_ORG O
+        LEFT JOIN DIM_ORG G ON O.CODE=G.SUBCOMPANYCODE
+
+        UNION
+        SELECT CODE,
+        '' AS COMPANYCODE,
+        '' AS  COMPANYNAME,
+        NAME,
+        '手工填报' AS TAP
+        FROM INPUT_HR_ORG
+        ORDER BY COMPANYCODE,CODE) aa
+        left join INPUT_HR_ZXB_CLIENT on INPUT_HR_ZXB_CLIENT.Code=aa.code
+        where 1=1
+        <if test="code != null and code!=''" >
+            and aa.code = #{code,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null and name!=''">
+            and aa.Name = #{name,jdbcType=VARCHAR}
+        </if>
+
 
 
 
@@ -47,14 +54,26 @@
   <select id="listByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >
 select * from
    ( select rownum r,c.* from (
-      select INPUT_HR_ZXB_CLIENT.code code,g.companycode companyCode,INPUT_HR_ZXB_CLIENT.Clientno clientNo,g.companyname companyName,INPUT_HR_ZXB_CLIENT.Name name,INPUT_HR_ZXB_CLIENT.Company_Type company_type    from INPUT_HR_ZXB_CLIENT
-      LEFT JOIN DIM_ORG G ON INPUT_HR_ZXB_CLIENT.CODE=G.SUBCOMPANYCODE) c
+      select aa.code,aa.COMPANYCODE companyCode,INPUT_HR_ZXB_CLIENT.Clientno clientNo,aa.companyname companyName,aa.Name name,aa.TAP company_type
+      from (SELECT  CODE,G.COMPANYCODE,G.COMPANYNAME,NAME,'HR系统' AS TAP
+      FROM ODS_HR_ORG O
+      LEFT JOIN DIM_ORG G ON O.CODE=G.SUBCOMPANYCODE
+
+      UNION
+      SELECT CODE,
+      '' AS COMPANYCODE,
+      '' AS  COMPANYNAME,
+      NAME,
+      '手工填报' AS TAP
+      FROM INPUT_HR_ORG
+      ORDER BY COMPANYCODE,CODE) aa
+      left join INPUT_HR_ZXB_CLIENT on INPUT_HR_ZXB_CLIENT.Code=aa.code) c
       where 1=1
-      <if test="code != null" >
-          and code = #{code,jdbcType=VARCHAR}
+      <if test="code != null and code!=''" >
+          and c.code = #{code,jdbcType=VARCHAR}
       </if>
-      <if test="name != null" >
-          and Name = #{name,jdbcType=VARCHAR}
+      <if test="name != null and name!=''">
+          and c.Name = #{name,jdbcType=VARCHAR}
       </if>
 
       <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">

@@ -205,8 +205,11 @@ public class VisitLogService {
             map.put("userNum",userNumTotal);
             map.put("visitNum",visitNumTotal);
             map.put("activeUserNum",activeUserNumTotal);
-            BigDecimal activeUserRatio = userNumTotal==0?BigDecimal.ZERO:new BigDecimal(visitNumTotal).divide(new BigDecimal(userNumTotal),BigDecimal.ROUND_HALF_UP);
-            BigDecimal acticeVisitRatio = activeUserNumTotal==0?BigDecimal.ZERO:new BigDecimal(visitNumTotal).divide(new BigDecimal(activeUserNumTotal),BigDecimal.ROUND_HALF_UP);
+            BigDecimal dfd = new BigDecimal(activeUserNumTotal);
+            BigDecimal dfd1 = new BigDecimal(userNumTotal);
+
+            BigDecimal activeUserRatio = userNumTotal==0?BigDecimal.ZERO:new BigDecimal(activeUserNumTotal).divide(new BigDecimal(userNumTotal),4,BigDecimal.ROUND_HALF_UP);
+            BigDecimal acticeVisitRatio = activeUserNumTotal==0?BigDecimal.ZERO:new BigDecimal(visitNumTotal).divide(new BigDecimal(activeUserNumTotal),4,BigDecimal.ROUND_HALF_UP);
             map.put("activeUserRatio",activeUserRatio);
             map.put("acticeVisitRatio",acticeVisitRatio);
         }

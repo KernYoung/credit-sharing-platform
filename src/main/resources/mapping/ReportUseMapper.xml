@@ -273,23 +273,23 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
 
     <!--天眼查客户初筛-->
     <select id="getTycFilterCustomer" resultType="map">
+
         SELECT
-        count(*) as num
-        FROM (select a.* from ODS_TYC_GSINFO a LEFT JOIN(
-        select *
-          from (select ROW_NUMBER() OVER(PARTITION BY custom_name ORDER BY UPDATETIME asc) rn,a.*
-                      from INPUT_CUSTOM_HAND a )
-         where rn = 1
-        ) b on a.input_name = b.custom_name
-        left join CREDIT_USER c on b.updateby = c.username
-        LEFT JOIN dim_org d on c.company_name = d.subcompanyname
-        where 1=1
+        COUNT(*) AS NUM
+        FROM INPUT_CUSTOM_HAND A LEFT
+        JOIN CREDIT_USER B
+        ON A.UPDATEBY = B.USERNAME LEFT
+        JOIN ODS_TYC_JSON C
+        ON A.FID = C.FID
+        WHERE NVL(C.FID,'0') &lt;&gt; '0'        --筛选执行ETL成功的数据
+        AND C.ERROR_CODE = 0             --筛选成功调用天眼查接口的数据
+        AND TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')  --大于等于开始时间
+        AND TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')  --小于等于结束时间
+        <!--AND RES_ENAIL(B.COMPANY_NAME) IN ('浙江省国际贸易集团有限公司')-->
         <if test="companyName!=null and companyName!=''">
             and  ${companyName}
         </if>
-        and TO_CHAR(b.updatetime,'YYYY-MM-DD') BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
-        ) I
-        WHERE   INPUT_NAME IS NOT NULL
+
     </select>
     <!--天眼查下发-->
     <select id="getTycXf" resultType="map">
@@ -369,31 +369,41 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
 
     <!--客户初筛调用次数-->
     <select id="getCustomFilter" resultType="map">
+
         SELECT
-        count(*) as num,companyname
-        FROM (select a.*,d.companyname from ODS_TYC_GSINFO a LEFT JOIN(
-        select *
-          from (select ROW_NUMBER() OVER(PARTITION BY custom_name ORDER BY UPDATETIME asc) rn,a.*
-                      from INPUT_CUSTOM_HAND a )
-         where rn = 1
-        ) b on a.input_name = b.custom_name
-        left join CREDIT_USER c on b.updateby = c.username
-        LEFT JOIN dim_org d on c.company_name = d.subcompanyname
-        where 1=1
-        <if test="companyName!=null and companyName!=''">
-            and  ${companyName}
+        COMPANY_NAME companyname,COUNT(*) AS num,
+        SOURCE source
+        FROM (
+        SELECT
+        RES_ENAIL(B.COMPANY_NAME) AS COMPANY_NAME,
+        CASE WHEN C.ERROR_CODE = 0 AND A.FID IS NOT NULL
+        THEN '天眼查接口'
+        ELSE '资信库' END AS SOURCE
+        FROM INPUT_CUSTOM_HAND A LEFT
+        JOIN CREDIT_USER B
+        ON A.UPDATEBY = B.USERNAME LEFT
+        JOIN ODS_TYC_JSON C
+        ON A.FID = C.FID
+        WHERE 1=1
+        <if test="startDate!=null and startDate!=''">
+        and TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')  --大于等于开始时间
         </if>
-        and TO_CHAR(b.updatetime,'YYYY-MM-DD') BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
-        and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
-        ) I
-        WHERE   INPUT_NAME IS NOT NULL
-        group by companyname
+        <if test="endDate!=null and endDate!=''">
+        AND TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')  --小于等于结束时间
+        </if>
+        <if test="companyName!=null and companyName!=''">
+            AND ${companyName}
+        </if>
+        )
+
+        GROUP BY COMPANY_NAME,SOURCE
+
     </select>
 
     <!--天眼查客户初筛明细-->
     <select id="getTycFilterCustomerList" resultType="com.fanruan.platform.bean.TycFilterCustomerList">
 
-
+    <!--
        select a.* from (
         SELECT
         realname ,userName applyUserName ,companyname,TO_CHAR(TO_TIMESTAMP(time,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as applyTime,name as applyCompanyName
@@ -416,6 +426,34 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
 
         and applyTime BETWEEN to_char(to_date(#{startDate},'yyyy-mm-dd'),'YYYY-MM-DD')
          and to_char(to_date(#{endDate},'yyyy-mm-dd'),'YYYY-MM-DD')
+         -->
+        SELECT
+        A.CUSTOM_NAME AS applyCompanyName,
+        B.NAME AS userName,
+        A.UPDATEBY AS applyUserName,
+        TO_CHAR(A.UPDATETIME,'yyyy-MM-dd HH24:MI:SS') AS applyTime,
+        RES_ENAIL(B.COMPANY_NAME) AS COMPANYNAME
+        FROM INPUT_CUSTOM_HAND A LEFT
+        JOIN CREDIT_USER B
+        ON A.UPDATEBY = B.USERNAME LEFT
+        JOIN ODS_TYC_JSON C
+        ON A.FID = C.FID
+        WHERE 1=1
+        <if test="startDate!=null and startDate!=''">
+        and TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        <if test="endDate!=null and endDate!=''">
+        AND TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        <if test="companyName!=null and companyName!=''">
+            AND ${companyName}
+        </if>
+        <if test="source!=null and source!='' and  source.toString()=='天眼查接口'.toString()">
+            AND C.ERROR_CODE = 0 AND A.FID IS NOT NULL
+        </if>
+        <if test="source!=null and source!='' and  source.toString()=='资信库'.toString()">
+            AND nvl(C.ERROR_CODE,'1') &lt;&gt;0
+        </if>
     </select>
 
     <!--页面热度-->

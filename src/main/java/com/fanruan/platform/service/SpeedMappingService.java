@@ -77,7 +77,8 @@ public class SpeedMappingService {
      * @return
      * @throws Exception
      */
-    public String getHrOrg(Map<String,Object> param) throws Exception{
+    public String getHrOrgEnable(Map<String,Object> param) throws Exception{
+        //flag 0代表树查询，不显示启用  1可以查询未启用
         String sCode = param.get("code")==null?"":param.get("code").toString();
         HrOrg org = new HrOrg();
         if(sCode.equals("")){
@@ -86,27 +87,79 @@ public class SpeedMappingService {
             org.setCode(sCode);
         }
         Map<String, Object> params = new HashMap<>();
-        params.put("code",org.getCode());
+        if(org.getCode()==null||org.getCode().equals("")){
+            params.put("code","010");
+        }else{
+            params.put("code",org.getCode());
+        }
+        List<HrOrg> orgVOs = hrOrgMapper.listByMap1(params);
+        if(orgVOs==null||orgVOs.size()==0){
+            return ReturnJson.getJson("1","查询为空",null);
+        }
+        HrOrg org1 = new HrOrg();
+        org1.setScode(org.getCode());
+        List<HrOrg> hrOrgList = getTreeDataEnable(org1);
+        return ReturnJson.getJson("0","保存成功",hrOrgList);
+    }
+
+    /**
+     * 查询组织机构
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    public String getHrOrg(Map<String,Object> param) throws Exception{
+        //flag 0代表树查询，不显示启用  1可以查询未启用
+        String sCode = param.get("code")==null?"":param.get("code").toString();
+        HrOrg org = new HrOrg();
+        if(sCode.equals("")){
+            org.setCode(null);
+        }else{
+            org.setCode(sCode);
+        }
+        Map<String, Object> params = new HashMap<>();
+        if(org.getCode()==null||org.getCode().equals("")){
+            params.put("code","010");
+        }else{
+            params.put("code",org.getCode());
+        }
         List<HrOrg> orgVOs = hrOrgMapper.listByMap(params);
         if(orgVOs==null||orgVOs.size()==0){
             return ReturnJson.getJson("1","查询为空",null);
         }
         HrOrg org1 = new HrOrg();
-        org1.setSCode(org.getCode());
+        org1.setScode(org.getCode());
         List<HrOrg> hrOrgList = getTreeData(org1);
         return ReturnJson.getJson("0","保存成功",hrOrgList);
+    }
+
+    public List<HrOrg> getTreeDataEnable(HrOrg hrOrg){
+        Map<String, Object> params = new HashMap<>();
+        params.put("scode",hrOrg.getScode());
+        //当前组
+        List<HrOrg> hrOrgs = hrOrgMapper.listByMap1(params);
+        if(hrOrgs!=null&&hrOrgs.size()>0){
+            HrOrg hrOrg1 = new HrOrg();
+            for (int i = 0; i < hrOrgs.size(); i++) {
+                hrOrg1.setScode(hrOrgs.get(i).getCode());
+                List<HrOrg> hrOrgs1 = getTreeDataEnable(hrOrg1);
+                hrOrgs.get(i).setChildHrOrg(hrOrgs1);
+            }
+        }
+
+        return hrOrgs;
     }
 
 
     public List<HrOrg> getTreeData(HrOrg hrOrg){
         Map<String, Object> params = new HashMap<>();
-        params.put("sCode",hrOrg.getSCode());
+        params.put("scode",hrOrg.getScode());
         //当前组
         List<HrOrg> hrOrgs = hrOrgMapper.listByMap(params);
         if(hrOrgs!=null&&hrOrgs.size()>0){
             HrOrg hrOrg1 = new HrOrg();
             for (int i = 0; i < hrOrgs.size(); i++) {
-                hrOrg1.setSCode(hrOrgs.get(i).getCode());
+                hrOrg1.setScode(hrOrgs.get(i).getCode());
                 List<HrOrg> hrOrgs1 = getTreeData(hrOrg1);
                 hrOrgs.get(i).setChildHrOrg(hrOrgs1);
             }
@@ -135,8 +188,8 @@ public class SpeedMappingService {
         hrOrg.setEnableState(param.get("enableState")==null?0:new Integer(param.get("enableState").toString()));
         hrOrg.setPkOrg(param.get("pkOrg")==null?"":param.get("pkOrg").toString());
         hrOrg.setShortName(param.get("shortName")==null?"":param.get("shortName").toString());
-        hrOrg.setSCode(param.get("sCode")==null?"":param.get("sCode").toString());
-        hrOrg.setSName(param.get("sName")==null?"":param.get("sName").toString());
+        hrOrg.setScode(param.get("scode")==null?"":param.get("scode").toString());
+        hrOrg.setSname(param.get("sname")==null?"":param.get("sname").toString());
         String time = DateUtil.trans2StandardFormat(new Date());
         hrOrg.setUpdateTimeBy(param.get("updateTimeBy")== null?time:param.get("updateTimeBy").toString());
         hrOrg.setPkOrg(param.get("pkOrg")==null?"":param.get("pkOrg").toString());
@@ -144,6 +197,8 @@ public class SpeedMappingService {
         if(hrOrg.getPkOrg()==null||hrOrg.getPkOrg().equals("")){
             hrOrg.setPkOrg(UUID.randomUUID().toString());
             hrOrgMapper.insert(hrOrg);
+        }else if(hrOrg.getPkOrg()!=null&&!hrOrg.getPkOrg().equals("")&&hrOrg.getDr()==1){
+            hrOrgMapper.deleteByPrimaryKey(hrOrg.getPkOrg());
         }else{
             hrOrgMapper.updateByPrimaryKeySelective(hrOrg);
         }

@@ -446,8 +446,8 @@ WHERE STATUS = 1
         <!--中诚信关注-->
         )
         SELECT
-        m0.COMPANYNAME,
-        m0.SHORTNAME,
+        m0.COMPANYNAME companyName1,
+        m0.SHORTNAME companyName,
         CASE m0.SHORTNAME WHEN  '浙江东方' THEN 1
         WHEN  '浙商资产' THEN 2
         WHEN  '浙金信托' THEN 3
@@ -467,12 +467,12 @@ WHERE STATUS = 1
         WHEN  '集团总部' THEN 17
         WHEN  '国贸资产' THEN 18
         ELSE 19 END AS  OID,
-        CASE WHEN  SHORTNAME ='东方金控' THEN '金融' ELSE nvl(m0.PART,'其他') END AS PART,
+        CASE WHEN  SHORTNAME ='东方金控' THEN '金融' ELSE nvl(m0.PART,'其他') END AS businessSegments,
         CASE part WHEN  '金融' THEN 1
         WHEN  '商贸' THEN 2
         WHEN  '医药' THEN 3
         ELSE 4 END AS  FID,
-        客商初筛,天眼查使用,中诚信使用,中信保使用,天眼查API,中诚信API,天眼查关注,中诚信关注,天眼查推送,中诚信推送
+        客商初筛 tycSxNum,天眼查使用 tycUseNum,中诚信使用 zcxUseNum,中信保使用 zxbUseNum,天眼查API tycApiNum,中诚信API zcxApiNum,天眼查关注 tycGzNum,中诚信关注 zcxGzNum,天眼查推送 tycMessageNum,中诚信推送 zcxMessageNum
         FROM M0
         LEFT JOIN M1 ON m0.COMPANYNAME=m1.COMPANYNAME
         LEFT JOIN M2 ON m0.COMPANYNAME=m2.COMPANYNAME

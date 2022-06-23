@@ -35,7 +35,7 @@ public class VisitLogController {
        if(checkPara!=null&&!checkPara.equals("")){
            return checkPara;
        }
-        ReportParameter rpVo = getReportParameter(para);
+        ReportParameter rpVo = getReportParameter1(para);
         List<UserVisit> userVisitList =  visitLogService.getUserVisit(rpVo);
         String json = getJson("0","查询成功",userVisitList);
         return json;
@@ -122,7 +122,7 @@ public class VisitLogController {
         return objectMapper.writeValueAsString(hs);
     }
 
-    public ReportParameter getReportParameter(Map<String,Object> para){
+    public ReportParameter getReportParameter1(Map<String,Object> para){
         ReportParameter rpVo = new ReportParameter();
         //处理日期，如果开始日期和结束日期一样，开始日期为当月第一天，结束日期为当月最后一天
         String startDate = para.get("startDate").toString();
@@ -139,6 +139,31 @@ public class VisitLogController {
             rpVo.setStartDate(para.get("startDate").toString());
             rpVo.setEndDate(para.get("endDate").toString());
         }
+        String companyName = para.get("companyName")==null?"":para.get("companyName").toString();
+        //将公司转换成可以in 查询
+        List<String> companyNameList = new ArrayList<String>();
+        if(companyName!=null&&!companyName.equals("")){
+            if(companyName!=null&&!companyName.equals("")){
+                String[] companyNameArr =  companyName.split(",");
+                for (int i = 0; i < companyNameArr.length; i++) {
+                    companyNameList.add(companyNameArr[i]);
+                }
+            }
+            String companyNames = SqlUtil.getOracleSQLIn(companyNameList,100,"c.companyname");
+            companyNames = "("+companyNames+")";
+            rpVo.setCompanyName(companyNames);
+        }
+//        rpVo.setCompanyName(companyName);
+        return rpVo;
+    }
+
+    public ReportParameter getReportParameter(Map<String,Object> para){
+        ReportParameter rpVo = new ReportParameter();
+        //处理日期，如果开始日期和结束日期一样，开始日期为当月第一天，结束日期为当月最后一天
+        String startDate = para.get("startDate").toString();
+        String endDate = para.get("endDate").toString();
+        rpVo.setStartDate(para.get("startDate").toString());
+        rpVo.setEndDate(para.get("endDate").toString());
         String companyName = para.get("companyName")==null?"":para.get("companyName").toString();
         //将公司转换成可以in 查询
         List<String> companyNameList = new ArrayList<String>();

@@ -14,9 +14,9 @@ public class HrOrg {
     private String spkOrg;
     private Integer enableState;
     private String shortName;
-    private String sCode;
+    private String scode;
 
-    private String sName;
+    private String sname;
 
     private String ts;
 
@@ -31,6 +31,8 @@ public class HrOrg {
     private String pkOrg;
 
     private String rule;
+
+    private String flag;
 
     private List<HrOrg> childHrOrg = new ArrayList<>();
 
