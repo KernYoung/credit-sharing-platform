@@ -311,8 +311,6 @@ public class ReportUseService {
         tycUse.add(xfItf);
 
 
-
-        rpVO.setCompanyName(companyName);
         //专业版嵌入
         TycUse zybQr = new TycUse();
         zybQr.setModule("专业版嵌入");
