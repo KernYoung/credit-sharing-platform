@@ -497,4 +497,25 @@ WHERE STATUS = 1
         ORDER BY FID,OID
     </select>
 
+
+    <select id="getCompanyNameCount" resultType="java.lang.Integer">
+
+        SELECT COUNT(*) FROM (
+                                 SELECT CODE,NAME FROM ODS_HR_ORG
+                                 UNION ALL
+                                 SELECT CODE,NAME FROM INPUT_HR_ORG
+                             )
+        WHERE NAME = #{name}
+
+    </select>
+
+    <select id="getCompanyCodeCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (
+                                 SELECT CODE,NAME FROM ODS_HR_ORG
+                                 UNION ALL
+                                 SELECT CODE,NAME FROM INPUT_HR_ORG
+                             )
+        WHERE CODE = #{code}
+
+    </select>
 </mapper>

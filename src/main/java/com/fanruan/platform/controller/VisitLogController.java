@@ -128,6 +128,25 @@ public class VisitLogController {
         return json;
     }
 
+    @RequestMapping(value = "/visitLog/checkCompany",method = RequestMethod.POST)
+    @ResponseBody
+    public String checkCompany(HttpServletRequest request, @RequestBody Map<String,Object> para)throws Exception{
+
+        String checkPara = checkName(para);
+        if(checkPara!=null&&!checkPara.equals("")){
+            return checkPara;
+        }
+        String name = para.get("name")==null?"":para.get("name").toString();
+        String code = para.get("code")==null?"":para.get("code").toString();
+
+        ReportParameter rpVO = new ReportParameter();
+        rpVO.setName(name);
+        rpVO.setCode(code);
+
+        String json = visitLogService.checkCompany(rpVO);
+        return json;
+    }
+
     public String getJson(String code,String msg,Object data) throws JsonProcessingException {
         ObjectMapper objectMapper=new ObjectMapper();
         HashMap<String,Object> hs=new HashMap<>();
@@ -214,6 +233,23 @@ public class VisitLogController {
         return null;
     }
 
+    public String checkName(Map<String,Object> para) throws JsonProcessingException {
+
+        StringBuilder errMsg = new StringBuilder();
+        if((para.get("code")==null||para.get("code").equals(""))&&(para.get("name")==null||para.get("name").equals(""))){
+            errMsg.append("公司名字和编码不能同时为空为空");
+        }
+
+        if(para.get("code")!=null&&!para.get("code").equals("")&&para.get("name")!=null&&!para.get("name").equals("")){
+            errMsg.append("公司名字和编码不能同时校验");
+        }
+
+        if(errMsg.toString().length()>0){
+            String json = getJson("1",errMsg.toString(),null);
+            return json;
+        }
+        return null;
+    }
 
 
 }

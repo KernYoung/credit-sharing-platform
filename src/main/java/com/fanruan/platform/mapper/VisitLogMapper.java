@@ -48,5 +48,7 @@ public interface VisitLogMapper {
 
     public List<Map<String,Object>> getLogMonthTotal(ReportParameter reportParameter);
 
-    
+
+    public Integer getCompanyNameCount(ReportParameter reportParameter);
+    public Integer getCompanyCodeCount(ReportParameter reportParameter);
 }

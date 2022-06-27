@@ -28,6 +28,9 @@ public class ReportParameter {
     public String flag;
     //数据来源
     public String source;
-
+    //公司名
+    public String name;
+    //公司编码
+    public String code;
 
 }
