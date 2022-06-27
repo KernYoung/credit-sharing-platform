@@ -119,6 +119,8 @@ public interface ReportUseMapper {
      */
     public List<pageActive> getPageActive(ReportParameter reportParameter);
 
+    public List<String> getPageActivePageDesc(ReportParameter reportParameter);
+
     /**
      * 模糊查询记录
      * @param reportParameter

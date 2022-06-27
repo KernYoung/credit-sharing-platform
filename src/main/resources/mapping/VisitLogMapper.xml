@@ -15,10 +15,10 @@
             AND ${companyName}
         </if>
         <if test="startDate!=null and startDate!=''">
-            AND to_char(Q_DATE,'YYYY-MM')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM')
+            AND to_char(Q_DATE,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         </if>
         <if test="endDate!=null and endDate!=''">
-            AND to_char(Q_DATE,'YYYY-MM')&lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM')
+            AND to_char(Q_DATE,'YYYY-MM-DD')&lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         </if>
         )
         where USER_NAME IS NOT NULL
@@ -27,10 +27,19 @@
     </select>
 
     <select id="getCompanyList" resultType="java.util.HashMap">
-        select distinct(name) name,code from (SELECT CODE,NAME,SHORTNAME,SCODE,SNAME FROM ODS_HR_ORG
-        UNION ALL
-        SELECT CODE,NAME,SHORTNAME,SCODE,SNAME FROM INPUT_HR_ORG
-        ORDER BY CODE) where (scode='010' or code='010')   order by code asc
+        SELECT * FROM(
+SELECT CODE,NAME FROM ODS_HR_ORG WHERE CODE = '010' OR SCODE = '010'
+UNION ALL
+SELECT CODE,NAME FROM INPUT_HR_ORG WHERE CODE = '010' OR SCODE = '010')
+WHERE (SELECT RES_ENAIL(COMPANY_NAME) FROM CREDIT_USER WHERE USERNAME = #{userName} AND ROWNUM = 1) = '浙江省国际贸易集团有限公司'
+
+UNION
+
+SELECT * FROM(
+SELECT CODE,NAME FROM ODS_HR_ORG WHERE CODE = '010' OR SCODE = '010'
+UNION ALL
+SELECT CODE,NAME FROM INPUT_HR_ORG WHERE CODE = '010' OR SCODE = '010')
+WHERE NAME = (SELECT RES_ENAIL(COMPANY_NAME) FROM CREDIT_USER WHERE USERNAME = #{userName} AND ROWNUM = 1)
     </select>
 
     <select id="getUserVisitList" resultType="com.fanruan.platform.bean.UserVisitList">
@@ -186,7 +195,7 @@ group by b.companyname
         NVL(访问次数,0) AS visitNum,
         NVL(访问人数,0) AS activeUserNum,
         case when NVL(启用用户,0)=0 then null else NVL(访问人数,0)/NVL(启用用户,0) end as activeUserRatio,
-        case when NVL(访问人数,0)=0 then null else  NVL(访问次数,0)/NVL(访问人数,0) end  as acticeVisitRatio
+        case when NVL(访问人数,0)=0 then null else  ceil(round(NVL(访问次数,0)/NVL(访问人数,0))) end  as acticeVisitRatio
         FROM ds1 left join ds2 on ds1.companyname=ds2.companyname
         where ds1.companyname IS NOT NULL
         ORDER BY FID ,OID

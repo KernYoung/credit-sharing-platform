@@ -136,9 +136,9 @@
       <if test="spkOrg != null and spkOrg!=''" >
         SPK_ORG = #{spkOrg,jdbcType=VARCHAR},
       </if>
-      <if test="enableState != null and enableState!=''" >
-        ENABLESTATE = #{enableState,jdbcType=DECIMAL},
-      </if>
+       <if test="enableState != null " >
+        ENABLESTATE = #{enableState,jdbcType=VARCHAR},
+       </if>
       <if test="shortName != null and shortName!=''" >
         SHORTNAME = #{shortName,jdbcType=VARCHAR},
       </if>
@@ -187,10 +187,10 @@
   </update>
   <select id="listByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select * from (  select rownum r,c.* from (
-    SELECT CODE,NAME,SHORTNAME,SCODE,SNAME, '手工' orgType,ENABLESTATE,PK_ORG  FROM INPUT_HR_ORG where nvl(dr,0)=0
+    SELECT CODE,NAME,SHORTNAME,SCODE,SNAME, '手工' orgType,ENABLESTATE,PK_ORG,rule  FROM INPUT_HR_ORG where nvl(dr,0)=0
 
     UNION ALL
-    SELECT CODE ,NAME ,SHORTNAME ,SCODE ,SNAME ,'NC' orgType,ENABLESTATE,PK_ORG FROM ODS_HR_ORG) c
+    SELECT CODE ,NAME ,SHORTNAME ,SCODE ,SNAME ,'NC' orgType,ENABLESTATE,PK_ORG,'' rule FROM ODS_HR_ORG) c
      order by code)
    where 1=1
         <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
@@ -207,15 +207,16 @@
         <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
           and  r &gt;= (#{pageIndex}-1) * #{pageSize}
         </if>
+        order by orgType desc,code asc
   </select>
 
 
   <select id="listByMap1" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select * from (  select rownum r,c.* from (
-    SELECT CODE,NAME,SHORTNAME,SCODE,SNAME, '手工' orgType,ENABLESTATE,PK_ORG  FROM INPUT_HR_ORG where nvl(dr,0)=0
+    SELECT CODE,NAME,SHORTNAME,SCODE,SNAME, '手工' orgType,ENABLESTATE,PK_ORG,rule  FROM INPUT_HR_ORG where nvl(dr,0)=0
 
     UNION ALL
-    SELECT CODE ,NAME ,SHORTNAME ,SCODE ,SNAME ,'NC' orgType,ENABLESTATE,PK_ORG FROM ODS_HR_ORG) c
+    SELECT CODE ,NAME ,SHORTNAME ,SCODE ,SNAME ,'NC' orgType,ENABLESTATE,PK_ORG,'' rule FROM ODS_HR_ORG) c
     order by code)
      where 1=1
     <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">

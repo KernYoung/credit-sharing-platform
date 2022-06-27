@@ -209,7 +209,8 @@ public class VisitLogService {
             BigDecimal dfd1 = new BigDecimal(userNumTotal);
 
             BigDecimal activeUserRatio = userNumTotal==0?BigDecimal.ZERO:new BigDecimal(activeUserNumTotal).divide(new BigDecimal(userNumTotal),4,BigDecimal.ROUND_HALF_UP);
-            BigDecimal acticeVisitRatio = activeUserNumTotal==0?BigDecimal.ZERO:new BigDecimal(visitNumTotal).divide(new BigDecimal(activeUserNumTotal),4,BigDecimal.ROUND_HALF_UP);
+            BigDecimal acticeVisitRatio = activeUserNumTotal==0?BigDecimal.ZERO:new BigDecimal(visitNumTotal).divide(new BigDecimal(activeUserNumTotal),0,BigDecimal.ROUND_HALF_UP);
+//            acticeVisitRatio = acticeVisitRatio.setScale( 0, BigDecimal.ROUND_UP );
             map.put("activeUserRatio",activeUserRatio);
             map.put("acticeVisitRatio",acticeVisitRatio);
         }

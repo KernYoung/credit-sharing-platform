@@ -55,7 +55,8 @@
 select * from
    ( select rownum r,c.* from (
       select aa.code,aa.COMPANYCODE companyCode,INPUT_HR_ZXB_CLIENT.Clientno clientNo,aa.companyname companyName,aa.Name name,aa.TAP company_type
-      from (SELECT  CODE,G.COMPANYCODE,G.COMPANYNAME,NAME,'HR系统' AS TAP
+      from (
+      SELECT  CODE,G.COMPANYCODE,G.COMPANYNAME,NAME,'HR系统' AS TAP
       FROM ODS_HR_ORG O
       LEFT JOIN DIM_ORG G ON O.CODE=G.SUBCOMPANYCODE
 
@@ -66,7 +67,7 @@ select * from
       NAME,
       '手工填报' AS TAP
       FROM INPUT_HR_ORG
-      ORDER BY COMPANYCODE,CODE) aa
+      ) aa
       left join INPUT_HR_ZXB_CLIENT on INPUT_HR_ZXB_CLIENT.Code=aa.code) c
       where 1=1
       <if test="code != null and code!=''" >
@@ -82,10 +83,11 @@ select * from
 
     )  where
      1=1
+
       <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
           and  r &gt;= (#{pageIndex}-1) * #{pageSize}
       </if>
-
+      order by company_type asc,code asc
 
   </select>
 </mapper>

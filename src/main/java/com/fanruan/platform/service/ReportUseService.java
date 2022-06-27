@@ -3,13 +3,11 @@ package com.fanruan.platform.service;
 import com.fanruan.platform.bean.*;
 import com.fanruan.platform.mapper.ReportUseMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elasticsearch.search.aggregations.metrics.InternalHDRPercentiles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ReportUseService {
@@ -367,12 +365,107 @@ public class ReportUseService {
      */
     public String getPageActive(ReportParameter rpVO) throws Exception{
         List<pageActive> pageActiveList = reportUseMapper.getPageActive(rpVO);
+        List<String> listPageName = reportUseMapper.getPageActivePageDesc(rpVO);
+
+
+        pageActiveList = sortByPageNameNum(pageActiveList,listPageName);
+
+
+
+        //每一个页面排序
+
+
+
+
+        //按公司名称排序
+        if(pageActiveList!=null&&pageActiveList.size()>0){
+            List<String> pageNames = new ArrayList<>();
+            int no = 0;
+            for (int i = 0; i < pageActiveList.size(); i++) {
+                String pageName = pageActiveList.get(i).getPageName();
+                if(pageNames.contains(pageName)){
+                    pageActiveList.get(i).setNo(no+"");
+                }else{
+                    no++;
+                    pageNames.add(pageName);
+                    pageActiveList.get(i).setNo(no+"");
+
+                }
+            }
+        }
+
         ObjectMapper objectMapper=new ObjectMapper();
         HashMap<String,Object> hs=new HashMap<>();
         hs.put("code","0");
         hs.put("msg","查询成功");
         hs.put("data",pageActiveList);
         return objectMapper.writeValueAsString(hs);
+    }
+
+
+    private List<pageActive> sortByPageNameNum(List<pageActive> pageActiveList,List<String> listPageName){
+        List<pageActive> pageActiveList1 = new ArrayList<>();
+        Map<String,List<pageActive>> pageNameMap = new HashMap<>();
+
+        for (int i = 0; i < listPageName.size(); i++) {
+            String pagename = listPageName.get(i)==null?"":listPageName.get(i).toString();
+            for (int j = 0; j < pageActiveList.size(); j++) {
+                String name = pageActiveList.get(j).getPageName()==null?"无":pageActiveList.get(j).getPageName().toString();
+                if(pagename.equals(name)){
+                    if(pageNameMap.containsKey(pagename)){
+                        List<pageActive> l = pageNameMap.get(pagename);
+                        l.add(pageActiveList.get(j));
+                        pageNameMap.put(pagename,l);
+                    }else{
+                        List<pageActive> l = new ArrayList<>();
+                        l.add(pageActiveList.get(j));
+                        pageNameMap.put(pagename,l);
+                    }
+                }
+            }
+        }
+        Iterator<String> keys = pageNameMap.keySet().iterator();
+        while(keys.hasNext()){
+            String pageName = keys.next();
+            List<pageActive> list = pageNameMap.get(pageName);
+            Collections.sort(list,new Comparator<pageActive>(){
+                @Override
+                public int compare(pageActive pa1,pageActive pa2){
+                    if(pa1.getNum()>pa2.getNum()){
+                        return -1;
+                    }
+                    if (pa1.getNum()==pa2.getNum()) {
+                        return 0;
+                    }
+                    return 1;
+                }
+            });
+        }
+//        /**
+//         *根据页面名称最终排序
+//         */
+        for (int i = 0; i < listPageName.size(); i++) {
+            String pageName = listPageName.get(i);
+            if(pageName==null||pageName.equals("")){
+                pageName = "无";
+            }
+            List<pageActive> list = pageNameMap.get(pageName);
+            pageActiveList1.addAll(list);
+        }
+
+
+        return  pageActiveList1;
+    }
+
+    private void sortMap(Map<String,Integer> map){
+        List<Map.Entry<String,Integer>> lsitid = new ArrayList<Map.Entry<String,Integer>>(map.entrySet());
+
+        Collections.sort(lsitid, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return (o2.getValue()-o1.getValue());
+            }
+        });
     }
 
     /**
