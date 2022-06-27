@@ -67,6 +67,7 @@ public class ReportUseController {
                 }
             }
             String companyNames = SqlUtil.getOracleSQLIn(companyNameList,100,key);
+            rpVo.setCompanyName2(companyNames.replaceAll("c.companyName","").replaceAll("RES_ENAIL(B.COMPANY_NAME)",""));
             companyNames = "("+companyNames+")";
             rpVo.setCompanyName(companyNames);
         }

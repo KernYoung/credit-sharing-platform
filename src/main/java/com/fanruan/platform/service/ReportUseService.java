@@ -244,6 +244,8 @@ public class ReportUseService {
         Integer syNum = 12000-bldNum;
         tjjk.setSurplusNum(syNum+"");
         tycUse.add(tjjk);
+
+
         //模糊查询
         TycUse mhcx = new TycUse();
         mhcx.setModule("API接口");
@@ -254,6 +256,7 @@ public class ReportUseService {
         mhcx.setUserNum(num);
         mhcx.setSurplusNum("--");
         tycUse.add(mhcx);
+
         //详情页-工商信息
         TycUse xqy = new TycUse();
         xqy.setModule("API接口");
@@ -264,6 +267,9 @@ public class ReportUseService {
         num = getInteger(tycBase.get("NUM"));
         xqy.setUserNum(num);
         tycUse.add(xqy);
+
+
+
         //客商初筛-工商信息
         TycUse khFilter = new TycUse();
         khFilter.setModule("API接口");
@@ -275,6 +281,7 @@ public class ReportUseService {
             companyName =rpVO.getCompanyName().replaceAll("c.companyName","RES_ENAIL(B.COMPANY_NAME)");
         }
         rpVO.setCompanyName(companyName);
+
         Map<String,Object> tycFilter = reportUseMapper.getTycFilterCustomer(rpVO);
         num = getInteger(tycFilter.get("NUM"));
         khFilter.setUserNum(num);
@@ -285,6 +292,9 @@ public class ReportUseService {
         }
 
         rpVO.setCompanyName(companyName);
+
+
+
         //下发接口-工商信息
         TycUse xfItf = new TycUse();
         xfItf.setModule("API接口");
@@ -297,10 +307,12 @@ public class ReportUseService {
         }else{
             num=0;
         }
-
         xfItf.setUserNum(num);
         tycUse.add(xfItf);
 
+
+
+        rpVO.setCompanyName(companyName);
         //专业版嵌入
         TycUse zybQr = new TycUse();
         zybQr.setModule("专业版嵌入");
@@ -315,6 +327,7 @@ public class ReportUseService {
 //        companyName =rpVO.getCompanyName().replaceAll("c.companyName","d.companyName");
 //        rpVO.setCompanyName(companyName);
 //        List<Map<String,Object>> tycFilterCustomerList = reportUseMapper.getCustomFilter(rpVO);
+
 
 
         ObjectMapper objectMapper=new ObjectMapper();

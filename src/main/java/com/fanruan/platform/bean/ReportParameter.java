@@ -10,6 +10,8 @@ public class ReportParameter {
     public String endDate;
     //公司名称
     public String companyName;
+    //公司名称
+    public String companyName2;
     //用户名
     public String userName;
     //用户编码

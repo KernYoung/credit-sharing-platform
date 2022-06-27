@@ -254,7 +254,7 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
 
     <!--天涯查使用基本，详情工商页-->
     <select id="getTycBase" resultType="map">
-        SELECT
+        <!--SELECT
         count(*) as num
         FROM
         (
@@ -269,8 +269,26 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         I
         WHERE URI='//company/getBaseInfo'  AND   TO_CHAR(TO_DATE(case when length(request_time) &lt;&gt; 19
         then substr(request_time,2,19) else request_time end,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD')
-        BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')-->
+        SELECT COUNT(*) AS NUM FROM(
+        SELECT
+        *
+        FROM ODS_TYC_JSON A LEFT
+        JOIN CREDIT_API_RELATION B
+        ON SUBSTR(A.TOKEN_ID,1,3) = B.ENT_TOKENID
+        WHERE A.JSONFLAG = '1001'
+        AND A.ERROR_CODE = '0'
+        AND A.FID IS NULL
+        AND SUBSTR(TOKEN_ID,-2,2) = '20'
+        AND TO_CHAR(UPDATETIME,'YYYY-MM-DD')
 
+        BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="companyName2!=null and companyName2!=''">
+            AND CASE WHEN B.ENTNAME IN ('协同-资信共享平台','门户测试','浙江省国际贸易集团有限公司1','浙江省国际贸易集团有限公司2')
+            THEN '浙江省国际贸易集团有限公司' ELSE B.ENTNAME END   ${companyName2}
+        </if>
+        )
     </select>
 
     <!--天眼查客户初筛-->
@@ -295,7 +313,7 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
     </select>
     <!--天眼查下发-->
     <select id="getTycXf" resultType="map">
-        SELECT
+        <!--SELECT
         count(*) num
         FROM (
         select a.* from LOG_INTERFACE_REPORT a
@@ -308,7 +326,24 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         ) I
         WHERE URI='/common/getJson/1001'  AND  SUBSTR(REQUEST_TIME,1,10)
          BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
-         and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+         and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')-->
+        SELECT COUNT(*) AS NUM FROM(
+        SELECT
+        *
+        FROM ODS_TYC_JSON A LEFT
+        JOIN CREDIT_API_RELATION B
+        ON SUBSTR(A.TOKEN_ID,1,3) = B.ENT_TOKENID
+        WHERE A.JSONFLAG = '1001'
+        AND A.ERROR_CODE = '0'
+        AND SUBSTR(TOKEN_ID,-1,1) = '2'
+        AND TO_CHAR(UPDATETIME,'YYYY-MM-DD')
+        BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="companyName2!=null and companyName2!=''">
+            AND CASE WHEN B.ENTNAME IN ('协同-资信共享平台','门户测试','浙江省国际贸易集团有限公司1','浙江省国际贸易集团有限公司2')
+            THEN '浙江省国际贸易集团有限公司' ELSE B.ENTNAME END   ${companyName2}
+        </if>
+        )
     </select>
 
     <!--天眼查嵌入页面-->
@@ -353,20 +388,23 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
 
     <!--天眼查模糊查询-->
     <select id="getTycMhcx" resultType="map">
+        SELECT COUNT(*) AS NUM FROM(
         SELECT
-        count(*) as num
-        FROM (
-        select a.* from LOG_INTERFACE_REPORT a
-        left join credit_user b on a.id = b.user_id
-        left join DIM_ORG c on b.company_name = c.subcompanyname
-        where 1=1
-        <if test="companyName!=null and companyName!=''">
-            and  ${companyName}
-        </if>
-        ) I
-        WHERE URI='//company/direct/searchList'  AND   SUBSTR(REQUEST_TIME,1,10)
+        *
+        FROM ODS_TYC_JSON A LEFT
+        JOIN CREDIT_API_RELATION B
+        ON SUBSTR(A.TOKEN_ID,1,3) = B.ENT_TOKENID
+        WHERE A.JSONFLAG = '816'
+        AND A.ERROR_CODE = '0'
+        AND TO_CHAR(UPDATETIME,'YYYY-MM-DD')
         BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="companyName2!=null and companyName2!=''">
+            AND CASE WHEN B.ENTNAME IN ('协同-资信共享平台','门户测试','浙江省国际贸易集团有限公司1','浙江省国际贸易集团有限公司2')
+            THEN '浙江省国际贸易集团有限公司' ELSE B.ENTNAME END   ${companyName2}
+        </if>
+        )
+
     </select>
 
     <!--客户初筛调用次数-->
