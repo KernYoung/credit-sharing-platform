@@ -4,6 +4,7 @@ import com.ctc.wstx.util.DataUtil;
 import com.fanruan.platform.bean.*;
 import com.fanruan.platform.mapper.VisitLogMapper;
 import com.fanruan.platform.util.DateUtil;
+import com.fanruan.platform.util.ReturnJson;
 import com.fanruan.platform.util.SqlUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -125,6 +126,11 @@ public class VisitLogService {
                 userVisit.setAttributeValue(totalKey,num);
             }
         }
+    }
+
+    public String getLogMonthTotal(ReportParameter rpVO) throws Exception{
+        List<Map<String,Object>> listMap = visitLogMapper.getLogMonthTotal(rpVO);
+        return ReturnJson.getJson("0","查询成功",listMap);
     }
 
     /**

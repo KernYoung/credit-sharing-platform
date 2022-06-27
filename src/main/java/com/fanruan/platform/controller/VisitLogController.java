@@ -49,6 +49,21 @@ public class VisitLogController {
         return json;
     }
 
+    @RequestMapping(value = "/visitLog/getLogMonthTotal",method = RequestMethod.POST)
+    @ResponseBody
+    public String getLogMonthTotal(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
+       try {
+           ReportParameter rpVo = new ReportParameter();
+           String json = visitLogService.getLogMonthTotal(rpVo);
+           return json;
+       }catch (Exception e){
+           String json = ReturnJson.getJson("1","查询失败",null);
+           return json;
+       }
+
+    }
+
+
 
     @RequestMapping(value = "/visitLog/getUserVisitList",method = RequestMethod.POST)
     @ResponseBody

@@ -46,7 +46,7 @@ public interface VisitLogMapper {
      */
     public List<LogMonthUse> getLogMonthUse(ReportParameter reportParameter);
 
-    //public Map<String,Object> getLogMonthTotal(ReportParameter reportParameter);
+    public List<Map<String,Object>> getLogMonthTotal(ReportParameter reportParameter);
 
     
 }

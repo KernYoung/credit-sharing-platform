@@ -200,8 +200,8 @@ group by b.companyname
         where ds1.companyname IS NOT NULL
         ORDER BY FID ,OID
     </select>
-<!--
-    <select id="getLogMonthTotal" resultType="com.fanruan.platform.bean.LogMonthUse" resultMap="map">
+
+    <select id="getLogMonthTotal" resultType="map">
             select
 count(*) as userNum,
 count(case when ROLE_NAME='子管理员' THEN 1 END) as subAdmin,
@@ -210,7 +210,7 @@ count(DISTINCT b.subcompanyname ) AS companyNum
 LEFT JOIN DIM_ORG B on a.company_name = b.subcompanyname
 WHERE STATUS = 1
     </select>
-    -->
+
 
     <select id="getLogMonthUse" resultType="com.fanruan.platform.bean.LogMonthUse">
         with m0 as(
