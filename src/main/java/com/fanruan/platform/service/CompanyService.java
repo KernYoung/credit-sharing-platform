@@ -401,7 +401,7 @@ public class CompanyService {
 
         User user =  userService.getUserById(userId);
         String companyCode = user == null ? "" : user.getCompanyCode();
-        String tokenId = getTokenIdByCompanyCode(companyCode,"getBaseInfo");
+        String tokenId = getTokenIdByCompanyCode(companyCode,"searchList");
         if(StringUtils.isBlank(tokenId)) log.info("获取tokenId失败，userId: " + userId + ", jsonFlag: 816");
         commonService.SaveLocalJson(keyword, dataStr, paramStr, "816", tokenId);
 

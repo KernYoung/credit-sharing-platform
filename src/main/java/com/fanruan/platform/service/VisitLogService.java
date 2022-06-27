@@ -152,8 +152,10 @@ public class VisitLogService {
         Map<String,Object> totalSumUse = subUse(sumUse);
         //当月用户活跃
         rpVO.setFlag("0");
+        List<Map<String,Object>> listMap = visitLogMapper.getLogMonthTotal(rpVO);
+
         List<LogMonthActive> currentMonthActive = visitLogMapper.getLogMonthActive(rpVO);
-        Map<String,Object> totalCurrentActive = subActive(currentMonthActive);
+        Map<String,Object> totalCurrentActive = subActive(currentMonthActive,listMap);
         //当月用户使用
         rpVO.setFlag("0");
         List<LogMonthUse> currentMonthUse = visitLogMapper.getLogMonthUse(rpVO);
@@ -193,6 +195,37 @@ public class VisitLogService {
 
     public Map<String,Object> subUse(List<LogMonthUse> monthUse){
         return null;
+    }
+
+    public Map<String,Object> subActive(List<LogMonthActive> activeList,List<Map<String,Object>> maps){
+        Map<String,Object> map = new HashMap<>();
+        if(activeList!=null&&activeList.size()>0){
+            int userNumTotal = 0;
+            int visitNumTotal = 0;
+            int activeUserNumTotal = 0;
+            for (LogMonthActive logMonthActive:
+                    activeList) {
+                userNumTotal = logMonthActive.getUserNum()+userNumTotal;
+                visitNumTotal = logMonthActive.getVisitNum()+visitNumTotal;
+                activeUserNumTotal = logMonthActive.getActiveUserNum()+activeUserNumTotal;
+            }
+            map.put("title","合计");
+            map.put("userNum",userNumTotal);
+            map.put("subadmin",maps.get(0).get("SUBADMIN"));
+            map.put("companynum",maps.get(0).get("COMPANYNUM"));
+            map.put("usernum",maps.get(0).get("USERNUM"));
+            map.put("visitNum",visitNumTotal);
+            map.put("activeUserNum",activeUserNumTotal);
+            BigDecimal dfd = new BigDecimal(activeUserNumTotal);
+            BigDecimal dfd1 = new BigDecimal(userNumTotal);
+
+            BigDecimal activeUserRatio = userNumTotal==0?BigDecimal.ZERO:new BigDecimal(activeUserNumTotal).divide(new BigDecimal(userNumTotal),4,BigDecimal.ROUND_HALF_UP);
+            BigDecimal acticeVisitRatio = activeUserNumTotal==0?BigDecimal.ZERO:new BigDecimal(visitNumTotal).divide(new BigDecimal(activeUserNumTotal),0,BigDecimal.ROUND_HALF_UP);
+//            acticeVisitRatio = acticeVisitRatio.setScale( 0, BigDecimal.ROUND_UP );
+            map.put("activeUserRatio",activeUserRatio);
+            map.put("acticeVisitRatio",acticeVisitRatio);
+        }
+        return map;
     }
 
     public Map<String,Object> subActive(List<LogMonthActive> activeList){
