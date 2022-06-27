@@ -174,7 +174,7 @@ WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
         <if test="companyName!=null and companyName!=''">
             and   ${companyName}
         </if>
-        order by A.UPDATE_TIME desc
+        order by A.REPORT_TYPE desc,  A.COMPANY_NAME desc, B.USERNAME||'('||B.NAME||')'  desc, c.companyname desc,A.UPDATE_TIME desc
     </select>
 
     <select id="getMonitoring" resultType="com.fanruan.platform.bean.Monitoring">

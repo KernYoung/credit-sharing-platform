@@ -187,7 +187,7 @@
   </update>
   <select id="listByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select * from (  select rownum r,c.* from (
-    SELECT CODE,NAME,SHORTNAME,SCODE,SNAME, '手工' orgType,ENABLESTATE,PK_ORG,rule  FROM INPUT_HR_ORG where nvl(dr,0)=0
+    SELECT CODE,NAME,SHORTNAME,SCODE,SNAME, '手工' orgType,ENABLESTATE,PK_ORG,rule  FROM INPUT_HR_ORG
 
     UNION ALL
     SELECT CODE ,NAME ,SHORTNAME ,SCODE ,SNAME ,'NC' orgType,ENABLESTATE,PK_ORG,'' rule FROM ODS_HR_ORG) c
