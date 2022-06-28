@@ -38,7 +38,7 @@
       )
     values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{spkOrg,jdbcType=VARCHAR},
       #{enableState,jdbcType=DECIMAL}, #{shortName,jdbcType=VARCHAR}, #{scode,jdbcType=VARCHAR},
-      #{sname,jdbcType=VARCHAR}, #{ts,jdbcType=VARCHAR}, #{dr,jdbcType=DECIMAL}, SYSDATE,
+      #{sname,jdbcType=VARCHAR},TO_CHAR(SYSDATE,'YYYY-MM-DD HH24:MI:SS'), #{dr,jdbcType=DECIMAL}, SYSDATE,
       #{updateTimeBy,jdbcType=VARCHAR}, #{pkOrg,jdbcType=VARCHAR}, #{rule,jdbcType=VARCHAR}
       )
   </insert>
