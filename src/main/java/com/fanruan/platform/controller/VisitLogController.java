@@ -138,11 +138,16 @@ public class VisitLogController {
         }
         String name = para.get("name")==null?"":para.get("name").toString();
         String code = para.get("code")==null?"":para.get("code").toString();
+        String pre = para.get("pre")==null?"":para.get("pre").toString();
+        String scode= para.get("scode")==null?"":para.get("scode").toString();
+        String zcode= para.get("zcode")==null?"":para.get("zcode").toString();
 
         ReportParameter rpVO = new ReportParameter();
         rpVO.setName(name);
         rpVO.setCode(code);
-
+        rpVO.setPre(pre);
+        rpVO.setScode(scode);
+        rpVO.setZcode(zcode);
         String json = visitLogService.checkCompany(rpVO);
         return json;
     }
@@ -236,12 +241,12 @@ public class VisitLogController {
     public String checkName(Map<String,Object> para) throws JsonProcessingException {
 
         StringBuilder errMsg = new StringBuilder();
-        if((para.get("code")==null||para.get("code").equals(""))&&(para.get("name")==null||para.get("name").equals(""))){
-            errMsg.append("公司名字和编码不能同时为空为空");
+        if((para.get("code")==null||para.get("code").equals(""))&&(para.get("name")==null||para.get("name").equals(""))&&(para.get("pre")==null||para.get("pre").equals(""))){
+            errMsg.append("公司名字和编码、前缀不能同时为空");
         }
 
-        if(para.get("code")!=null&&!para.get("code").equals("")&&para.get("name")!=null&&!para.get("name").equals("")){
-            errMsg.append("公司名字和编码不能同时校验");
+        if(para.get("code")!=null&&!para.get("code").equals("")&&para.get("name")!=null&&!para.get("name").equals("")&&para.get("pre")!=null&&!para.get("pre").equals("")){
+            errMsg.append("公司名字和编码、前缀不能同时校验");
         }
 
         if(errMsg.toString().length()>0){

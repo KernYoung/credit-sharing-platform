@@ -32,5 +32,11 @@ public class ReportParameter {
     public String name;
     //公司编码
     public String code;
+    //公司前缀
+    public String pre;
+    //上级公司
+    public String scode;
+
+    public String zcode;
 
 }

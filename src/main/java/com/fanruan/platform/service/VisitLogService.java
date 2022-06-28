@@ -297,6 +297,20 @@ public class VisitLogService {
             return  ReturnJson.getJson("0","成功",hs).toString();
         }
 
+        if(!"".equals(rpVO.getPre())){
+            Integer count =visitLogMapper.getCompanyPreCount(rpVO);
+            HashMap<String,Object> hs=new HashMap<>();
+
+            boolean flag = false;
+
+            if(count==0){
+                flag =true;
+            }
+
+            hs.put("flag",flag);
+            return  ReturnJson.getJson("0","成功",hs).toString();
+        }
+
        return null;
     }
 }

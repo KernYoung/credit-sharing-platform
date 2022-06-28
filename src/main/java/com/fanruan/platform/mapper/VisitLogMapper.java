@@ -51,4 +51,6 @@ public interface VisitLogMapper {
 
     public Integer getCompanyNameCount(ReportParameter reportParameter);
     public Integer getCompanyCodeCount(ReportParameter reportParameter);
+
+    public Integer getCompanyPreCount(ReportParameter reportParameter);
 }
