@@ -18,6 +18,8 @@
         update INPUT_HR_ZXB_CLIENT
         <set >
              CLIENTNO = #{clientNo,jdbcType=VARCHAR},
+            UPDATEBY= #{updateBy,jdbcType=VARCHAR},
+            UPDATETIME=SYSDATE
         </set>
     where code = #{code,jdbcType=VARCHAR}
   </update>

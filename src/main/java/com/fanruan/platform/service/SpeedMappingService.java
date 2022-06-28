@@ -63,6 +63,7 @@ public class SpeedMappingService {
 
         int size = hrZxbClientMapper.getClientCount(param);
         if(size>0){
+            hrZxbClient.setUpdateBy(param.get("updateBy")==null?"":param.get("updateBy").toString());
             hrZxbClientMapper.updateByPrimaryKeySelective(hrZxbClient);
             return ReturnJson.getJson("0","保存成功",null);
         }else{
