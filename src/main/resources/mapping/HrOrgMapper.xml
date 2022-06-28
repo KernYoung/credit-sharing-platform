@@ -38,7 +38,7 @@
       )
     values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{spkOrg,jdbcType=VARCHAR},
       #{enableState,jdbcType=DECIMAL}, #{shortName,jdbcType=VARCHAR}, #{scode,jdbcType=VARCHAR},
-      #{sname,jdbcType=VARCHAR}, #{ts,jdbcType=VARCHAR}, #{dr,jdbcType=DECIMAL}, #{updateTime,jdbcType=VARCHAR},
+      #{sname,jdbcType=VARCHAR}, #{ts,jdbcType=VARCHAR}, #{dr,jdbcType=DECIMAL}, SYSDATE,
       #{updateTimeBy,jdbcType=VARCHAR}, #{pkOrg,jdbcType=VARCHAR}, #{rule,jdbcType=VARCHAR}
       )
   </insert>
@@ -157,9 +157,9 @@
       <if test="dr != null and dr!=''" >
         DR = #{dr,jdbcType=DECIMAL},
       </if>
-      <if test="updateTime != null and updateTime!=''" >
-        UPDATETIME = #{updateTime,jdbcType=OTHER},
-      </if>
+
+        UPDATETIME = SYSDATE,
+
       <if test="updateTimeBy != null and updateTimeBy!=''" >
         UPDATETIMEBY = #{updateTimeBy,jdbcType=VARCHAR},
       </if>

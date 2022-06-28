@@ -208,8 +208,8 @@ public class SpeedMappingService {
         hrOrg.setShortName(param.get("shortName")==null?"":param.get("shortName").toString());
         hrOrg.setScode(param.get("scode")==null?"":param.get("scode").toString());
         hrOrg.setSname(param.get("sname")==null?"":param.get("sname").toString());
-        String time = DateUtil.trans2StandardFormat(new Date());
-        hrOrg.setUpdateTimeBy(param.get("updateTimeBy")== null?time:param.get("updateTimeBy").toString());
+        //String time = DateUtil.trans2StandardFormat(new Date());
+        hrOrg.setUpdateTimeBy(param.get("updateTimeBy")== null?"":param.get("updateTimeBy").toString());
         hrOrg.setPkOrg(param.get("pkOrg")==null?"":param.get("pkOrg").toString());
         hrOrg.setRule(param.get("rule")==null?"":param.get("rule").toString());
         if(hrOrg.getPkOrg()==null||hrOrg.getPkOrg().equals("")){
