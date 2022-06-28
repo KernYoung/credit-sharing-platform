@@ -213,10 +213,10 @@
 
   <select id="listByMap1" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select * from (  select rownum r,c.* from (
-    SELECT CODE,NAME,SHORTNAME,SCODE,SNAME, '手工' orgType,ENABLESTATE,PK_ORG,rule  FROM INPUT_HR_ORG where nvl(dr,0)=0
+    SELECT CODE,NAME,SHORTNAME,SCODE,SNAME, '手工' orgType,ENABLESTATE,PK_ORG,rule  FROM INPUT_HR_ORG  WHERE ENABLESTATE = '1'
 
     UNION ALL
-    SELECT CODE ,NAME ,SHORTNAME ,SCODE ,SNAME ,'NC' orgType,ENABLESTATE,PK_ORG,'' rule FROM ODS_HR_ORG) c
+    SELECT CODE ,NAME ,SHORTNAME ,SCODE ,SNAME ,'NC' orgType,2 ENABLESTATE,PK_ORG,'' rule FROM ODS_HR_ORG WHERE DR = '0') c
     order by code)
      where 1=1
     <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
