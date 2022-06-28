@@ -9,6 +9,8 @@ public interface HrZxbClientMapper {
 
     int updateByPrimaryKeySelective(HrZxbClient record);
 
+    int insert(HrZxbClient record);
+    int getClientCount(Map<String, Object> params);
 
     List<HrZxbClient> listByMap(Map<String, Object> params);
 

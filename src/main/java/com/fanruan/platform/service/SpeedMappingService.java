@@ -60,8 +60,25 @@ public class SpeedMappingService {
         if("".equals(hrZxbClient.getCode())||"".equals(hrZxbClient.getClientNo())){
             return ReturnJson.getJson("1","信保代码为空",null);
         }
-        hrZxbClientMapper.updateByPrimaryKeySelective(hrZxbClient);
-        return ReturnJson.getJson("0","保存成功",null);
+
+        int size = hrZxbClientMapper.getClientCount(param);
+        if(size>0){
+            hrZxbClientMapper.updateByPrimaryKeySelective(hrZxbClient);
+            return ReturnJson.getJson("0","保存成功",null);
+        }else{
+            hrZxbClient.setId(UUID.randomUUID().toString());
+            hrZxbClient.setName(param.get("name")==null?"":param.get("name").toString());
+            hrZxbClient.setCompanyType(param.get("companyType")==null?"":param.get("companyType").toString());
+            hrZxbClient.setUpdateBy(param.get("updateBy")==null?"":param.get("updateBy").toString());
+            int result=hrZxbClientMapper.insert(hrZxbClient);
+            if(result==1){
+                return ReturnJson.getJson("0","保存成功",null);
+            }else{
+                return ReturnJson.getJson("1","保存失败",null);
+            }
+
+        }
+
     }
 
     public String getXbMapping(Map<String,Object> param) throws Exception{

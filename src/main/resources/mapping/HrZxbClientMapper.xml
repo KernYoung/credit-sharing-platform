@@ -22,6 +22,12 @@
     where code = #{code,jdbcType=VARCHAR}
   </update>
 
+    <insert id="insert" parameterType="com.fanruan.platform.bean.HrZxbClient" >
+        INSERT INTO INPUT_HR_ZXB_CLIENT(FID,CODE,NAME,CLIENTNO,UPDATEBY,UPDATETIME,COMPANY_TYPE)
+        values (#{id,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+                #{clientNo,jdbcType=VARCHAR},#{updateBy,jdbcType=VARCHAR},SYSDATE, #{companyType,jdbcType=VARCHAR})
+    </insert>
+
     <select id="getCount" resultType="Integer" parameterType="java.util.Map">
 
         select count(*)
@@ -49,6 +55,11 @@
 
 
 
+    </select>
+
+
+    <select id="getClientCount" resultType="Integer" parameterType="java.util.Map">
+        SELECT COUNT(*) FROM INPUT_HR_ZXB_CLIENT WHERE CODE =  #{code}
     </select>
 
   <select id="listByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >

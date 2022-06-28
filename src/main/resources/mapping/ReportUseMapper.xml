@@ -436,7 +436,7 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         </if>
         )
 
-        GROUP BY COMPANY_NAME,SOURCE
+        GROUP BY COMPANY_NAME,SOURCE order by SOURCE
 
     </select>
 

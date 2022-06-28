@@ -21,4 +21,6 @@ public class HrZxbClient {
 
     private String companyType;
 
+    private String id;
+
 }
