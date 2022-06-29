@@ -80,6 +80,9 @@ public class VisitLogService {
 
             for (int i = 0; i < userVisitList.size(); i++) {
                 String companyName = userVisitList.get(i).getCompanyName();
+                if(companyName==null||companyName.equals("")){
+                    continue;
+                }
                 //处理成员公司启用总数
                 if(list!=null&&list.size()>0){
                     for (int j = 0; j < list.size(); j++) {
@@ -87,6 +90,8 @@ public class VisitLogService {
                         if(map.get("COMPANYNAME")==null)
                             continue;
                         String queryCompanyName = map.get("COMPANYNAME").toString();
+                        if(queryCompanyName==null||queryCompanyName.equals(""))
+                            continue;
                         int userNumber = Integer.valueOf(map.get("USERNUMBER").toString());
                         if(companyName.equals(queryCompanyName)){
                             userVisitList.get(i).setUserNum(userNumber);
