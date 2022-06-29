@@ -174,7 +174,11 @@ WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
         <if test="companyName!=null and companyName!=''">
             and   ${companyName}
         </if>
-        order by A.REPORT_TYPE desc,  A.COMPANY_NAME desc, B.USERNAME||'('||B.NAME||')'  desc, c.companyname desc,A.UPDATE_TIME desc
+        order by MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE ORDER BY A.UPDATE_TIME DESC) desc,
+        MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME ORDER BY A.UPDATE_TIME DESC) desc,
+        MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME,B.USERNAME ORDER BY A.UPDATE_TIME DESC)  desc,
+        MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME,B.USERNAME,C.companyname ORDER BY A.UPDATE_TIME DESC) desc
+        ,A.UPDATE_TIME desc
     </select>
 
     <select id="getMonitoring" resultType="com.fanruan.platform.bean.Monitoring">
