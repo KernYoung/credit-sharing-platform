@@ -210,11 +210,13 @@ WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
             from CREDIT_FOCUS_RELATIONS a left join credit_user b on a.user_id = b.user_id
             left join DIM_ORG c on b.company_name = c. subcompanyname
             inner join log_tyc_concern d on b.username = d.updateby and d.entname = a.company_name
+            where     1=1
+                    <if test="companyName!=null and companyName!=''">
+            and   ${companyName}
+        </if>
             )
             where 1=1 and name is not null
-            <if test="companyName!=null and companyName!=''">
-                and   ${companyName}
-            </if>
+
             and RELATIONS LIKE '%"tianyancha":1%'
             order by company_name
         </if>
