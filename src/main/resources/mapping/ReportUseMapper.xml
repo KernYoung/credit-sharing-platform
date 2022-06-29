@@ -165,7 +165,7 @@ WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
 
 
     <select id="getZcxReportUseList" resultType="com.fanruan.platform.bean.ZcxReportUseList">
-        select A.COMPANY_NAME applyCompanyName,A.REPORT_TYPE applyType,A.UPDATE_BY ,A.UPDATE_TIME applyTime,B.USERNAME||'('||B.NAME||')' as userName,c.companyname companyName
+        select A.COMPANY_NAME applyCompanyName,A.REPORT_TYPE applyType,A.UPDATE_BY ,to_char(A.UPDATE_TIME,'YYYY-MM-DD hh24:mi:ss') applyTime,B.USERNAME||'('||B.NAME||')' as userName,c.companyname companyName
         from (select * from CREDIT_REPORT where UPDATE_BY &lt;&gt;'null' )A left join CREDIT_USER B
         on A.UPDATE_BY=B.USER_ID
         left join DIM_ORG c on b.company_name = c.subcompanyname
@@ -563,7 +563,7 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
 
     <!--模糊查询-->
     <select id="getLikeQuery" resultType="com.fanruan.platform.bean.LikeQuery">
-        select rownum no,A.USER_ID,B.NAME userName,A.KEY_WORD keyWord,A.SEARCH_TIME operateTime from
+        select rownum no,A.USER_ID,B.NAME userName,A.KEY_WORD keyWord,to_char(A.SEARCH_TIME,'YYYY-MM-DD hh24:mi:ss') operateTime from
         (
         select a.* from CREDIT_SEARCH_WORDS a
         left join credit_user b on a.user_id = b.user_id
