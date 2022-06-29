@@ -48,10 +48,11 @@
         left join INPUT_HR_ZXB_CLIENT on INPUT_HR_ZXB_CLIENT.Code=aa.code
         where 1=1
         <if test="code != null and code!=''" >
-            and aa.code = #{code,jdbcType=VARCHAR}
+            and aa.code like '%'||#{code}||'%'
+
         </if>
         <if test="name != null and name!=''">
-            and aa.Name = #{name,jdbcType=VARCHAR}
+            and aa.name like '%'||#{name}||'%'
         </if>
 
 
@@ -84,10 +85,10 @@ select * from
       left join INPUT_HR_ZXB_CLIENT on INPUT_HR_ZXB_CLIENT.Code=aa.code) c
       where 1=1
       <if test="code != null and code!=''" >
-          and c.code = #{code,jdbcType=VARCHAR}
+          and c.code like '%'||#{code}||'%'
       </if>
       <if test="name != null and name!=''">
-          and c.Name = #{name,jdbcType=VARCHAR}
+          and c.name like '%'||#{name}||'%'
       </if>
 
       <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">

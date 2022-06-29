@@ -98,6 +98,22 @@ public class VisitLogService {
             subNum(userVisitList,"visitNum","visitTotalNum");
             subNum(userVisitList,"visitPageNum","visitPageTotalNum");
         }
+        //处理序号，相同成员公司序号一样
+        if(userVisitList!=null&&userVisitList.size()>0){
+            List<String> namelist = new ArrayList<>();
+            int no = 0;
+            for (int i = 0; i < userVisitList.size(); i++) {
+                String companyName = userVisitList.get(i).getCompanyName();
+                if(namelist.contains(companyName)){
+                    userVisitList.get(i).setNo(no+"");
+                }else{
+                    no++;
+                    namelist.add(companyName);
+                    userVisitList.get(i).setNo(no+"");
+
+                }
+            }
+        }
         return userVisitList;
     }
 
