@@ -194,8 +194,8 @@ group by b.companyname
         NVL(启用用户,0) AS userNum,
         NVL(访问次数,0) AS visitNum,
         NVL(访问人数,0) AS activeUserNum,
-        case when NVL(启用用户,0)=0 then null else NVL(访问人数,0)/NVL(启用用户,0) end as activeUserRatio,
-        case when NVL(访问人数,0)=0 then null else  ceil(round(NVL(访问次数,0)/NVL(访问人数,0))) end  as acticeVisitRatio
+        case when NVL(启用用户,0)=0 then 0 else NVL(访问人数,0)/NVL(启用用户,0) end as activeUserRatio,
+        case when NVL(访问人数,0)=0 then 0 else  ceil(round(NVL(访问次数,0)/NVL(访问人数,0))) end  as acticeVisitRatio
         FROM ds1 left join ds2 on ds1.companyname=ds2.companyname
         where ds1.companyname IS NOT NULL
         ORDER BY FID ,OID
