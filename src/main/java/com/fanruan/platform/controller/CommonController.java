@@ -1906,7 +1906,17 @@ public class CommonController {
          * 校验国家紧急程度
          */
         if(commonService.onCheckSpeedMapping(param)){
-            hs.put("returnMsg","该紧急程度不能申请!");
+            String speed = param.get("speed")==null?"":
+                    param.get("speed").toString();
+            String speedName = "";
+            if("1".equals(speed)){
+                speedName="一般";
+            }else if("2".equals(speed)){
+                speedName="加急";
+            }else if("3".equals(speed)){
+                speedName="特急";
+            }
+            hs.put("returnMsg","当前国家不能申请紧急程度:"+speedName);
             hs.put("returnCode","500");
             return objectMapper.writeValueAsString(hs);
         }
@@ -2633,6 +2643,9 @@ public class CommonController {
         companyPointsPRODList = commonService.getCompanyPoints(pafcVersion);
         companyPointsDEVList = InputPointsService.getCompanyPoints(pafcVersion);
 
+        //对没有匹配的公司进行提示
+
+        List<String> unMatch = new ArrayList<>();
         for(PAFCPoints pafcPoints : pafcPointsList){
             for(PAFCCompany pafcCompany : pafcCompanyList){
                 if(pafcPoints.getCompanyCode().equals(pafcCompany.getCompanyCode())){
@@ -2641,7 +2654,25 @@ public class CommonController {
                     pafcPoints.setCompanyName(pafcCompany.getCompanyName());
                 }
             }
+            //处理PAFC_INPUT_DISTRIBUTE有公司编码而架构表没有
+            if(pafcPoints.getCompanyName()==null||pafcPoints.getCompanyName().equals("")){
+                unMatch.add(pafcPoints.getCompanyCode());
+            }
         }
+        //处理PAFC_INPUT_DISTRIBUTE有公司编码而架构表没有
+        if(unMatch!=null&&unMatch.size()>0){
+            for (int i = 0; i < unMatch.size(); i++) {
+                String companyCode= unMatch.get(i);
+                for (int j = 0; j < pafcPointsList.size(); j++) {
+                    if(companyCode.equals(pafcPointsList.get(j).getCompanyCode())){
+                        pafcPointsList.remove(j);
+                        break;
+                    }
+                }
+            }
+        }
+        //end
+
         Integer attentionTemp = 0;
         Integer interfaceTemp = 0;
         //按二级公司维度统计接口、关注使用数 --正式数据

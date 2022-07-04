@@ -379,9 +379,19 @@ public class CompanyController {
          * 校验国家紧急程度
          */
         if(commonService.onCheckSpeedMapping(param)){
-            hs.put("returnMsg","请检查国家对应紧急程度");
-            hs.put("returnCode","500");
             ObjectMapper objectMapper=new ObjectMapper();
+            String speed = param.get("speed")==null?"":
+                    param.get("speed").toString();
+            String speedName = "";
+            if("1".equals(speed)){
+                speedName="一般";
+            }else if("2".equals(speed)){
+                speedName="加急";
+            }else if("3".equals(speed)){
+                speedName="特急";
+            }
+            hs.put("returnMsg","当前国家不能申请紧急程度:"+speedName);
+            hs.put("returnCode","500");
             return objectMapper.writeValueAsString(hs);
         }
 
