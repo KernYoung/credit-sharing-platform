@@ -4,9 +4,12 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class DateUtil {
 
@@ -86,4 +89,65 @@ public class DateUtil {
 
         return lastDayOfMonth;
     }
+
+    /**
+     *  获取两个时间之间的间隔天数
+     * @param startTimeStr  开始时间
+     * @param endTimeStr    结束时间
+     * @return      天数          例如2018-11-01 00:00:00至2018-11-30 23:59:59  返回为30
+     */
+    public static int getBetweenDays(String startTimeStr, String endTimeStr) {
+        int betweenDays = 0;
+        Date startTime = strToDateLong(startTimeStr);
+        Date endTime = strToDateLong(endTimeStr);
+
+        long start = startTime.getTime();
+        long end = endTime.getTime();
+
+        betweenDays = (int) (Math.abs(end - start)/(24*3600*1000));
+
+        return betweenDays + 1;
+    }
+
+    public static Date strToDateLong(String strDate) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date strtodate = formatter.parse(strDate, pos);
+        return strtodate;
+    }
+
+    /**
+     *  获取两个日期之间的所有日期 (年月日)
+     *
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public static List<String> getBetweenDate(String startTime, String endTime){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        // 声明保存日期集合
+        List<String> list = new ArrayList<String>();
+        try {
+            // 转化成日期类型
+            Date startDate = sdf.parse(startTime);
+            Date endDate = sdf.parse(endTime);
+
+            //用Calendar 进行日期比较判断
+            Calendar calendar = Calendar.getInstance();
+            while (startDate.getTime()<=endDate.getTime()){
+                // 把日期添加到集合
+                list.add(sdf.format(startDate));
+                // 设置日期
+                calendar.setTime(startDate);
+                //把日期增加一天
+                calendar.add(Calendar.DATE, 1);
+                // 获取增加后的日期
+                startDate=calendar.getTime();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }

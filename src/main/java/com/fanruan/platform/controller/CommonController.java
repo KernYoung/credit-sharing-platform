@@ -2655,22 +2655,22 @@ public class CommonController {
                 }
             }
             //处理PAFC_INPUT_DISTRIBUTE有公司编码而架构表没有
-            if(pafcPoints.getCompanyName()==null||pafcPoints.getCompanyName().equals("")){
-                unMatch.add(pafcPoints.getCompanyCode());
-            }
+//            if(pafcPoints.getCompanyName()==null||pafcPoints.getCompanyName().equals("")){
+//                unMatch.add(pafcPoints.getCompanyCode());
+//            }
         }
         //处理PAFC_INPUT_DISTRIBUTE有公司编码而架构表没有
-        if(unMatch!=null&&unMatch.size()>0){
-            for (int i = 0; i < unMatch.size(); i++) {
-                String companyCode= unMatch.get(i);
-                for (int j = 0; j < pafcPointsList.size(); j++) {
-                    if(companyCode.equals(pafcPointsList.get(j).getCompanyCode())){
-                        pafcPointsList.remove(j);
-                        break;
-                    }
-                }
-            }
-        }
+//        if(unMatch!=null&&unMatch.size()>0){
+//            for (int i = 0; i < unMatch.size(); i++) {
+//                String companyCode= unMatch.get(i);
+//                for (int j = 0; j < pafcPointsList.size(); j++) {
+//                    if(companyCode.equals(pafcPointsList.get(j).getCompanyCode())){
+//                        pafcPointsList.remove(j);
+//                        break;
+//                    }
+//                }
+//            }
+//        }
         //end
 
         Integer attentionTemp = 0;

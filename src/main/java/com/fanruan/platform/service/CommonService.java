@@ -934,6 +934,9 @@ public class CommonService {
      * @return
      */
     public boolean onCheckSpeedMapping(Map<String,Object> param){
+        //先不上线
+        if(1==1)
+            return false;
         boolean flag = false;
         String reportCorpCountryCode = param.get("reportCorpCountryCode")==null?"":
                 param.get("reportCorpCountryCode").toString();

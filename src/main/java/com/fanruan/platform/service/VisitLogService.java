@@ -30,8 +30,40 @@ public class VisitLogService {
      * @return
      */
     public List<UserVisit> getUserVisit(ReportParameter rpVO){
+        List<UserVisit> usreVisitList1 = new ArrayList<>();
+        String begindate = rpVO.getStartDate();//查询开始日期
+        String endDate = rpVO.getEndDate();//查询结束日期
+        //两个日期之间的日期
+        List<String> days = DateUtil.getBetweenDate(begindate,endDate);
         List<UserVisit> usreVisitList =  visitLogMapper.getUserVisit(rpVO);
-        return usreVisitList;
+        if(usreVisitList!=null&&usreVisitList.size()>0){
+            //日期和查询数据数量一样，则不需要补0
+            if(days.size()== usreVisitList.size()){
+                return usreVisitList;
+            }
+
+            for (int i = 0; i < days.size(); i++) {
+                String thisDay = days.get(i);
+                boolean flag =  false;
+                for (int j = 0; j < usreVisitList.size(); j++) {
+                    String day = usreVisitList.get(j).getBillDate();//查询到的日期
+                    if(thisDay.equals(day)){
+                        flag = true;
+                        usreVisitList1.add(usreVisitList.get(j));
+                    }
+                }
+                //如果查询不到，补一条遍历天为0的数据
+                if(!flag){
+                    UserVisit userVisit = new UserVisit();
+                    userVisit.setBillDate(thisDay);
+                    userVisit.setVisitNum(0);
+                    userVisit.setVisitPageNum(0);
+                    userVisit.setVisitUserNum(0);
+                    usreVisitList1.add(userVisit);
+                }
+            }
+        }
+        return usreVisitList1;
     }
 
     public List<String> getCompanyList(Map<String,Object> rpVO){
