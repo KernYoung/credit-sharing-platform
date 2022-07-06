@@ -500,6 +500,8 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         <if test="source!=null and source!='' and  source.toString()=='资信库'.toString()">
             AND nvl(C.ERROR_CODE,'1') &lt;&gt;0
         </if>
+        ORDER BY MAX(A.UPDATETIME)OVER(PARTITION BY A.CUSTOM_NAME ORDER BY A.UPDATETIME DESC) DESC,A.CUSTOM_NAME DESC,
+        MAX(A.UPDATETIME)OVER(PARTITION BY A.CUSTOM_NAME,B.NAME ORDER BY A.UPDATETIME DESC) DESC,A.UPDATETIME DESC
     </select>
 
     <!--页面热度-->
