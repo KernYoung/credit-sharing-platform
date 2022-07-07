@@ -32,10 +32,32 @@
 
     <select id="getCount" resultType="Integer" parameterType="java.util.Map">
 
-        select count(*)
+        <!--select count(*)
         from (SELECT  CODE,G.COMPANYCODE,G.COMPANYNAME,NAME,'HR系统' AS TAP
         FROM ODS_HR_ORG O
         LEFT JOIN DIM_ORG G ON O.CODE=G.SUBCOMPANYCODE
+
+        UNION
+        SELECT CODE,
+        '' AS COMPANYCODE,
+        '' AS  COMPANYNAME,
+        NAME,
+        '手工填报' AS TAP
+        FROM INPUT_HR_ORG
+        ORDER BY COMPANYCODE,CODE) aa
+        left join INPUT_HR_ZXB_CLIENT on INPUT_HR_ZXB_CLIENT.Code=aa.code
+        where 1=1
+        <if test="code != null and code!=''" >
+            and aa.code like '%'||#{code}||'%'
+
+        </if>
+        <if test="name != null and name!=''">
+            and aa.name like '%'||#{name}||'%'
+        </if>-->
+        select count(*)
+        from (SELECT  O.CODE,G.CODE AS COMPANYCODE,G.NAME AS COMPANYNAME,O.NAME,'HR系统' AS TAP
+        FROM ODS_HR_ORG O
+        LEFT JOIN ODS_HR_ORG G ON G.NAME=RES_ENAIL(O.NAME)
 
         UNION
         SELECT CODE,
@@ -57,7 +79,6 @@
 
 
 
-
     </select>
 
 
@@ -66,7 +87,7 @@
     </select>
 
   <select id="listByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >
-select * from
+<!--select * from
    ( select rownum r,c.* from (
       select aa.code,aa.COMPANYCODE companyCode,INPUT_HR_ZXB_CLIENT.Clientno clientNo,aa.companyname companyName,aa.Name name,aa.TAP company_type
       from (
@@ -101,7 +122,46 @@ select * from
       <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
           and  r &gt;= (#{pageIndex}-1) * #{pageSize}
       </if>
-      order by company_type asc,code asc
+      order by company_type asc,code asc-->
+      select * from
+      ( select rownum r,c.* from (
+      select aa.code,aa.COMPANYCODE companyCode,INPUT_HR_ZXB_CLIENT.Clientno clientNo,aa.companyname companyName,aa.Name name,aa.TAP company_type
+      from (
+      SELECT  O.CODE,G.CODE AS COMPANYCODE,G.NAME AS COMPANYNAME,O.NAME,'HR系统' AS TAP
+      FROM ODS_HR_ORG O
+      LEFT JOIN ODS_HR_ORG G ON G.NAME=RES_ENAIL(O.NAME)
+
+      UNION
+      SELECT CODE,
+      '' AS COMPANYCODE,
+      '' AS  COMPANYNAME,
+      NAME,
+      '手工填报' AS TAP
+      FROM INPUT_HR_ORG
+      ) aa
+      left join INPUT_HR_ZXB_CLIENT on INPUT_HR_ZXB_CLIENT.Code=aa.code) c
+      where 1=1
+      <if test="code != null and code!=''" >
+          and c.code like '%'||#{code}||'%'
+      </if>
+      <if test="name != null and name!=''">
+          and c.name like '%'||#{name}||'%'
+      </if>
+
+      <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
+          and rownum &lt;= #{pageIndex} * #{pageSize}
+      </if>
+
+      )  where
+      1=1
+
+      <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
+          and  r &gt;= (#{pageIndex}-1) * #{pageSize}
+      </if>
+      ORDER BY COMPANYCODE,CODE
+
+
+
 
   </select>
 </mapper>
