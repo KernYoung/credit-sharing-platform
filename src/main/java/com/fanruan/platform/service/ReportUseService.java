@@ -124,7 +124,7 @@ public class ReportUseService {
             zcxReportUses.add(qyxypj);
 
             //城投企业评价
-            ZcxReportUse ctqypj = getZcxReportUseByType(zcxReportUseList,"城投企业评价");
+            ZcxReportUse ctqypj = getZcxReportUseByType(zcxReportUseList,"城投企业信用评价");
             ctqypj.setNumberOfHits("2点/次");
             ctqypj.setNo("5");
             zcxReportUses.add(ctqypj);
