@@ -215,13 +215,16 @@ public class SpeedMappingService {
         if(hrOrg.getPkOrg()==null||hrOrg.getPkOrg().equals("")){
             hrOrg.setPkOrg(UUID.randomUUID().toString());
             hrOrgMapper.insert(hrOrg);
+            return ReturnJson.getJson("0","创建成功",null);
         }else if(hrOrg.getPkOrg()!=null&&!hrOrg.getPkOrg().equals("")&&hrOrg.getDr()==1){
             hrOrgMapper.deleteByPrimaryKey(hrOrg.getPkOrg());
+            return ReturnJson.getJson("0","删除成功",null);
         }else{
             hrOrgMapper.updateByPrimaryKeySelective(hrOrg);
+            return ReturnJson.getJson("0","保存成功",null);
         }
 
-        return ReturnJson.getJson("0","保存成功",null);
+
     }
     @Transactional(rollbackFor=Exception.class)
     public String uploadSpeedMapping(List<SpeedMapping> list) throws Exception{
