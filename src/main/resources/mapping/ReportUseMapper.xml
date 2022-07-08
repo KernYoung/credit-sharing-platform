@@ -89,6 +89,9 @@
         left join ODS_ZXB_REPORTAPPROVE  R ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
         left join ODS_ZXB_PDF P ON P.NOTICESERIALNO = R.NOTICESERIALNO
         WHERE P.NOTICESERIALNO IS NOT NULL and a.companyname IS NOT NULL
+        <if test="companyName!=null and companyName!=''">
+            and ${companyName}
+        </if>
         and to_char(APPROVEDATE,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(APPROVEDATE,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         order by reportCode
     </select>

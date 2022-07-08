@@ -101,7 +101,7 @@ public class ReportUseController {
     @ResponseBody
     public String getXbReportUseList(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
         ReportParameter rpVO = new ReportParameter();
-        rpVO = dealReportParameter(para,"c.companyName");
+        rpVO = dealReportParameter(para,"companyName");
         String json = reportUseService.getXbReportUseByCompany(rpVO);
         return json;
     }

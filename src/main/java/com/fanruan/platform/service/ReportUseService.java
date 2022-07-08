@@ -50,6 +50,14 @@ public class ReportUseService {
      */
     public String getXbReportUseByCompany(ReportParameter rpVO) throws Exception{
         List<XbReportUseByCompany> xbReportUse = reportUseMapper.getXbReportUseByCompany(rpVO);
+
+        if(xbReportUse!=null&&xbReportUse.size()>0){
+            for (XbReportUseByCompany xb :xbReportUse) {
+                xb.setDownLoadNum(0);
+                xb.setPreviewNum(0);
+            }
+        }
+
         List<Map<String,Object>> list = reportUseMapper.getUseNum(rpVO);
         if(list!=null&&list.size()>0){
             for (XbReportUseByCompany xbReportUseByCompany:
