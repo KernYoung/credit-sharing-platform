@@ -64,8 +64,8 @@ WHERE NAME = (SELECT RES_ENAIL(COMPANY_NAME) FROM CREDIT_USER WHERE USERNAME = #
         where 1=1
         and a.USER_NAME is not null and name is not null
         group by b.NAME,c.companyname,c.subcompanyname,a.user_code,b.username
-        ORDER BY c.companynamE,MAX(visitNum)OVER(PARTITION BY c.companyname,c.subcompanyname ORDER BY visitNum DESC) DESC,visitNum DESC
-
+        ORDER BY c.companynamE,MAX(visitNum)OVER(PARTITION BY c.companyname,c.subcompanyname ORDER BY visitNum DESC) DESC,
+        c.subcompanyname,visitNum DESC
     </select>
 
     <select id="getUseUserCompanyName" resultType="map">
