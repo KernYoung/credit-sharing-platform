@@ -177,9 +177,17 @@ WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
         <if test="companyName!=null and companyName!=''">
             and   ${companyName}
         </if>
-        order by MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE ORDER BY A.UPDATE_TIME DESC) desc,
+        /*order by MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE ORDER BY A.UPDATE_TIME DESC) desc,
         MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME ORDER BY A.UPDATE_TIME DESC) desc,
         MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME,B.USERNAME ORDER BY A.UPDATE_TIME DESC)  desc,
+        MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME,B.USERNAME,C.companyname ORDER BY A.UPDATE_TIME DESC) desc
+        ,A.UPDATE_TIME desc*/
+        order by MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE ORDER BY A.UPDATE_TIME DESC) desc,
+        A.REPORT_TYPE DESC,
+        MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME ORDER BY A.UPDATE_TIME DESC) desc,
+        A.COMPANY_NAME DESC,
+        MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME,B.USERNAME ORDER BY A.UPDATE_TIME DESC)  desc,
+        B.USERNAME DESC,
         MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME,B.USERNAME,C.companyname ORDER BY A.UPDATE_TIME DESC) desc
         ,A.UPDATE_TIME desc
     </select>
@@ -205,7 +213,8 @@ WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
             )
             where 1=1 and name is not null AND UPDATETIME IS NOT NULL
             and RELATIONS LIKE '%"zhongchengxin":1%'
-            order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,updatetime DESC
+            /*order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,updatetime DESC*/
+            order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,company_name DESC,updatetime DESC
         </if>
         <if test="flag!=null and flag!='' and flag=='1'.toString()">
             select rownum no,company_name gzCompanyName,name userName,companyname companyName,updatetime gzTime from (
@@ -221,7 +230,8 @@ WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
             where 1=1 and name is not null
 
             and RELATIONS LIKE '%"tianyancha":1%'
-            order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,updatetime DESC
+           /* order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,updatetime DESC*/
+            order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,company_name DESC,updatetime DESC
         </if>
 
 
