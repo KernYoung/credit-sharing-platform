@@ -225,6 +225,9 @@
     <if test="scode!=null and scode!=''">
       and scode=#{scode,jdbcType=VARCHAR}
     </if>
+    <if test="scode==null ">
+      and code='010'
+    </if>
     <if test="code!=null and code!=''">
       and code=#{code,jdbcType=VARCHAR}
     </if>
