@@ -27,19 +27,22 @@
     </select>
 
     <select id="getCompanyList" resultType="java.util.HashMap">
+
         SELECT * FROM(
-SELECT CODE,NAME FROM ODS_HR_ORG WHERE  DR = '0' and (CODE = '010' OR SCODE = '010')
-UNION ALL
-SELECT CODE,NAME FROM INPUT_HR_ORG WHERE  ENABLESTATE = '1' and ( CODE = '010' OR SCODE = '010'))
-WHERE (SELECT RES_ENAIL(COMPANY_NAME) FROM CREDIT_USER WHERE USERNAME = #{userName} AND ROWNUM = 1) = '浙江省国际贸易集团有限公司'
+             SELECT * FROM(
+                              SELECT CODE,NAME FROM ODS_HR_ORG WHERE  DR = '0' and (CODE = '010' OR SCODE = '010')
+                              UNION ALL
+                              SELECT CODE,NAME FROM INPUT_HR_ORG WHERE  ENABLESTATE = '1' and ( CODE = '010' OR SCODE = '010'))
+             WHERE (SELECT RES_ENAIL(COMPANY_NAME) FROM CREDIT_USER WHERE USERNAME = #{userName,jdbcType=VARCHAR} AND ROWNUM = 1) = '浙江省国际贸易集团有限公司'
 
-UNION
+             UNION
 
-SELECT * FROM(
-SELECT CODE,NAME FROM ODS_HR_ORG WHERE CODE = '010' OR SCODE = '010'
-UNION ALL
-SELECT CODE,NAME FROM INPUT_HR_ORG WHERE CODE = '010' OR SCODE = '010')
-WHERE NAME = (SELECT RES_ENAIL(COMPANY_NAME) FROM CREDIT_USER WHERE USERNAME = #{userName} AND ROWNUM = 1)
+             SELECT * FROM(
+                              SELECT CODE,NAME FROM ODS_HR_ORG WHERE CODE = '010' OR SCODE = '010'
+                              UNION ALL
+                              SELECT CODE,NAME FROM INPUT_HR_ORG WHERE CODE = '010' OR SCODE = '010')
+             WHERE NAME = (SELECT RES_ENAIL(COMPANY_NAME) FROM CREDIT_USER WHERE USERNAME = #{userName,jdbcType=VARCHAR} AND ROWNUM = 1)
+         ) order by decode(code,'010',1),code
     </select>
 
     <select id="getUserVisitList" resultType="com.fanruan.platform.bean.UserVisitList">
@@ -1350,7 +1353,7 @@ WHERE STATUS = 1
           and a.RULE is not null
           AND '010' =#{scode,jdbcType=VARCHAR}
           AND a.SCODE = '010'
-            AND a.CODE not in (#{zcode,jdbcType=VARCHAR})
+            AND a.CODE not in (#{zcode })
 
     </select>
 </mapper>
