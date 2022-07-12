@@ -178,8 +178,8 @@ public class SpeedMappingService {
             HrOrg hrOrg1 = new HrOrg();
             for (int i = 0; i < hrOrgs.size(); i++) {
                 hrOrg1.setScode(hrOrgs.get(i).getCode());
-                List<HrOrg> hrOrgs1 = getTreeData(hrOrg1);
-                hrOrgs.get(i).setChildHrOrg(hrOrgs1);
+                //List<HrOrg> hrOrgs1 = getTreeData(hrOrg1);
+                //hrOrgs.get(i).setChildHrOrg(hrOrgs1);
             }
         }
 
