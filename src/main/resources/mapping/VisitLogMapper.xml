@@ -46,7 +46,7 @@
     </select>
 
     <select id="getUserVisitList" resultType="com.fanruan.platform.bean.UserVisitList">
-        select distinct B.NAME AS USERNAME,b.username userCode,user_code,a.user_code || '('|| b.NAME ||')' as name,c.companyname,c.subcompanyname,count(a.ID) visitNum,count(distinct a.TO_PATH) visitPageNum,max(a.Q_DATE)  AS lastVisitTime
+        <!--select distinct B.NAME AS USERNAME,b.username userCode,user_code,a.user_code || '('|| b.NAME ||')' as name,c.companyname,c.subcompanyname,count(a.ID) visitNum,count(distinct a.TO_PATH) visitPageNum,max(a.Q_DATE)  AS lastVisitTime
         from (
         select a.* from LOG_CREDIT_OPER a
         left join credit_user b on a.user_code = b.username
@@ -68,12 +68,35 @@
         and a.USER_NAME is not null and name is not null
         group by b.NAME,c.companyname,c.subcompanyname,a.user_code,b.username
         ORDER BY c.companynamE,MAX(visitNum)OVER(PARTITION BY c.companyname,c.subcompanyname ORDER BY visitNum DESC) DESC,
-        c.subcompanyname,visitNum DESC
+        c.subcompanyname,visitNum DESC-->
+        select distinct B.NAME AS USERNAME,b.username userCode,user_code,a.user_code || '('|| b.NAME ||')' as name,RES_ENAIL(B.COMPANY_NAME) companyname,b.COMPANY_NAME subcompanyname,count(a.ID) visitNum,count(distinct a.TO_PATH) visitPageNum,max(a.Q_DATE)  AS lastVisitTime
+        from (
+        select a.* from LOG_CREDIT_OPER a
+        left join credit_user b on a.user_code = b.username
+        where 1=1
+        <if test="startDate!=null and startDate!=''">
+            and to_char(Q_DATE,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        <if test="endDate!=null and endDate!=''">
+            and to_char(Q_DATE,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        <if test="companyName!=null and companyName!=''">
+            AND ${companyName}
+        </if>
+        ) a
+        left join credit_user b on a.USER_CODE = b.username
+        where 1=1
+        and a.USER_NAME is not null and name is not null
+        group by b.NAME,RES_ENAIL(B.COMPANY_NAME),b.COMPANY_NAME,a.user_code,b.username
+        ORDER BY RES_ENAIL(B.COMPANY_NAME),MAX(visitNum)OVER(PARTITION BY RES_ENAIL(B.COMPANY_NAME),b.COMPANY_NAME ORDER BY visitNum DESC) DESC,
+        b.COMPANY_NAME,visitNum DESC
     </select>
 
     <select id="getUseUserCompanyName" resultType="map">
-    select count(*) as userNumber,b.companyname as companyName FROM CREDIT_USER A LEFT JOIN DIM_ORG B on a.company_name = b.subcompanyname  WHERE STATUS = 1
-group by b.companyname
+    <!--select count(*) as userNumber,b.companyname as companyName FROM CREDIT_USER A LEFT JOIN DIM_ORG B on a.company_name = b.subcompanyname  WHERE STATUS = 1
+group by b.companyname-->
+        select count(*) as userNumber,RES_ENAIL(company_name)  as companyName FROM CREDIT_USER A WHERE STATUS = 1
+        group by RES_ENAIL(company_name)
     </select>
 
     <select id="getUserBehavior" resultType="com.fanruan.platform.bean.UserBehavior">
