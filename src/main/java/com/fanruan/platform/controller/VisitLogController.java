@@ -72,7 +72,7 @@ public class VisitLogController {
         if(checkPara1!=null&&!checkPara1.equals("")){
             return checkPara1;
         }
-        ReportParameter rpVo = getReportParameter2(para);
+        ReportParameter rpVo = getReportParameter(para);
         List<UserVisitList> userVisitList =  visitLogService.getUserVisitList(rpVo);
         String json = getJson("0","查询成功",userVisitList);
         return json;
