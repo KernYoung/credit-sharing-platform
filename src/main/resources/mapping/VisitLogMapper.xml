@@ -100,6 +100,53 @@ group by b.companyname
     </select>
 
     <select id="getUserBehavior" resultType="com.fanruan.platform.bean.UserBehavior">
+        <!--select rownum no,USERNAME,operationTime,visitResource,pageName from (select A.ID
+        ,A.USER_NAME USERNAME
+        ,A.Q_DATE operationTime
+        ,A.TO_PATH visitResource
+        ,CASE
+        WHEN A.TO_PATH='/ZxbApplyList'
+        THEN '信保报告审核'
+        WHEN A.TO_PATH='/'
+        THEN '登录页'
+        WHEN A.TO_PATH||NVL(A.TO_PAGE_NAME,'0')='/iframePage0'
+        THEN '访问日志'
+        ELSE TO_PAGE_NAME
+        END AS pageName
+        from (
+        select a.* from LOG_CREDIT_OPER a
+        left join credit_user b on a.user_code = b.username
+        left join DIM_ORG c on b.company_name = c.subcompanyname
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            AND ${companyName}
+        </if>
+        <if test="userCode!=null and userCode!=''">
+            AND b.username=#{userCode}
+        </if>
+        ) A
+        where 1=1
+
+        <if test="startDate!=null and startDate!=''">
+            and to_char(A.Q_DATE,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        <if test="endDate!=null and endDate!=''">
+            and to_char(A.Q_DATE,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+
+        AND NOT EXISTS(SELECT * FROM (
+        select a.* from LOG_CREDIT_OPER a
+        left join credit_user b on a.user_code = b.username
+        left join DIM_ORG c on b.company_name = c.subcompanyname
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            AND ${companyName}
+        </if>
+        <if test="userCode!=null and userCode!=''">
+            AND b.username=#{userCode}
+        </if>
+        ) B WHERE NVL(A.USER_NAME,'0')='0' AND A.TO_PATH = '/')
+        order by A.Q_DATE desc)-->
         select rownum no,USERNAME,operationTime,visitResource,pageName from (select A.ID
         ,A.USER_NAME USERNAME
         ,A.Q_DATE operationTime
@@ -146,6 +193,7 @@ group by b.companyname
             AND b.username=#{userCode}
         </if>
         ) B WHERE NVL(A.USER_NAME,'0')='0' AND A.TO_PATH = '/')
+        AND A.USER_NAME is not null
         order by A.Q_DATE desc)
     </select>
     <select id="getLogMonthActive" resultType="com.fanruan.platform.bean.LogMonthActive">
