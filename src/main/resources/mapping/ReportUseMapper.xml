@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fanruan.platform.mapper.ReportUseMapper">
     <select id="getXbReportUse" resultType="com.fanruan.platform.bean.XbReportUse">
-        SELECT
+        <!--SELECT
         a.companyname,
         COUNT(DISTINCT P.NOTICESERIALNO) AS num,
         SUM(NVL(C.NUM,0)) usrNum
@@ -43,10 +43,51 @@
         ) C on C.CODE=P.NOTICESERIALNO AND a.companyname=C.companyname
         WHERE P.NOTICESERIALNO IS NOT NULL and a.companyname IS NOT NULL
         GROUP BY a.companyname
+        order by a.companyname-->
+        SELECT
+        a.companyname,
+        COUNT(DISTINCT P.NOTICESERIALNO) AS num,
+        SUM(NVL(C.NUM,0)) usrNum
+        from (
+        select a.*,B.name as 申请人,RES_ENAIL(B.COMPANY_NAME) companyname from LOG_ZXB_APPLY a
+        left join credit_user B on a.updateby = B.username
+        where 1=1 and to_char(APPROVEDATE,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(APPROVEDATE,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="companyName!=null and companyName!=''">
+            and   ${companyName}
+        </if>
+        ) A
+        left join ODS_ZXB_REPORTAPPROVE  R ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
+        left join ODS_ZXB_PDF P ON P.NOTICESERIALNO = R.NOTICESERIALNO
+        left join (
+        SELECT
+        a.companyname,
+        substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1) AS CODE,
+        A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME AS NAME,
+        count(*) AS NUM
+        FROM (
+        select a.*,RES_ENAIL(B.COMPANY_NAME) companyname from LOG_ZXB_APPLY a
+        left join credit_user b on a.APPROVEBY = b.username
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            and  ${companyName}
+        </if>
+        ) A
+        LEFT JOIN ODS_ZXB_REPORTAPPROVE  R ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
+        LEFT JOIN  LOG_INTERFACE_REPORT I ON substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1)=R.NOTICESERIALNO
+        WHERE URI='//company/getPDF' and  TO_CHAR(TO_DATE(case when length(request_time) &lt;&gt; 19
+        then substr(request_time,2,19) else request_time end,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD') &gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and TO_CHAR(TO_DATE(case when length(request_time) &lt;&gt; 19
+        then substr(request_time,2,19) else request_time end,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        group by  a.companyname,substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1),A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME
+        ) C on C.CODE=P.NOTICESERIALNO AND a.companyname=C.companyname
+        WHERE P.NOTICESERIALNO IS NOT NULL and a.companyname IS NOT NULL
+        GROUP BY a.companyname
         order by a.companyname
+
+
+
     </select>
     <select id="getXbReportUseList" resultType="com.fanruan.platform.bean.XbReportUseList">
-        select b.name || '(' || b.username || ')' as userName,c.companyname,a.*, reportcorpchnname || '/'|| a.reportcorpengname  as name from (
+        <!--select b.name || '(' || b.username || ')' as userName,c.companyname,a.*, reportcorpchnname || '/'|| a.reportcorpengname  as name from (
         select PARSEJSON (REQUEST_MESSAGE, 'userId') as userid,
         substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1) as reportCode,
         case when PARSEJSON (REQUEST_MESSAGE, 'reportbuyerno') = 'null' then '' else PARSEJSON (REQUEST_MESSAGE, 'reportbuyerno') end as xbCode,
@@ -68,36 +109,82 @@
         and to_char(a.operateTime,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         and reportCode not like '%用户手册%'
         and reportCode not like '%客商导入模板%'
+        order by a.operateTime desc-->
+        select b.name || '(' || b.username || ')' as userName, RES_ENAIL(B.COMPANY_NAME) companyname,a.*, reportcorpchnname || '/'|| a.reportcorpengname  as name from (
+        select PARSEJSON (REQUEST_MESSAGE, 'userId') as userid,
+        substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1) as reportCode,
+        case when PARSEJSON (REQUEST_MESSAGE, 'reportbuyerno') = 'null' then '' else PARSEJSON (REQUEST_MESSAGE, 'reportbuyerno') end as xbCode,
+        case when PARSEJSON (REQUEST_MESSAGE, 'isDownload') =0 then '预览' else '下载' end as operateNote,
+        case when PARSEJSON (REQUEST_MESSAGE, 'reportcorpengname') = 'null' then '' else PARSEJSON (REQUEST_MESSAGE, 'reportcorpengname') end as reportcorpengname,
+        case when PARSEJSON (REQUEST_MESSAGE, 'reportcorpchnname') = 'null' then '' else PARSEJSON (REQUEST_MESSAGE, 'reportcorpchnname') end as reportcorpchnname,
+        to_date(case when length(request_time) &lt;&gt; 19
+        then substr(request_time,2,19) else request_time end,'yyyy-mm-dd hh24:mi:ss') as operateTime
+        from log_interface_report where URI = '//company/getPDF'
+        and PARSEJSON (REQUEST_MESSAGE, 'userId') IS NOT NULL
+        ) a
+        left join credit_user b on a.userid = b.user_id
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            and ${companyName}
+        </if>
+        and to_char(a.operateTime,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(a.operateTime,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and reportCode not like '%用户手册%'
+        and reportCode not like '%客商导入模板%'
         order by a.operateTime desc
+
     </select>
     <select id="getXbReportUseByCompany" resultType="com.fanruan.platform.bean.XbReportUseByCompany">
+        <!-- SELECT DISTINCT
+         a.updateby || '(' || a.申请人 || ')' as userName,
+             to_char(a.updatetime,'yyyy-mm-dd') applyTime,
+         to_char(a.APPROVEDATE,'yyyy-mm-dd') approveTime,
+         a.companyname applyCompanyName,
+         P.NOTICESERIALNO AS reportCode,&#45;&#45;报告单号
+         a.REPORTBUYERNO xbCode,&#45;&#45;信保代码
+         A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME AS name
+         from (
+         select a.*,d.name as 申请人,e.companyname from LOG_ZXB_APPLY a
+         left join credit_user b on a.APPROVEBY = b.username
+         left join DIM_ORG c on b.company_name = c.subcompanyname
+         left join credit_user d on a.updateby = d.username
+         left join DIM_ORG e on d.company_name = e.subcompanyname
+         ) A
+         left join ODS_ZXB_REPORTAPPROVE  R ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
+         left join ODS_ZXB_PDF P ON P.NOTICESERIALNO = R.NOTICESERIALNO
+         WHERE P.NOTICESERIALNO IS NOT NULL and a.companyname IS NOT NULL
+         <if test="companyName!=null and companyName!=''">
+             and ${companyName}
+         </if>
+         and to_char(APPROVEDATE,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(APPROVEDATE,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+         order by reportCode-->
         SELECT DISTINCT
         a.updateby || '(' || a.申请人 || ')' as userName,
-            to_char(a.updatetime,'yyyy-mm-dd') applyTime,
+        to_char(a.updatetime,'yyyy-mm-dd') applyTime,
         to_char(a.APPROVEDATE,'yyyy-mm-dd') approveTime,
         a.companyname applyCompanyName,
         P.NOTICESERIALNO AS reportCode,--报告单号
         a.REPORTBUYERNO xbCode,--信保代码
         A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME AS name
         from (
-        select a.*,d.name as 申请人,e.companyname from LOG_ZXB_APPLY a
-        left join credit_user b on a.APPROVEBY = b.username
-        left join DIM_ORG c on b.company_name = c.subcompanyname
-        left join credit_user d on a.updateby = d.username
-        left join DIM_ORG e on d.company_name = e.subcompanyname
+        select a.*,B.name as 申请人,RES_ENAIL(B.COMPANY_NAME) companyname from LOG_ZXB_APPLY a
+        left join credit_user B on a.updateby = B.username
+        WHERE 1 = 1
+        <if test="companyName!=null and companyName!=''">
+            and ${companyName}
+        </if>
         ) A
         left join ODS_ZXB_REPORTAPPROVE  R ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
         left join ODS_ZXB_PDF P ON P.NOTICESERIALNO = R.NOTICESERIALNO
         WHERE P.NOTICESERIALNO IS NOT NULL and a.companyname IS NOT NULL
-        <if test="companyName!=null and companyName!=''">
-            and ${companyName}
-        </if>
         and to_char(APPROVEDATE,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(APPROVEDATE,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         order by reportCode
+
+
     </select>
 
     <select id="getUseNum" resultType="map">
-        SELECT
+        <!--SELECT
         substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1) AS CODE,
         A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME AS NAME,
         case when REQUEST_MESSAGE like '%"isDownload":"1"%' then '1' else '0' end as type,
@@ -116,11 +203,31 @@
 
         WHERE URI='//company/getPDF' and  TO_CHAR(TO_DATE(REQUEST_TIME,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD') BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         group by  substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1),A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME,
+        case when REQUEST_MESSAGE like '%"isDownload":"1"%' then '1' else '0' end-->
+        SELECT
+        substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1) AS CODE,
+        A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME AS NAME,
+        case when REQUEST_MESSAGE like '%"isDownload":"1"%' then '1' else '0' end as type,
+        count(*) AS NUM
+        FROM (
+        select a.* from LOG_ZXB_APPLY a
+        left join credit_user b on a.APPROVEBY = b.username
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            and ${companyName}
+        </if>
+        ) A
+        LEFT JOIN ODS_ZXB_REPORTAPPROVE  R ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
+        LEFT JOIN  LOG_INTERFACE_REPORT I ON substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1)=R.NOTICESERIALNO
+
+        WHERE URI='//company/getPDF' and  TO_CHAR(TO_DATE(REQUEST_TIME,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD') BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        group by  substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1),A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME,
         case when REQUEST_MESSAGE like '%"isDownload":"1"%' then '1' else '0' end
+
     </select>
 
     <select id="getZcxReportUse" resultType="com.fanruan.platform.bean.ZcxReportUse">
-        select A.REPORT_TYPE module,count(*) as userNumber
+        <!--select A.REPORT_TYPE module,count(*) as userNumber
         from (select * from CREDIT_REPORT where update_by &lt;&gt; 'null' ) A
         left join CREDIT_USER B on A.UPDATE_BY=B.USER_ID
         left join DIM_ORG c on b.company_name = c.subcompanyname
@@ -129,16 +236,38 @@
         <if test="companyName!=null and companyName!=''">
             and ${companyName}
         </if>
+        group by A.REPORT_TYPE-->
+        select A.REPORT_TYPE module,count(*) as userNumber
+        from (select * from CREDIT_REPORT where update_by  &lt;&gt; 'null' ) A
+        left join CREDIT_USER B on A.UPDATE_BY=B.USER_ID
+        where to_char(A.UPDATE_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(A.UPDATE_TIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="companyName!=null and companyName!=''">
+            and ${companyName}
+        </if>
         group by A.REPORT_TYPE
+
 
     </select>
 
     <select id="getZcxReportGz" resultType="map">
-     select count(*) count from (SELECT COMPANY_NAME,COUNT(*) FROM
+        <!--select count(*) count from (SELECT COMPANY_NAME,COUNT(*) FROM
+           (
+           select a.* from CREDIT_FOCUS_RELATIONS a
+           left join credit_user b on a.user_id = b.user_id
+           left join DIM_ORG c on b.company_name = c.subcompanyname
+           INNER join log_zcx_concern d
+           on b.username = d.updateby and d.entname = a.company_name
+           where 1=1
+           <if test="companyName!=null and companyName!=''">
+               and ${companyName}
+           </if>
+           )
+   WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)-->
+        select count(*) count from (SELECT COMPANY_NAME,COUNT(*) FROM
         (
         select a.* from CREDIT_FOCUS_RELATIONS a
         left join credit_user b on a.user_id = b.user_id
-        left join DIM_ORG c on b.company_name = c.subcompanyname
         INNER join log_zcx_concern d
         on b.username = d.updateby and d.entname = a.company_name
         where 1=1
@@ -146,7 +275,8 @@
             and ${companyName}
         </if>
         )
-WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
+        WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
+
     </select>
 
     <select id="getZxcShareSum" resultType="map">
@@ -168,7 +298,7 @@ WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
 
 
     <select id="getZcxReportUseList" resultType="com.fanruan.platform.bean.ZcxReportUseList">
-        select A.COMPANY_NAME applyCompanyName,A.REPORT_TYPE applyType,A.UPDATE_BY ,to_char(A.UPDATE_TIME,'YYYY-MM-DD hh24:mi:ss') applyTime,B.USERNAME||'('||B.NAME||')' as userName,c.companyname companyName
+        <!--select A.COMPANY_NAME applyCompanyName,A.REPORT_TYPE applyType,A.UPDATE_BY ,to_char(A.UPDATE_TIME,'YYYY-MM-DD hh24:mi:ss') applyTime,B.USERNAME||'('||B.NAME||')' as userName,c.companyname companyName
         from (select * from CREDIT_REPORT where UPDATE_BY &lt;&gt;'null' )A left join CREDIT_USER B
         on A.UPDATE_BY=B.USER_ID
         left join DIM_ORG c on b.company_name = c.subcompanyname
@@ -189,13 +319,27 @@ WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
         MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME,B.USERNAME ORDER BY A.UPDATE_TIME DESC)  desc,
         B.USERNAME DESC,
         MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME,B.USERNAME,C.companyname ORDER BY A.UPDATE_TIME DESC) desc
+        ,A.UPDATE_TIME desc-->
+        select A.COMPANY_NAME applyCompanyName,A.REPORT_TYPE applyType,A.UPDATE_BY ,to_char(A.UPDATE_TIME,'YYYY-MM-DD hh24:mi:ss') applyTime,B.USERNAME||'('||B.NAME||')' as userName,RES_ENAIL(B.COMPANY_NAME) companyName
+        from (select * from CREDIT_REPORT where UPDATE_BY &lt;&gt;'null' )A left join CREDIT_USER B
+        on A.UPDATE_BY=B.USER_ID
+        where to_char(A.UPDATE_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(A.UPDATE_TIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="companyName!=null and companyName!=''">
+            and   ${companyName}
+        </if>
+        order by MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE ORDER BY A.UPDATE_TIME DESC) desc,
+        MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME ORDER BY A.UPDATE_TIME DESC) desc,
+        MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME,B.USERNAME ORDER BY A.UPDATE_TIME DESC)  desc,
+        MAX(A.UPDATE_TIME)OVER(PARTITION BY A.REPORT_TYPE,A.COMPANY_NAME,B.USERNAME,RES_ENAIL(B.COMPANY_NAME) ORDER BY A.UPDATE_TIME DESC) desc
         ,A.UPDATE_TIME desc
+
     </select>
 
     <select id="getMonitoring" resultType="com.fanruan.platform.bean.Monitoring">
 
 
-        <if test="flag!=null and flag!='' and flag=='0'.toString()">
+        <!--<if test="flag!=null and flag!='' and flag=='0'.toString()">
             select rownum no,company_name gzCompanyName,name userName,companyname companyName,updatetime gzTime from (
             select a.*
             ,b.name
@@ -232,8 +376,43 @@ WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
             and RELATIONS LIKE '%"tianyancha":1%'
            /* order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,updatetime DESC*/
             order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,company_name DESC,updatetime DESC
-        </if>
+        </if>-->
 
+        <if test="flag!=null and flag!='' and flag=='0'.toString()">
+            select rownum no,company_name gzCompanyName,name userName,companyname companyName,updatetime gzTime from (
+            select a.*
+            ,b.name
+            ,TO_CHAR(TO_TIMESTAMP(d.updatetime,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as updatetime,RES_ENAIL(B.COMPANY_NAME) companyname
+            from CREDIT_FOCUS_RELATIONS a
+            left join credit_user b on a.user_id = b.user_id
+            left join log_zcx_concern d
+            on b.username = d.updateby and d.entname = a.company_name
+            where 1=1
+            <if test="companyName!=null and companyName!=''">
+                and   ${companyName}
+            </if>
+            )
+            where 1=1 and name is not null AND UPDATETIME IS NOT NULL
+            and RELATIONS LIKE '%"zhongchengxin":1%'
+            /*order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,updatetime DESC*/
+            order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,company_name DESC,updatetime DESC
+        </if>
+        <if test="flag!=null and flag!='' and flag=='1'.toString()">
+            select rownum no,company_name gzCompanyName,name userName,companyname companyName,updatetime gzTime from (
+            select a.*,b.name,TO_CHAR(TO_TIMESTAMP(d.updatetime,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as updatetime,RES_ENAIL(B.COMPANY_NAME) companyname
+            from CREDIT_FOCUS_RELATIONS a left join credit_user b on a.user_id = b.user_id
+            inner join log_tyc_concern d on b.username = d.updateby and d.entname = a.company_name
+            where     1=1
+            <if test="companyName!=null and companyName!=''">
+                and   ${companyName}
+            </if>
+            )
+            where 1=1 and name is not null
+
+            and RELATIONS LIKE '%"tianyancha":1%'
+            /* order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,updatetime DESC*/
+            order by MAX(updatetime)OVER(PARTITION BY company_name ORDER BY updatetime DESC) DESC,company_name DESC,updatetime DESC
+        </if>
 
 
 
@@ -242,20 +421,20 @@ WHERE RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANY_NAME)
     <!--天眼查总关注-->
     <select id="getTycUseGz" resultType="map">
         select count(*) from (SELECT COMPANY_NAME,COUNT(*) FROM ( select  a.* from CREDIT_FOCUS_RELATIONS a
-left join credit_user b on a.user_id = b.user_id
-left join DIM_ORG c on b.company_name = c. subcompanyname
-inner join log_tyc_concern d on b.username = d.updateby and d.entname = a.company_name
-where 1=1
+        left join credit_user b on a.user_id = b.user_id
+        left join DIM_ORG c on b.company_name = c. subcompanyname
+        inner join log_tyc_concern d on b.username = d.updateby and d.entname = a.company_name
+        where 1=1
         <if test="companyName!=null and companyName!=''">
             and  ${companyName}
         </if>
-)
-WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
+        )
+        WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
     </select>
 
     <!--天眼查使用模糊查询-->
     <select id="getTycUseLike" resultType="map">
-       SELECT
+        SELECT
         count(*) as num
         FROM (
         select a.* from LOG_INTERFACE_REPORT a
@@ -367,7 +546,7 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
 
     <!--天眼查嵌入页面-->
     <select id="getTycQr" resultType="map">
-        SELECT
+        <!--SELECT
         count(*) as num
         FROM (
         select a.* from LOG_CREDIT_OPER a
@@ -380,29 +559,59 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         ) I
         WHERE FORM_PATH='/essInfo'  AND   TO_CHAR(Q_DATE,'YYYY-MM-DD')
         BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')-->
+        SELECT
+        count(*) as num
+        FROM (
+        select a.* from LOG_CREDIT_OPER a
+        left join credit_user b on a.user_code = b.username
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            and  ${companyName}
+        </if>
+        ) I
+        WHERE FORM_PATH='/essInfo'  AND   TO_CHAR(Q_DATE,'YYYY-MM-DD')
+        BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+
     </select>
     <!--天眼查总关注-->
     <select id="getTycZgz" resultType="map">
-       select count(*) num from (SELECT COMPANY_NAME,COUNT(*) FROM ( select  a.* from CREDIT_FOCUS_RELATIONS a
+        <!--select count(*) num from (SELECT COMPANY_NAME,COUNT(*) FROM ( select  a.* from CREDIT_FOCUS_RELATIONS a
+         left join credit_user b on a.user_id = b.user_id
+         left join DIM_ORG c on b.company_name = c. subcompanyname
+         inner join log_tyc_concern d on b.username = d.updateby and d.entname = a.company_name
+         where 1=1
+         <if test="companyName!=null and companyName!=''">
+             and  ${companyName}
+         </if>
+         )
+ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)-->
+        select count(*) num from (SELECT COMPANY_NAME,COUNT(*) FROM ( select  a.* from CREDIT_FOCUS_RELATIONS a
         left join credit_user b on a.user_id = b.user_id
-        left join DIM_ORG c on b.company_name = c. subcompanyname
         inner join log_tyc_concern d on b.username = d.updateby and d.entname = a.company_name
         where 1=1
         <if test="companyName!=null and companyName!=''">
             and  ${companyName}
         </if>
         )
-WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
+        WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
+
     </select>
 
     <!--天眼查总关注不联动-->
     <select id="getTycZgzBld" resultType="map">
+        <!--
         select count(*) num from (SELECT COMPANY_NAME,COUNT(*) FROM ( select  a.* from CREDIT_FOCUS_RELATIONS a
         left join credit_user b on a.user_id = b.user_id
         left join DIM_ORG c on b.company_name = c. subcompanyname
         )
+        WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)-->
+        select count(*) num from (SELECT COMPANY_NAME,COUNT(*) FROM ( select  a.* from CREDIT_FOCUS_RELATIONS a
+        left join credit_user b on a.user_id = b.user_id
+        )
         WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
+
     </select>
 
     <!--天眼查模糊查询-->
@@ -445,10 +654,10 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         ON A.FID = C.FID
         WHERE 1=1
         <if test="startDate!=null and startDate!=''">
-        and TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')  --大于等于开始时间
+            and TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')  --大于等于开始时间
         </if>
         <if test="endDate!=null and endDate!=''">
-        AND TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')  --小于等于结束时间
+            AND TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')  --小于等于结束时间
         </if>
         <if test="companyName!=null and companyName!=''">
             AND ${companyName}
@@ -462,30 +671,30 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
     <!--天眼查客户初筛明细-->
     <select id="getTycFilterCustomerList" resultType="com.fanruan.platform.bean.TycFilterCustomerList">
 
-    <!--
-       select a.* from (
-        SELECT
-        realname ,userName applyUserName ,companyname,TO_CHAR(TO_TIMESTAMP(time,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as applyTime,name as applyCompanyName
-        FROM (select a.*,c.username,c.name as realname,d.companyname,b.updatetime as time from ODS_TYC_GSINFO a LEFT JOIN(
-        select *
-          from (select ROW_NUMBER() OVER(PARTITION BY custom_name ORDER BY UPDATETIME asc) rn,a.*
-                      from INPUT_CUSTOM_HAND a )
-         where rn = 1
-        ) b on a.input_name = b.custom_name
-        left join CREDIT_USER c on b.updateby = c.username
-        LEFT JOIN dim_org d on c.company_name = d.subcompanyname
-        where 1=1
-        <if test="companyName!=null and companyName!=''">
-            and ${companyName}
-        </if>
-        ) I
-        WHERE INPUT_NAME IS NOT NULL
-        ) a
-        where 1=1
+        <!--
+           select a.* from (
+            SELECT
+            realname ,userName applyUserName ,companyname,TO_CHAR(TO_TIMESTAMP(time,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as applyTime,name as applyCompanyName
+            FROM (select a.*,c.username,c.name as realname,d.companyname,b.updatetime as time from ODS_TYC_GSINFO a LEFT JOIN(
+            select *
+              from (select ROW_NUMBER() OVER(PARTITION BY custom_name ORDER BY UPDATETIME asc) rn,a.*
+                          from INPUT_CUSTOM_HAND a )
+             where rn = 1
+            ) b on a.input_name = b.custom_name
+            left join CREDIT_USER c on b.updateby = c.username
+            LEFT JOIN dim_org d on c.company_name = d.subcompanyname
+            where 1=1
+            <if test="companyName!=null and companyName!=''">
+                and ${companyName}
+            </if>
+            ) I
+            WHERE INPUT_NAME IS NOT NULL
+            ) a
+            where 1=1
 
-        and applyTime BETWEEN to_char(to_date(#{startDate},'yyyy-mm-dd'),'YYYY-MM-DD')
-         and to_char(to_date(#{endDate},'yyyy-mm-dd'),'YYYY-MM-DD')
-         -->
+            and applyTime BETWEEN to_char(to_date(#{startDate},'yyyy-mm-dd'),'YYYY-MM-DD')
+             and to_char(to_date(#{endDate},'yyyy-mm-dd'),'YYYY-MM-DD')
+             -->
         SELECT
         A.CUSTOM_NAME AS applyCompanyName,
         B.NAME AS userName,
@@ -499,10 +708,10 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         ON A.FID = C.FID
         WHERE 1=1
         <if test="startDate!=null and startDate!=''">
-        and TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+            and TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         </if>
         <if test="endDate!=null and endDate!=''">
-        AND TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+            AND TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         </if>
         <if test="companyName!=null and companyName!=''">
             AND ${companyName}
@@ -519,6 +728,33 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
 
     <!--页面热度-->
     <select id="getPageActive" resultType="com.fanruan.platform.bean.pageActive">
+        <!--select rownum no,aa.* from (select
+        CASE
+        WHEN TO_PATH='/ZxbApplyList'
+        THEN '信保报告审核'
+        WHEN TO_PATH='/'
+        THEN '登录页'
+        WHEN TO_PATH||NVL(TO_PAGE_NAME,'0')='/iframePage0'
+        THEN '访问日志'
+        ELSE TO_PAGE_NAME
+        END AS pageName
+        ,TO_PATH pagePath
+        ,count(ID) as num,
+        count(ID) ID,
+        count(distinct USER_NAME) as visitUserNum
+        from (
+        select a.* from LOG_CREDIT_OPER a
+        left join credit_user b on a.user_code = b.username
+        left join DIM_ORG c on b.company_name = c.subcompanyname
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            and ${companyName}
+        </if>
+        )
+        where  to_char(Q_DATE,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(Q_DATE,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        group by TO_PAGE_NAME,TO_PATH
+        order by ID desc) aa-->
         select rownum no,aa.* from (select
         CASE
         WHEN TO_PATH='/ZxbApplyList'
@@ -536,7 +772,6 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         from (
         select a.* from LOG_CREDIT_OPER a
         left join credit_user b on a.user_code = b.username
-        left join DIM_ORG c on b.company_name = c.subcompanyname
         where 1=1
         <if test="companyName!=null and companyName!=''">
             and ${companyName}
@@ -546,9 +781,37 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         and to_char(Q_DATE,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         group by TO_PAGE_NAME,TO_PATH
         order by ID desc) aa
+
     </select>
     <!--页面名称按访问次数排序-->
     <select id="getPageActivePageDesc" resultType="java.lang.String">
+        <!-- select nvl(pagename,'无') pagename from (select rownum no,aa.* from (select
+         CASE
+         WHEN TO_PATH='/ZxbApplyList'
+         THEN '信保报告审核'
+         WHEN TO_PATH='/'
+         THEN '登录页'
+         WHEN TO_PATH||NVL(TO_PAGE_NAME,'0')='/iframePage0'
+         THEN '访问日志'
+         ELSE TO_PAGE_NAME
+         END AS pageName
+         ,TO_PATH pagePath
+         ,count(ID) as num,
+         count(ID) ID,
+         count(distinct USER_NAME) as visitUserNum
+         from (
+         select a.* from LOG_CREDIT_OPER a
+         left join credit_user b on a.user_code = b.username
+         left join DIM_ORG c on b.company_name = c.subcompanyname
+         where 1=1
+         <if test="companyName!=null and companyName!=''">
+             and ${companyName}
+         </if>
+         )
+         where  to_char(Q_DATE,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+         and to_char(Q_DATE,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+         group by TO_PAGE_NAME,TO_PATH
+         order by ID desc) aa) group by pagename order by  max(num) desc-->
         select nvl(pagename,'无') pagename from (select rownum no,aa.* from (select
         CASE
         WHEN TO_PATH='/ZxbApplyList'
@@ -566,7 +829,6 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         from (
         select a.* from LOG_CREDIT_OPER a
         left join credit_user b on a.user_code = b.username
-        left join DIM_ORG c on b.company_name = c.subcompanyname
         where 1=1
         <if test="companyName!=null and companyName!=''">
             and ${companyName}
@@ -576,11 +838,12 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         and to_char(Q_DATE,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         group by TO_PAGE_NAME,TO_PATH
         order by ID desc) aa) group by pagename order by  max(num) desc
+
     </select>
 
     <!--模糊查询-->
     <select id="getLikeQuery" resultType="com.fanruan.platform.bean.LikeQuery">
-        select rownum no,A.USER_ID,B.NAME userName,A.KEY_WORD keyWord,to_char(A.SEARCH_TIME,'YYYY-MM-DD hh24:mi:ss') operateTime from
+        <!--select rownum no,A.USER_ID,B.NAME userName,A.KEY_WORD keyWord,to_char(A.SEARCH_TIME,'YYYY-MM-DD hh24:mi:ss') operateTime from
         (
         select a.* from CREDIT_SEARCH_WORDS a
         left join credit_user b on a.user_id = b.user_id
@@ -594,7 +857,22 @@ WHERE RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANY_NAME)
         left join CREDIT_USER B on A.USER_ID=B.USER_ID
         where to_char(A.SEARCH_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         and to_char(A.SEARCH_TIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        order by A.SEARCH_TIME desc-->
+        select rownum no,A.USER_ID,B.NAME userName,A.KEY_WORD keyWord,to_char(A.SEARCH_TIME,'YYYY-MM-DD hh24:mi:ss') operateTime from
+        (
+        select a.* from CREDIT_SEARCH_WORDS a
+        left join credit_user b on a.user_id = b.user_id
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            and  ${companyName}
+        </if>
+        )
+        A
+        left join CREDIT_USER B on A.USER_ID=B.USER_ID
+        where to_char(A.SEARCH_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(A.SEARCH_TIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         order by A.SEARCH_TIME desc
+
     </select>
 
 </mapper>

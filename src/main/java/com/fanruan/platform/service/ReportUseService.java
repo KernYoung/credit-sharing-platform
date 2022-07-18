@@ -40,7 +40,7 @@ public class ReportUseService {
      * @return
      */
     public String getXbReportUseList(ReportParameter rpVO) throws Exception{
-       return null;
+        return null;
     }
 
     /**
@@ -89,7 +89,7 @@ public class ReportUseService {
 
     public ZcxReportUse getZcxReportUseByType(List<ZcxReportUse> zcxReportUseList,String type){
         for (ZcxReportUse zcxReportUse:
-             zcxReportUseList) {
+                zcxReportUseList) {
             String module = zcxReportUse.getModule();
             if(module.equals(type)){
                 return zcxReportUse;
@@ -110,58 +110,58 @@ public class ReportUseService {
         List<Map<String,Object>> zcxZgz = reportUseMapper.getZcxReportGz(rpVO);
 
 //        if(zcxReportUseList!=null&&zcxReportUseList.size()>0){
-            //风险初筛
-            ZcxReportUse fxcs = getZcxReportUseByType(zcxReportUseList,"风险初筛");
-            fxcs.setNumberOfHits("10点/次");
-            fxcs.setNo("1");
-            zcxReportUses.add(fxcs);
-            //财务排雷
-            ZcxReportUse cwpl = getZcxReportUseByType(zcxReportUseList,"财务排雷");
-            cwpl.setNumberOfHits("2点/次");
-            cwpl.setNo("2");
-            zcxReportUses.add(cwpl);
-            //产业企业评价
-            ZcxReportUse cyqypj = getZcxReportUseByType(zcxReportUseList,"产业企业信用评价");
-            cyqypj.setNumberOfHits("2点/次");
-            cyqypj.setNo("3");
-            zcxReportUses.add(cyqypj);
-            //区域信用评价
-            ZcxReportUse qyxypj = getZcxReportUseByType(zcxReportUseList,"区域信用评价");
+        //风险初筛
+        ZcxReportUse fxcs = getZcxReportUseByType(zcxReportUseList,"风险初筛");
+        fxcs.setNumberOfHits("10点/次");
+        fxcs.setNo("1");
+        zcxReportUses.add(fxcs);
+        //财务排雷
+        ZcxReportUse cwpl = getZcxReportUseByType(zcxReportUseList,"财务排雷");
+        cwpl.setNumberOfHits("2点/次");
+        cwpl.setNo("2");
+        zcxReportUses.add(cwpl);
+        //产业企业评价
+        ZcxReportUse cyqypj = getZcxReportUseByType(zcxReportUseList,"产业企业信用评价");
+        cyqypj.setNumberOfHits("2点/次");
+        cyqypj.setNo("3");
+        zcxReportUses.add(cyqypj);
+        //区域信用评价
+        ZcxReportUse qyxypj = getZcxReportUseByType(zcxReportUseList,"区域信用评价");
         qyxypj.setNumberOfHits("2点/次");
-            qyxypj.setNo("4");
-            zcxReportUses.add(qyxypj);
+        qyxypj.setNo("4");
+        zcxReportUses.add(qyxypj);
 
-            //城投企业评价
-            ZcxReportUse ctqypj = getZcxReportUseByType(zcxReportUseList,"城投企业信用评价");
-            ctqypj.setNumberOfHits("2点/次");
-            ctqypj.setNo("5");
-            zcxReportUses.add(ctqypj);
-            //风险预警（关注不与时间联动）
-            ZcxReportUse fxyj = getZcxReportUseByType(zcxReportUseList,"风险预警（关注不与时间联动）");
-             fxyj.setNumberOfHits("100点/企业/年");
-            fxyj.setNo("6");
-            if(zcxZgz!=null&&zcxZgz.size()>0){
-                int num  = zcxZgz.get(0).get("COUNT")==null?0:new Integer(zcxZgz.get(0).get("COUNT").toString());
-                fxyj.setUserNumber(num);
-            }
-            zcxReportUses.add(fxyj);
+        //城投企业评价
+        ZcxReportUse ctqypj = getZcxReportUseByType(zcxReportUseList,"城投企业信用评价");
+        ctqypj.setNumberOfHits("2点/次");
+        ctqypj.setNo("5");
+        zcxReportUses.add(ctqypj);
+        //风险预警（关注不与时间联动）
+        ZcxReportUse fxyj = getZcxReportUseByType(zcxReportUseList,"风险预警（关注不与时间联动）");
+        fxyj.setNumberOfHits("100点/企业/年");
+        fxyj.setNo("6");
+        if(zcxZgz!=null&&zcxZgz.size()>0){
+            int num  = zcxZgz.get(0).get("COUNT")==null?0:new Integer(zcxZgz.get(0).get("COUNT").toString());
+            fxyj.setUserNumber(num);
+        }
+        zcxReportUses.add(fxyj);
 
-            ZcxReportUse total = new ZcxReportUse();
-            total.setNo("7");
-            total.setModule("合计");
-            Integer ds = 10*getInteger(fxcs.getUserNumber())+2*(getInteger(cwpl.getUserNumber())+getInteger(cyqypj.getUserNumber())
+        ZcxReportUse total = new ZcxReportUse();
+        total.setNo("7");
+        total.setModule("合计");
+        Integer ds = 10*getInteger(fxcs.getUserNumber())+2*(getInteger(cwpl.getUserNumber())+getInteger(cyqypj.getUserNumber())
 
-                    +getInteger(qyxypj.getUserNumber())+getInteger(ctqypj.getUserNumber()))+100*getInteger(fxyj.getUserNumber());
-             total.setNumberOfHits(""+ds);
-             Integer totalUserNum = getInteger(fxcs.getUserNumber())+getInteger(cwpl.getUserNumber())
-                     +getInteger(cyqypj.getUserNumber())+getInteger(qyxypj.getUserNumber())+
-                     getInteger(ctqypj.getUserNumber());
-              total.setUserNumber(totalUserNum);
-              //中诚信共享求和
-            Map<String,Object> zcxShare = reportUseMapper.getZxcShareSum(rpVO);
-            Integer shareNum  = zcxShare.get("NUM")==null?0:new Integer(zcxShare.get("NUM").toString());
-            total.setShareNumber(shareNum);
-             zcxReportUses.add(total);
+                +getInteger(qyxypj.getUserNumber())+getInteger(ctqypj.getUserNumber()))+100*getInteger(fxyj.getUserNumber());
+        total.setNumberOfHits(""+ds);
+        Integer totalUserNum = getInteger(fxcs.getUserNumber())+getInteger(cwpl.getUserNumber())
+                +getInteger(cyqypj.getUserNumber())+getInteger(qyxypj.getUserNumber())+
+                getInteger(ctqypj.getUserNumber());
+        total.setUserNumber(totalUserNum);
+        //中诚信共享求和
+        Map<String,Object> zcxShare = reportUseMapper.getZxcShareSum(rpVO);
+        Integer shareNum  = zcxShare.get("NUM")==null?0:new Integer(zcxShare.get("NUM").toString());
+        total.setShareNumber(shareNum);
+        zcxReportUses.add(total);
 //        }
 
 
@@ -233,7 +233,7 @@ public class ReportUseService {
     public String getTycUse(ReportParameter rpVO) throws Exception{
         String companyName =null;
         if(rpVO.getCompanyName()!=null){
-            companyName =rpVO.getCompanyName().replaceAll("d.companyName","c.companyName");
+            companyName =rpVO.getCompanyName().replaceAll("RES_ENAIL(B.COMPANY_NAME)","RES_ENAIL(B.COMPANY_NAME)");
         }
         rpVO.setCompanyName(companyName);
         List<TycUse> tycUse = new ArrayList<>();
@@ -286,7 +286,7 @@ public class ReportUseService {
         khFilter.setSurplusNum("--");
 
         if(rpVO.getCompanyName()!=null){
-            companyName =rpVO.getCompanyName().replaceAll("c.companyName","RES_ENAIL(B.COMPANY_NAME)");
+            companyName =rpVO.getCompanyName().replaceAll("RES_ENAIL(B.COMPANY_NAME)","RES_ENAIL(B.COMPANY_NAME)");
         }
         rpVO.setCompanyName(companyName);
 
@@ -296,7 +296,7 @@ public class ReportUseService {
         tycUse.add(khFilter);
 
         if(rpVO.getCompanyName()!=null){
-            companyName =rpVO.getCompanyName().replaceAll("d.companyName","c.companyName");
+            companyName =rpVO.getCompanyName().replaceAll("RES_ENAIL(B.COMPANY_NAME)","RES_ENAIL(B.COMPANY_NAME)");
         }
 
         rpVO.setCompanyName(companyName);

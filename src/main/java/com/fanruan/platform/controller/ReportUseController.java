@@ -30,7 +30,7 @@ public class ReportUseController {
     @ResponseBody
     public String getXbReportUse(HttpServletRequest request, @RequestBody Map<String,Object> para)  throws Exception{
         ReportParameter rpVO = new ReportParameter();
-        rpVO = dealReportParameter(para,"c.companyName");
+        rpVO = dealReportParameter(para,"RES_ENAIL(B.COMPANY_NAME)");
         String json = reportUseService.getXbReportUse(rpVO);
         return json;
     }
@@ -53,8 +53,8 @@ public class ReportUseController {
 //            rpVo.setStartDate(startDate);
 //            rpVo.setEndDate(endDate);
 //        }else{
-            rpVo.setStartDate(para.get("startDate").toString());
-            rpVo.setEndDate(para.get("endDate").toString());
+        rpVo.setStartDate(para.get("startDate").toString());
+        rpVo.setEndDate(para.get("endDate").toString());
 //        }
         String companyName = para.get("companyName")==null?"":para.get("companyName").toString();
         //将公司转换成可以in 查询
@@ -67,8 +67,8 @@ public class ReportUseController {
                 }
             }
             String companyNames = SqlUtil.getOracleSQLIn(companyNameList,100,key);
-            rpVo.setCompanyName2(companyNames.replaceAll("c.companyName","").replaceAll("RES_ENAIL(B.COMPANY_NAME)",""));
-            companyNames = "("+companyNames+")";
+            rpVo.setCompanyName2( SqlUtil.getOracleSQLIn(companyNameList,100,""));
+            //companyNames = "("+companyNames+")";
             rpVo.setCompanyName(companyNames);
         }
         String userName = para.get("userName")==null?"":para.get("userName").toString();
@@ -101,7 +101,7 @@ public class ReportUseController {
     @ResponseBody
     public String getXbReportUseList(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
         ReportParameter rpVO = new ReportParameter();
-        rpVO = dealReportParameter(para,"companyName");
+        rpVO = dealReportParameter(para,"RES_ENAIL(B.COMPANY_NAME)");
         String json = reportUseService.getXbReportUseByCompany(rpVO);
         return json;
     }
@@ -119,7 +119,7 @@ public class ReportUseController {
     @ResponseBody
     public String getZcxReportUse(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
         ReportParameter rpVO = new ReportParameter();
-        rpVO = dealReportParameter(para,"c.companyName");
+        rpVO = dealReportParameter(para,"RES_ENAIL(B.COMPANY_NAME)");
         String json = reportUseService.getZcxReportUse(rpVO);
         return json;
     }
@@ -135,7 +135,7 @@ public class ReportUseController {
     @ResponseBody
     public String getZcxReportUseList(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
         ReportParameter rpVO = new ReportParameter();
-        rpVO = dealReportParameter(para,"c.companyName");
+        rpVO = dealReportParameter(para,"RES_ENAIL(B.COMPANY_NAME)");
         String json = reportUseService.getZcxReportUseList(rpVO);
         return json;
     }
@@ -152,7 +152,7 @@ public class ReportUseController {
     public String getMonitoring(HttpServletRequest request, @RequestBody Map<String,Object> para)  throws Exception{
         //flag 0中诚信 1 天眼查
         ReportParameter rpVO = new ReportParameter();
-        rpVO = dealReportParameter(para,"c.companyName");
+        rpVO = dealReportParameter(para,"RES_ENAIL(B.COMPANY_NAME)");
         String json = reportUseService.getMonitoring(rpVO);
         return json;
     }
@@ -168,7 +168,7 @@ public class ReportUseController {
     @ResponseBody
     public String getTycUse(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
         ReportParameter rpVO = new ReportParameter();
-        rpVO = dealReportParameter(para,"c.companyName");
+        rpVO = dealReportParameter(para,"RES_ENAIL(B.COMPANY_NAME)");
         String json = reportUseService.getTycUse(rpVO);
         return json;
     }
@@ -218,7 +218,7 @@ public class ReportUseController {
     @ResponseBody
     public String getPageActive(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
         ReportParameter rpVO = new ReportParameter();
-        rpVO = dealReportParameter(para,"c.companyName");
+        rpVO = dealReportParameter(para,"res_enail(B.COMPANY_NAME)");
         String json = reportUseService.getPageActive(rpVO);
         return json;
     }
@@ -234,7 +234,7 @@ public class ReportUseController {
     @ResponseBody
     public String getLikeQuery(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
         ReportParameter rpVO = new ReportParameter();
-        rpVO = dealReportParameter(para,"c.companyName");
+        rpVO = dealReportParameter(para,"RES_ENAIL(B.COMPANY_NAME)");
         String json = reportUseService.getLikeQuery(rpVO);
         return json;
     }

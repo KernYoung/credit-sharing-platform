@@ -31,10 +31,10 @@ public class VisitLogController {
     @RequestMapping(value = "/visitLog/getUserVisit",method = RequestMethod.POST)
     @ResponseBody
     public String getUserVisit(HttpServletRequest request, @RequestBody Map<String,Object> para) throws JsonProcessingException {
-       String checkPara = checkPara(para);
-       if(checkPara!=null&&!checkPara.equals("")){
-           return checkPara;
-       }
+        String checkPara = checkPara(para);
+        if(checkPara!=null&&!checkPara.equals("")){
+            return checkPara;
+        }
         ReportParameter rpVo = getReportParameter1(para);
         List<UserVisit> userVisitList =  visitLogService.getUserVisit(rpVo);
         String json = getJson("0","查询成功",userVisitList);
@@ -52,14 +52,14 @@ public class VisitLogController {
     @RequestMapping(value = "/visitLog/getLogMonthTotal",method = RequestMethod.POST)
     @ResponseBody
     public String getLogMonthTotal(HttpServletRequest request, @RequestBody Map<String,Object> para) throws Exception{
-       try {
-           ReportParameter rpVo = new ReportParameter();
-           String json = visitLogService.getLogMonthTotal(rpVo);
-           return json;
-       }catch (Exception e){
-           String json = ReturnJson.getJson("1","查询失败",null);
-           return json;
-       }
+        try {
+            ReportParameter rpVo = new ReportParameter();
+            String json = visitLogService.getLogMonthTotal(rpVo);
+            return json;
+        }catch (Exception e){
+            String json = ReturnJson.getJson("1","查询失败",null);
+            return json;
+        }
 
     }
 
@@ -72,7 +72,7 @@ public class VisitLogController {
         if(checkPara1!=null&&!checkPara1.equals("")){
             return checkPara1;
         }
-        ReportParameter rpVo = getReportParameter(para);
+        ReportParameter rpVo = getReportParameter2(para);
         List<UserVisitList> userVisitList =  visitLogService.getUserVisitList(rpVo);
         String json = getJson("0","查询成功",userVisitList);
         return json;
@@ -188,8 +188,8 @@ public class VisitLogController {
                     companyNameList.add(companyNameArr[i]);
                 }
             }
-            String companyNames = SqlUtil.getOracleSQLIn(companyNameList,100,"c.companyname");
-            companyNames = "("+companyNames+")";
+            String companyNames = SqlUtil.getOracleSQLIn(companyNameList,100,"RES_ENAIL(B.COMPANY_NAME)");
+            //companyNames = "("+companyNames+")";
             rpVo.setCompanyName(companyNames);
         }
 //        rpVo.setCompanyName(companyName);
@@ -213,8 +213,8 @@ public class VisitLogController {
                     companyNameList.add(companyNameArr[i]);
                 }
             }
-            String companyNames = SqlUtil.getOracleSQLIn(companyNameList,100,"c.companyname");
-            companyNames = "("+companyNames+")";
+            String companyNames = SqlUtil.getOracleSQLIn(companyNameList,100,"RES_ENAIL(B.COMPANY_NAME)");
+            //companyNames = "("+companyNames+")";
             rpVo.setCompanyName(companyNames);
         }
 //        rpVo.setCompanyName(companyName);
@@ -257,7 +257,7 @@ public class VisitLogController {
         }
         if(errMsg.toString().length()>0){
             String json = getJson("1",errMsg.toString(),null);
-           return json;
+            return json;
         }
         return null;
     }
