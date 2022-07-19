@@ -147,7 +147,10 @@
     where ID = #{id,jdbcType=VARCHAR}
   </update>
   <select id="listByMap" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select * from (select
+    <if test="pageSize!= null and pageSize!='' and pageIndex !=null and pageIndex!='' " >
+        select * from (
+    </if>
+        select
     <include refid="Base_Column_List" />
     from DIM_ZXB_SPEED_MAPPING
     <where >
@@ -176,7 +179,10 @@
       <if test="remark!= null" >
         and REMARK = #{remark}
       </if>
+
     </where>
-    and rownum&lt;= #{pageIndex} * #{pageSize}) where r&gt;= (#{pageIndex}-1) * #{pageSize}
+    <if test="pageSize!= null and pageSize!='' and pageIndex !=null and pageIndex!='' " >
+      and rownum&lt;= #{pageIndex} * #{pageSize}) where r&gt;= (#{pageIndex}-1) * #{pageSize}
+    </if>
   </select>
 </mapper>
