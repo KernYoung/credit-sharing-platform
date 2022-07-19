@@ -195,24 +195,48 @@ public class VisitLogService {
 
         ObjectMapper objectMapper=new ObjectMapper();
         HashMap<String,Object> hs=new HashMap<>();
-        //查询累计用户活跃数
-        rpVO.setFlag("1");
-        List<LogMonthActive> sumActive = visitLogMapper.getLogMonthActive(rpVO);
-        Map<String,Object> totalSumActive = subActive(sumActive);
-        //累计用户使用数量
-        rpVO.setFlag("1");
-        List<LogMonthUse> sumUse = visitLogMapper.getLogMonthUse(rpVO);
-        Map<String,Object> totalSumUse = subUse(sumUse);
-        //当月用户活跃
-        rpVO.setFlag("0");
-        List<Map<String,Object>> listMap = visitLogMapper.getLogMonthTotal(rpVO);
+        String type = rpVO.getType();
+        if("累计活跃".equals(type)){
+            //查询累计用户活跃数
+            rpVO.setFlag("1");
+            List<LogMonthActive> sumActive = visitLogMapper.getLogMonthActive(rpVO);
+            Map<String,Object> totalSumActive = subActive(sumActive);
+            hs.put("code","0");
+            hs.put("message","查询成功");
+            hs.put("sumActiveTitle","累计活跃");
+            hs.put("sumActive",sumActive);
+            hs.put("totalSumActive",totalSumActive);
+            return objectMapper.writeValueAsString(hs);
+        } else if("累计使用".equals(type)){
+            //累计用户使用数量
+            rpVO.setFlag("1");
+            List<LogMonthUse> sumUse = visitLogMapper.getLogMonthUse(rpVO);
+            Map<String,Object> totalSumUse = subUse(sumUse);
+            hs.put("code","0");
+            hs.put("message","查询成功");
+            hs.put("totalSumActiveTitle","累计使用");
+            hs.put("sumUse",sumUse);
+            hs.put("totalSumUse",totalSumUse);
+            return objectMapper.writeValueAsString(hs);
+        } else  if("当月活跃".equals(type)){
+            //当月用户活跃
+            rpVO.setFlag("0");
+            List<Map<String,Object>> listMap = visitLogMapper.getLogMonthTotal(rpVO);
 
-        List<LogMonthActive> currentMonthActive = visitLogMapper.getLogMonthActive(rpVO);
-        Map<String,Object> totalCurrentActive = subActive(currentMonthActive,listMap);
-        //当月用户使用
-        rpVO.setFlag("0");
-        List<LogMonthUse> currentMonthUse = visitLogMapper.getLogMonthUse(rpVO);
-        Map<String,Object> totalCurrentSumUse = subUse(currentMonthUse);
+            List<LogMonthActive> currentMonthActive = visitLogMapper.getLogMonthActive(rpVO);
+            Map<String,Object> totalCurrentActive = subActive(currentMonthActive,listMap);
+            hs.put("code","0");
+            hs.put("message","查询成功");
+            hs.put("currentMonthActiveTitle","当月活跃");
+            hs.put("currentMonthActive",currentMonthActive);
+            hs.put("totalCurrentActive",totalCurrentActive);
+            return objectMapper.writeValueAsString(hs);
+        } else if("当月使用".equals(type)) {
+
+            //当月用户使用
+            rpVO.setFlag("0");
+            List<LogMonthUse> currentMonthUse = visitLogMapper.getLogMonthUse(rpVO);
+            Map<String, Object> totalCurrentSumUse = subUse(currentMonthUse);
 
 //        //累计用户使用数量
 //        List<LogMonthUse> sumUse = visitLogMapper.getLogMonthUse(rpVO);
@@ -220,30 +244,20 @@ public class VisitLogService {
 //        List<LogMonthActive> currentMonthActive = visitLogMapper.getLogMonthActive(rpVO);
 //        //当月用户使用
 //        List<LogMonthUse> currentMonthUse = visitLogMapper.getLogMonthUse(rpVO);
-        hs.put("code","0");
-        hs.put("message","查询成功");
-        hs.put("wholeTitle","总共启用12321");
 
-        hs.put("sumActiveTitle","累计活跃");
-        hs.put("sumActive",sumActive);
-        hs.put("totalSumActive",totalSumActive);
-
-        hs.put("totalSumActiveTitle","累计使用");
-        hs.put("sumUse",sumUse);
-        hs.put("totalSumUse",totalSumUse);
-
-        hs.put("currentMonthActiveTitle","当月活跃");
-        hs.put("currentMonthActive",currentMonthActive);
-        hs.put("totalCurrentActive",totalCurrentActive);
-
-        hs.put("currentMonthUseTitle","当月使用");
-        hs.put("currentMonthUse",currentMonthUse);
-        hs.put("totalCurrentSumUse",totalCurrentSumUse);
+            hs.put("code","0");
+            hs.put("message","查询成功");
+            hs.put("currentMonthUseTitle", "当月使用");
+            hs.put("currentMonthUse", currentMonthUse);
+            hs.put("totalCurrentSumUse", totalCurrentSumUse);
 
 //       String json = getJson("1","查询成功",sumActive);
-        return objectMapper.writeValueAsString(hs);
+            return objectMapper.writeValueAsString(hs);
+        }else{
+            return null;
+        }
 
-//        return null;
+
     }
 
     public Map<String,Object> subUse(List<LogMonthUse> monthUse){

@@ -39,4 +39,6 @@ public class ReportParameter {
 
     public String zcode;
 
+    public String type;
+
 }

@@ -117,6 +117,7 @@ public class VisitLogController {
         String zStart = para.get("zStart")==null?"":para.get("zStart").toString();
         String bStart = para.get("bStart")==null?"":para.get("bStart").toString();
         String qStart = para.get("qStart")==null?"":para.get("qStart").toString();
+        String type = para.get("type")==null?"":para.get("type").toString();
         ReportParameter rpVO = new ReportParameter();
         rpVO.setStartDate(startDate);
         rpVO.setEndDate(endDate);
@@ -124,6 +125,7 @@ public class VisitLogController {
         rpVO.setZStart(zStart);
         rpVO.setBStart(bStart);
         rpVO.setQStart(qStart);
+        rpVO.setType(type);
         String json = visitLogService.getLogMonth(rpVO);
         return json;
     }

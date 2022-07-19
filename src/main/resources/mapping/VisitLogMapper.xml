@@ -169,7 +169,7 @@
         </if>
         ) B WHERE NVL(A.USER_NAME,'0')='0' AND A.TO_PATH = '/')
         order by A.Q_DATE desc)-->
-        select rownum no,USERNAME,operationTime,visitResource,pageName from (select A.ID
+        select rownum no,USERNAME,to_char(operationTime,'YYYY-MM-DD hh24:mi:ss') AS operationTime ,visitResource,pageName from (select A.ID
         ,A.USER_NAME USERNAME
         ,A.Q_DATE operationTime
         ,A.TO_PATH visitResource
