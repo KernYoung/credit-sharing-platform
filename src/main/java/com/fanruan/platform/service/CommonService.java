@@ -934,19 +934,40 @@ public class CommonService {
      * @return
      */
     public boolean onCheckSpeedMapping(Map<String,Object> param){
-        //先不上线
-        if(1==1)
-            return false;
         boolean flag = false;
         String reportCorpCountryCode = param.get("reportCorpCountryCode")==null?"":
                 param.get("reportCorpCountryCode").toString();
-        if(reportCorpCountryCode==null||reportCorpCountryCode.equals("")){
-//            param.put("speed",null);
-            return flag;
-        }
         String speed = param.get("speed")==null?"":
                 param.get("speed").toString();
+        if("1".equals(speed)){
+            return false;
+        }
+        if(reportCorpCountryCode==null||reportCorpCountryCode.equals("")){
+//            param.put("speed",null);
+            String reportbuyerNo =param.get("reportbuyerNo")==null?"":
+                    param.get("reportbuyerNo").toString();
+            if(!"".equals(reportbuyerNo)){
+
+                if(reportbuyerNo.indexOf("/")>0){
+
+                    reportCorpCountryCode=reportbuyerNo.split("/")[0];
+                }else{
+                    if("1".equals(speed)){
+                        return flag;
+                    }else{
+                        return true;
+                    }
+                }
+            }else{
+                return flag;
+            }
+
+
+        }
+
         String speedName = "";
+
+
         if("1".equals(speed)){
             speedName="一般";
         }else if("2".equals(speed)){
