@@ -157,10 +157,15 @@ public class ReportUseService {
                 +getInteger(cyqypj.getUserNumber())+getInteger(qyxypj.getUserNumber())+
                 getInteger(ctqypj.getUserNumber());
         total.setUserNumber(totalUserNum);
+        Integer shareNumber = getInteger(fxcs.getShareNumber())+getInteger(cwpl.getShareNumber())
+                +getInteger(cyqypj.getShareNumber())+getInteger(qyxypj.getShareNumber())+
+                getInteger(ctqypj.getShareNumber());
+
+        total.setShareNumber(shareNumber);
         //中诚信共享求和
-        Map<String,Object> zcxShare = reportUseMapper.getZxcShareSum(rpVO);
-        Integer shareNum  = zcxShare.get("NUM")==null?0:new Integer(zcxShare.get("NUM").toString());
-        total.setShareNumber(shareNum);
+//        Map<String,Object> zcxShare = reportUseMapper.getZxcShareSum(rpVO);
+//        Integer shareNum  = zcxShare.get("NUM")==null?0:new Integer(zcxShare.get("NUM").toString());
+//        total.setShareNumber(shareNum);
         zcxReportUses.add(total);
 //        }
 

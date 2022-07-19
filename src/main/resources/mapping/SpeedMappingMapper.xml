@@ -161,13 +161,13 @@
       <if test="nationCode!= null" >
         and NATION_CODE = #{nationCode}
       </if>
-      <if test="nationName!= null" >
+      <if test="nationName!= null and nationName!=''" >
         and NATION_NAME = #{nationName}
       </if>
       <if test="reportType!= null" >
         and REPORT_TYPE = #{reportType}
       </if>
-      <if test="speed!= null" >
+      <if test="speed!= null and speed!=''" >
         and SPEED = #{speed}
       </if>
       <if test="responseDays!= null" >
