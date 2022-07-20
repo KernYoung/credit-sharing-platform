@@ -17,7 +17,7 @@ spring:
           password: GMfr2020
         uat:
           driver-class-name: oracle.jdbc.driver.OracleDriver
-          url: jdbc:oracle:thin:@10.0.130.27:1521:orcl
+          url: jdbc:oracle:thin:@10.0.130.84:1521:orcl
           username: BIUSER
           password: GMfr2020
 
