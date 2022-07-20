@@ -56,15 +56,15 @@ logging.config:
 platform:
   es:
     schema: http
-    host: 10.0.132.12
+    host: 10.0.105.4
     port: 9200
 
 local:
   schema: http
-  host: localhost
+  host: credit.zibchina.com
   port: 9001
 
 interfaceIssued:
   schema: http
-  ip: 10.0.132.12
+  ip: 10.0.105.4
   port: 9292
