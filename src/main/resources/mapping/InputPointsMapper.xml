@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fanruan.platform.mapper.InputPointsMapper">
+    <select id="getVersionPointsTYC" resultType="java.util.HashMap">
+select * from table(F_CREDIT_TYC_INPUT(to_date(#{startDate},'yyyy-mm-dd'),to_date(#{endDate},'yyyy-mm-dd')))
+    </select>
+
+    <select id="getVersionPointsZCX" resultType="java.util.HashMap">
+        select * from table(F_CREDIT_ZCX_INPUT(to_date(#{startDate},'yyyy-mm-dd'),to_date(#{endDate},'yyyy-mm-dd')))
+    </select>
+
+    <select id="getCompanyPoints" resultType="java.util.HashMap">
+select * from table(F_CREDIT_FIRM_INPUT(to_date(#{startDate},'yyyy-mm-dd'),to_date(#{endDate},'yyyy-mm-dd'),#{supplierName}))
+  </select>
+</mapper>

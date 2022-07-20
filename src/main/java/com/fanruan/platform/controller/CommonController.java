@@ -79,6 +79,8 @@ public class CommonController {
     private CompanyService companyService;
     @Autowired
     private SpeedMappingService speedMappingService;
+    @Autowired
+    private InputPointsService inputPointsService;
 
 
     @RequestMapping(value = "/common/getArea", method = RequestMethod.POST)
@@ -2590,11 +2592,11 @@ public class CommonController {
             pafcVersion.setEndDate(pafcVersion.getEndDate() == null ? "" : DateUtil.transform2day(pafcVersion.getEndDate()));
             if(pafcVersion.getSupplierName().equals("天眼查")){
                 pafcVersionPROD = commonService.getVersionPointsTYC(pafcVersion);
-                pafcVersionDEV = InputPointsService.getVersionPointsTYC(pafcVersion);
+                pafcVersionDEV = inputPointsService.getVersionPointsTYC(pafcVersion);
 
             }else if(pafcVersion.getSupplierName().equals("中诚信")){
                 pafcVersionPROD = commonService.getVersionPointsZCX(pafcVersion);
-                pafcVersionDEV = InputPointsService.getVersionPointsZCX(pafcVersion);
+                pafcVersionDEV = inputPointsService.getVersionPointsZCX(pafcVersion);
             }
 
             if(pafcVersionPROD.getInterfaceUsedTotalPoints() == null) pafcVersionPROD.setInterfaceUsedTotalPoints(0);
@@ -2641,7 +2643,7 @@ public class CommonController {
         pafcCompanyList = commonService.getRecipientInfoList();
         pafcPointsList = commonService.getPAFCPointsList(versionNo);
         companyPointsPRODList = commonService.getCompanyPoints(pafcVersion);
-        companyPointsDEVList = InputPointsService.getCompanyPoints(pafcVersion);
+        companyPointsDEVList = inputPointsService.getCompanyPoints(pafcVersion);
 
         //对没有匹配的公司进行提示
 
@@ -2686,8 +2688,13 @@ public class CommonController {
             //加上测试环境数据
             for(PAFCPoints companyPoints : companyPointsDEVList){
                 if(pafcPoints.getCompanyName().equals(companyPoints.getCompanyName())){
-                    pafcPoints.setInterfaceUsedPoints(pafcPoints.getInterfaceUsedPoints() + companyPoints.getInterfaceUsedPoints());
-                    pafcPoints.setAttentionUsedPoints(pafcPoints.getAttentionUsedPoints() + companyPoints.getAttentionUsedPoints());
+                    System.out.println(pafcPoints.getCompanyName()+222);
+                   Integer interfaceUsedPoints = pafcPoints.getInterfaceUsedPoints()==null?0:pafcPoints.getInterfaceUsedPoints();
+                   Integer InterfaceUsedPoints1 = companyPoints.getInterfaceUsedPoints()==null?0:companyPoints.getInterfaceUsedPoints();
+                    pafcPoints.setInterfaceUsedPoints(interfaceUsedPoints+ InterfaceUsedPoints1);
+                    Integer attentionUsedPoints = pafcPoints.getAttentionUsedPoints()==null?0:pafcPoints.getAttentionUsedPoints();
+                    Integer attentionUsedPoints1 = companyPoints.getAttentionUsedPoints()==null?0:companyPoints.getAttentionUsedPoints();
+                    pafcPoints.setAttentionUsedPoints(attentionUsedPoints + attentionUsedPoints1);
                 }
 
                 if(companyPoints.getCompanyName().equals("浙江中大技术进出口集团有限公司")){

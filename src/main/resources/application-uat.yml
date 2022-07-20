@@ -2,23 +2,30 @@ server:
   port: 9292
   max-http-header-size: 18432
 spring:
+  autoconfigure:
+    exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
   datasource:
-    driver-class-name: oracle.jdbc.driver.OracleDriver
-    url: jdbc:oracle:thin:@10.0.130.84:1521:orcl
-#    url: jdbc:oracle:thin:@10.0.119.2:1521:orcl
-    username: BIUSER
-    password: GMfr2020
-#    username: biuser
-#    password: GMfr2020
+    type: com.alibaba.druid.pool.DruidDataSource
+    dynamic:
+      primary: master
+      strict: true
+      datasource:
+        master:
+          driver-class-name: oracle.jdbc.driver.OracleDriver
+          url: jdbc:oracle:thin:@10.0.130.84:1521:orcl
+          username: BIUSER
+          password: GMfr2020
+        uat:
+          driver-class-name: oracle.jdbc.driver.OracleDriver
+          url: jdbc:oracle:thin:@10.0.130.27:1521:orcl
+          username: BIUSER
+          password: GMfr2020
 
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://106.14.210.23:5306/sharing_platform?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
-#    username: root
-#    password: ant456
+
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: false
+    show-sql: true
     open-in-view: false
     properties:
       hibernate:
@@ -35,12 +42,13 @@ spring:
         min-idel: 0
     timeout: 10000
 mybatis:
-#  # spring boot集成mybatis的方式打印sql
-#  configuration:
+  #  # spring boot集成mybatis的方式打印sql
+  #  configuration:
+  log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapping/*Mapper.xml
+  configuration:
+    map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    mapper-locations: classpath:mapping/*Mapper.xml
-    configuration:
-      map-underscore-to-camel-case: true
 
 logging.config:
   classpath:log4j2.xml
@@ -53,7 +61,7 @@ platform:
 
 local:
   schema: http
-  host: zibchina.com
+  host: localhost
   port: 9001
 
 interfaceIssued:
