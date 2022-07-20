@@ -17,7 +17,7 @@ spring:
           password: GMfr2020
         uat:
           driver-class-name: oracle.jdbc.driver.OracleDriver
-          url: jdbc:oracle:thin:@10.0.130.27:1521:orcl
+          url: jdbc:oracle:thin:@10.0.130.84:1521:orcl
           username: BIUSER
           password: GMfr2020
 
@@ -25,7 +25,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     open-in-view: false
     properties:
       hibernate:
@@ -48,7 +48,6 @@ mybatis:
   mapper-locations: classpath:mapping/*Mapper.xml
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 logging.config:
   classpath:log4j2.xml
@@ -61,7 +60,7 @@ platform:
 
 local:
   schema: http
-  host: localhost
+  host: zibchina.com
   port: 9001
 
 interfaceIssued:
