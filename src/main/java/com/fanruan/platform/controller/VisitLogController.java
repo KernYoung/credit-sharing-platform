@@ -103,6 +103,61 @@ public class VisitLogController {
         String json = getJson("0","查询成功",userVisitList);
         return json;
     }
+
+    @RequestMapping(value = "/visitLog/getLogMonthActive",method = RequestMethod.POST)
+    @ResponseBody
+    public String getLogMonthActive(HttpServletRequest request, @RequestBody Map<String,Object> para)throws JsonProcessingException{
+
+        String checkPara = checkPara(para);
+        if(checkPara!=null&&!checkPara.equals("")){
+            return checkPara;
+        }
+        String startDate = para.get("startDate")==null?"":para.get("startDate").toString();
+        String endDate = para.get("endDate")==null?"":para.get("endDate").toString();
+        String tStart = para.get("tStart")==null?"":para.get("tStart").toString();
+        String zStart = para.get("zStart")==null?"":para.get("zStart").toString();
+        String bStart = para.get("bStart")==null?"":para.get("bStart").toString();
+        String qStart = para.get("qStart")==null?"":para.get("qStart").toString();
+        String flag = para.get("flag")==null?"":para.get("flag").toString();
+        ReportParameter rpVO = new ReportParameter();
+        rpVO.setStartDate(startDate);
+        rpVO.setEndDate(endDate);
+        rpVO.setTStart(tStart);
+        rpVO.setZStart(zStart);
+        rpVO.setBStart(bStart);
+        rpVO.setQStart(qStart);
+        rpVO.setFlag(flag);
+        String json = visitLogService.getLogMonthActive(rpVO);
+        return json;
+    }
+
+    @RequestMapping(value = "/visitLog/getLogMonthUse",method = RequestMethod.POST)
+    @ResponseBody
+    public String getLogMonthUse(HttpServletRequest request, @RequestBody Map<String,Object> para)throws JsonProcessingException{
+
+        String checkPara = checkPara(para);
+        if(checkPara!=null&&!checkPara.equals("")){
+            return checkPara;
+        }
+        String startDate = para.get("startDate")==null?"":para.get("startDate").toString();
+        String endDate = para.get("endDate")==null?"":para.get("endDate").toString();
+        String tStart = para.get("tStart")==null?"":para.get("tStart").toString();
+        String zStart = para.get("zStart")==null?"":para.get("zStart").toString();
+        String bStart = para.get("bStart")==null?"":para.get("bStart").toString();
+        String qStart = para.get("qStart")==null?"":para.get("qStart").toString();
+        String flag = para.get("flag")==null?"":para.get("flag").toString();
+        ReportParameter rpVO = new ReportParameter();
+        rpVO.setStartDate(startDate);
+        rpVO.setEndDate(endDate);
+        rpVO.setTStart(tStart);
+        rpVO.setZStart(zStart);
+        rpVO.setBStart(bStart);
+        rpVO.setQStart(qStart);
+        rpVO.setFlag(flag);
+        String json = visitLogService.getLogMonthUse(rpVO);
+        return json;
+    }
+
     @RequestMapping(value = "/visitLog/getLogMonth",method = RequestMethod.POST)
     @ResponseBody
     public String getLogMonth(HttpServletRequest request, @RequestBody Map<String,Object> para)throws JsonProcessingException{

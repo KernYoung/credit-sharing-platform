@@ -186,6 +186,30 @@ public class VisitLogService {
         return ReturnJson.getJson("0","查询成功",listMap);
     }
 
+    public String getLogMonthActive(ReportParameter rpVO) throws JsonProcessingException{
+        ObjectMapper objectMapper=new ObjectMapper();
+        List<LogMonthActive> sumActive = visitLogMapper.getLogMonthActive(rpVO);
+        Map<String,Object> totalSumActive = subActive(sumActive);
+        HashMap<String,Object> hs=new HashMap<>();
+        hs.put("code","0");
+        hs.put("message","查询成功");
+        hs.put("Active",sumActive);
+        hs.put("totalActive",totalSumActive);
+        return objectMapper.writeValueAsString(hs);
+    }
+
+    public String getLogMonthUse(ReportParameter rpVO) throws JsonProcessingException{
+        ObjectMapper objectMapper=new ObjectMapper();
+        HashMap<String,Object> hs=new HashMap<>();
+        List<LogMonthUse> sumUse = visitLogMapper.getLogMonthUse(rpVO);
+        Map<String,Object> totalSumUse = subUse(sumUse);
+        hs.put("code","0");
+        hs.put("message","查询成功");
+        hs.put("Use",sumUse);
+        hs.put("totalUse",totalSumUse);
+        return objectMapper.writeValueAsString(hs);
+    }
+
     /**
      * 月报
      * @param rpVO
