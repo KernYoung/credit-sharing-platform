@@ -25,7 +25,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     open-in-view: false
     properties:
       hibernate:
@@ -48,7 +48,6 @@ mybatis:
   mapper-locations: classpath:mapping/*Mapper.xml
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 logging.config:
   classpath:log4j2.xml
