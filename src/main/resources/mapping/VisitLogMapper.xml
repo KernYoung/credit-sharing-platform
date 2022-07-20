@@ -294,7 +294,7 @@
           FROM ds1 left join ds2 on ds1.companyname=ds2.companyname
           where ds1.companyname IS NOT NULL
           ORDER BY FID ,OID-->
-        WITH RECUR_ORG AS(
+        <!--WITH RECUR_ORG AS(
         SELECT
         '010' AS GROUPCODE,'浙江省国际贸易集团有限公司' AS GROUPNAME,
         F.CODE AS COMPANYCODE,F.NAME AS COMPANYNAME,
@@ -347,6 +347,117 @@
         ) a
         left join credit_user b on a.USER_CODE = b.username
         left join RECUR_ORG c on b.company_name = c.subcompanyname
+        where 1=1
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+            <if test="endDate!=null and endDate!=''">
+                and SUBSTR(to_char(a.Q_DATE,'YYYY-MM-DD'),1,7)=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+            </if>
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            <if test="endDate!=null and endDate!=''">
+                and SUBSTR(to_char(a.Q_DATE,'YYYY-MM-DD'),1,10)&lt;=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,10)
+            </if>
+            <if test="startDate!=null and startDate!=''">
+                and SUBSTR(to_char(a.Q_DATE,'YYYY-MM-DD'),1,10) &gt;=SUBSTR(to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,10)
+            </if>
+        </if>
+        and a.USER_NAME is not null and name is not null
+        group by c.companyname,c.companycode
+        )
+        SELECT
+        ds1.shortname companyName,
+        CASE ds1.SHORTNAME WHEN  '浙江东方' THEN 1
+        WHEN  '浙商资产' THEN 2
+        WHEN  '浙金信托' THEN 3
+        WHEN  '大地期货' THEN 4
+        WHEN  '中韩人寿' THEN 5
+        WHEN  '浙江粮油' THEN 6
+        WHEN  '浙江土畜' THEN 7
+        WHEN  '浙纺公司' THEN 8
+        WHEN  '浙江化工' THEN 9
+        WHEN  '中大技术' THEN 10
+        WHEN  '东方机电' THEN 11
+        WHEN  '国贸云商' THEN 12
+        WHEN  '国际供应链公司' THEN 13
+        WHEN  '省中医药集团' THEN 14
+        WHEN  '英特集团' THEN 15
+        WHEN  '康恩贝' THEN 16
+        WHEN  '集团本部' THEN 17
+        WHEN  '国贸资产' THEN 18
+        ELSE 19 END AS  OID,
+        nvl(DS1.PART,'其他')  AS businessSegments,
+        CASE part WHEN  '金融' THEN 1
+        WHEN  '商贸' THEN 2
+        WHEN  '医药' THEN 3
+        ELSE 4 END AS  FID,
+        NVL(启用用户,0) AS userNum,
+        NVL(访问次数,0) AS visitNum,
+        NVL(访问人数,0) AS activeUserNum,
+        case when NVL(启用用户,0)=0 then 0 else NVL(访问人数,0)/NVL(启用用户,0) end as activeUserRatio,
+        case when NVL(访问人数,0)=0 then 0 else  ceil(round(NVL(访问次数,0)/NVL(访问人数,0))) end  as acticeVisitRatio
+        FROM ds1 left join ds2 on ds1.companyname=ds2.companyname
+        where ds1.companyname IS NOT NULL
+        ORDER BY FID ,OID-->
+        with RECUR_ORG AS(
+        SELECT
+        '010' AS GROUPCODE,'浙江省国际贸易集团有限公司' AS GROUPNAME,
+        F.CODE AS COMPANYCODE,F.NAME AS COMPANYNAME,
+        T.CODE AS SUBCOMPANYCODE,T.NAME AS SUBCOMPANYNAME,T.SHORTNAME,LEVEL,T.PART
+        FROM (
+        SELECT
+        A.CODE,A.NAME,A.SCODE,A.SNAME,A.SHORTNAME,CASE WHEN B.DEF1 ='制造' THEN '其他' WHEN B.DEF1 <![CDATA[<> ]]> C.DEF1 THEN C.DEF1 WHEN B.DEF1 IS NULL THEN C.DEF1 ELSE B.DEF1 END AS PART
+        FROM ODS_HR_ORG A LEFT
+        JOIN ODS_HRM_ORG_DETAIL B
+        ON A.CODE = B.CODE LEFT
+        JOIN ODS_HRM_ORG_DETAIL C
+        ON C.NAME = RES_ENAIL(A.NAME)
+        UNION ALL
+        SELECT
+        A.CODE,A.NAME,A.SCODE,A.SNAME,A.SHORTNAME,
+        CASE WHEN A.SHORTNAME LIKE'%中韩%'
+        THEN '金融'
+        WHEN  A.CODE LIKE'%knb%' OR  A.CODE LIKE'%keb%'  OR A.CODE LIKE'%KEB%'
+        THEN '医药'
+        WHEN C.DEF1 IS NULL
+        THEN '其他' ELSE C.DEF1 END AS PART
+        FROM INPUT_HR_ORG A LEFT
+        JOIN ODS_HRM_ORG_DETAIL C
+        ON C.NAME = RES_ENAIL(A.NAME)
+        ) T LEFT
+        JOIN (
+        SELECT
+        A.CODE,A.NAME,A.SCODE,A.SNAME,A.SHORTNAME
+        FROM ODS_HR_ORG A
+        UNION
+        SELECT
+        CODE,NAME,SCODE,SNAME,SHORTNAME
+        FROM INPUT_HR_ORG ) F
+        ON RES_ENAIL(T.NAME) = F.NAME
+        START WITH T.CODE = '010' CONNECT BY PRIOR T.CODE  = T.SCODE
+
+        ),
+        ds1 as(
+        select
+        count(*) as 启用用户,
+        b.companyname,
+        c.shortname,
+        CASE WHEN c.shortname IN('浙商资产','浙江东方') THEN '金融' WHEN b.part='制造' THEN '其他' ELSE b.part END AS part  FROM CREDIT_USER A
+        LEFT JOIN RECUR_ORG B on a.company_code = b.subcompanycode
+        LEFT JOIN RECUR_ORG C on b.companycode= c.subcompanycode
+        WHERE STATUS = 1
+        group by b.companyname,c.shortname,CASE WHEN c.shortname IN('浙商资产','浙江东方') THEN '金融' WHEN b.part='制造' THEN '其他' ELSE b.part END
+        ),
+        ds2 as(
+        select distinct
+        c.companyname,
+        c.companycode,
+        count(a.ID) 访问次数,
+        count(distinct a.user_code) 访问人数
+        from (
+        select a.ID,a.user_code,a.Q_DATE,a.USER_NAME from LOG_CREDIT_OPER a
+        ) a
+        left join credit_user b on a.USER_CODE = b.username
+        left join RECUR_ORG c on b.company_code = c.subcompanycode
         where 1=1
         <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
             <if test="endDate!=null and endDate!=''">
@@ -1523,7 +1634,7 @@ WHERE STATUS = 1-->
         LEFT JOIN M9 ON m0.COMPANYNAME=m9.COMPANYNAME
         WHERE m0.COMPANYNAME is not null
         ORDER BY FID,OID-->
-        with RECUR_ORG AS(
+        <!--with RECUR_ORG AS(
         SELECT
         '010' AS GROUPCODE,'浙江省国际贸易集团有限公司' AS GROUPNAME,
         F.CODE AS COMPANYCODE,F.NAME AS COMPANYNAME,
@@ -1588,6 +1699,416 @@ WHERE STATUS = 1-->
         ) I
         WHERE 1 = 1
         GROUP BY companyname
+        &lt;!&ndash;天眼查客商初筛&ndash;&gt;
+
+        ),
+        m2 as(
+        SELECT
+        COUNT(*) AS 天眼查使用,O.COMPANYNAME
+        FROM(
+        SELECT
+        A.*,
+        CASE WHEN B.ENTNAME IN ('协同-资信共享平台','门户测试','浙江省国际贸易集团有限公司1','浙江省国际贸易集团有限公司2')
+        THEN '浙江省国际贸易集团有限公司'
+        ELSE B.ENTNAME END COMPANYNAME
+        FROM ODS_TYC_JSON A LEFT
+        JOIN CREDIT_API_RELATION B
+        ON SUBSTR(A.TOKEN_ID,1,3) = B.ENT_TOKENID
+        WHERE A.ERROR_CODE = '0'
+        AND SUBSTR(A.TOKEN_ID,-1,1) = '0'
+        and to_char(A.UPDATETIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{tStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+
+            and SUBSTR(to_char(A.UPDATETIME,'YYYY-MM-DD'),1,7)=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            and to_char(A.UPDATETIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+
+            and to_char(A.UPDATETIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>) O
+        GROUP BY O.COMPANYNAME
+        &#45;&#45;天眼查使用
+
+
+        ),
+        m3 as(
+        select SUM(CASE WHEN A.REPORT_TYPE='风险初筛' THEN 10 ELSE 2 END) AS 中诚信使用,c.companyname
+        from (select * from CREDIT_REPORT where UPDATE_BY <![CDATA[!= ]]>'null' )A left join CREDIT_USER B
+        on A.UPDATE_BY=B.USER_ID
+        left join RECUR_ORG c on b.company_name = c.subcompanyname
+        where 1=1
+        and  to_char(A.UPDATE_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{zStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+
+            and SUBSTR(to_char(A.UPDATE_TIME,'YYYY-MM-DD'),1,7)=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            and   to_char(A.UPDATE_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+
+            and to_char(A.UPDATE_TIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        GROUP BY c.companyname
+        &lt;!&ndash;中诚信使用&ndash;&gt;
+
+        ),
+        m4 as(
+        SELECT
+        C.companyname,
+        count(distinct P.NOTICESERIALNO ) AS 中信保使用
+        FROM ODS_ZXB_PDF P
+        INNER JOIN (SELECT NOTICESERIALNO,MAX(UPDATETIME) MAXTIME FROM ODS_ZXB_PDF  GROUP BY NOTICESERIALNO) D ON D.MAXTIME=P.UPDATETIME
+        INNER JOIN ODS_ZXB_REPORTAPPROVE R ON R.NOTICESERIALNO=P.NOTICESERIALNO
+        INNER JOIN LOG_ZXB_APPLY A ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
+        INNER  JOIN CREDIT_USER B ON A.UPDATEBY=B.USERNAME
+        INNER join RECUR_ORG c on b.company_name = c.subcompanyname
+        WHERE ORDERSTATE='0'
+        and to_char(P.updatetime,'YYYY-MM-DD')&gt;=to_char(to_date(#{bStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+
+            and SUBSTR(to_char(P.updatetime,'YYYY-MM-DD'),1,7)=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+
+            AND to_char(P.UPDATETIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+            AND to_char(P.UPDATETIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        GROUP BY
+        C.companyname
+        &lt;!&ndash;中信保使用&ndash;&gt;
+
+        ),
+        m51 as(
+        SELECT
+        COUNT(*) AS 天眼查API,O.COMPANYNAME
+        FROM(
+        SELECT
+        A.*,
+        CASE WHEN B.ENTNAME IN ('协同-资信共享平台','门户测试','浙江省国际贸易集团有限公司1','浙江省国际贸易集团有限公司2')
+        THEN '浙江省国际贸易集团有限公司'
+        ELSE B.ENTNAME END COMPANYNAME
+        FROM ODS_TYC_JSON A LEFT
+        JOIN CREDIT_API_RELATION B
+        ON SUBSTR(A.TOKEN_ID,1,3) = B.ENT_TOKENID
+        WHERE A.ERROR_CODE = '0'
+        AND SUBSTR(A.TOKEN_ID,-1,1) <![CDATA[<> ]]> '0'
+        AND   TO_CHAR(A.UPDATETIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{tStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+
+            and TO_CHAR(A.UPDATETIME,'YYYY-MM')=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            AND  TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+
+            AND  TO_CHAR(A.UPDATETIME,'YYYY-MM-DD') &lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>) O
+        GROUP BY O.COMPANYNAME
+        &lt;!&ndash;API调用&ndash;&gt;
+        ),
+        m52 as(
+        SELECT COMPANYNAME,SUM(中诚信API) AS 中诚信API FROM(
+        SELECT CASE WHEN A.COMPANY IN ('浙江省国际贸易集团有限公司2','浙江省国际贸易集团有限公司1')
+        THEN '浙江省国际贸易集团有限公司'
+        ELSE A.COMPANY END as COMPANYNAME
+        ,COUNT( * )*10  AS 中诚信API
+        FROM (
+        SELECT
+        ENTNAME AS COMPANY
+        ,
+        CASE SUBSTR(TOKEN_ID,4,1)
+        WHEN '1'
+        THEN '中诚信'
+        WHEN '2'
+        THEN '天眼查'
+        WHEN '4'
+        THEN '天眼查'
+        END AS API
+        ,SUBSTR(REQUEST_TIME,1,7) AS RE
+        FROM
+        LOG_INTERFACE_REPORT L
+        LEFT JOIN CREDIT_API_RELATION R ON SUBSTR(TOKEN_ID,1,3)=ENT_TOKENID
+        WHERE
+        L.TOKEN_ID IS NOT NULL
+        AND  SUBSTR(REQUEST_TIME,1,10) &gt;=to_char(to_date(#{zStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+
+            and SUBSTR(REQUEST_TIME,1,7)=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            AND  SUBSTR(REQUEST_TIME,1,10) &gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+
+            AND  SUBSTR(REQUEST_TIME,1,10)&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        ) A
+        WHERE
+        API ='中诚信'
+
+        GROUP BY
+        A.COMPANY)GROUP BY COMPANYNAME
+        &lt;!&ndash;API调用&ndash;&gt;
+
+
+        ),
+        m6 as(
+
+        SELECT
+        DS1.COMPANYNAME,count(*) as 天眼查推送
+        from ODS_TYC_PUSHSTRUCT o
+        left join (select * from (
+        select a.*
+        ,b.name
+        ,TO_CHAR(TO_TIMESTAMP(d.updatetime,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as updatetime,c.companyname
+        from CREDIT_FOCUS_RELATIONS a
+        left join credit_user b on a.user_id = b.user_id
+        left join RECUR_ORG c
+        on b.company_name = c. subcompanyname
+        left join log_tyc_concern d
+        on b.username = d.updateby and d.entname = a.company_name
+        )
+        where 1=1
+        and RELATIONS LIKE '%"tianyancha":1%') ds1
+        on o.COMPANYNAME=ds1.COMPANY_NAME
+        where  1=1
+        and to_char(o.UPDATETIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{tStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+
+            and SUBSTR(to_char(o.UPDATETIME,'YYYY-MM-DD'),1,7)=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            and to_char(o.UPDATETIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+
+            AND to_char(o.UPDATETIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+        group by ds1.COMPANYNAME
+        &lt;!&ndash;预警推送&ndash;&gt;
+
+
+        ),
+        ds1 as(select * from (
+        select a.*
+        ,b.name
+        ,TO_CHAR(TO_TIMESTAMP(d.updatetime,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as updatetime,c.companyname
+        from CREDIT_FOCUS_RELATIONS a
+        left join credit_user b on a.user_id = b.user_id
+        left join RECUR_ORG c
+        on b.company_name = c. subcompanyname
+        left join log_zcx_concern d
+        on b.username = d.updateby and d.entname = a.company_name
+        )
+        where 1=1
+        and RELATIONS LIKE '%"zhongchengxin":1%'
+        ),
+        ds2 as(
+        SELECT
+        DS1.COMPANYNAME,
+        count(*) as  NUM from ODS_ZCX_NEWSPUBOPINION o
+        left join ds1
+        on o.ENTERPRISE_NAME=ds1.COMPANY_NAME
+        where 1=1
+        and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &gt;=#{zStart}
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+
+            and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM')=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &lt;=#{endDate} and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &gt;=#{startDate}
+
+        </if>
+        group by DS1.COMPANYNAME
+        UNION ALL
+        SELECT
+        DS1.COMPANYNAME,
+        count(*) as  NUM from ODS_ZCX_RISKEVENT o
+        left join ds1
+        on o.ENTERPRISE_NAME=ds1.COMPANY_NAME
+        where 1=1
+        and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &gt;=#{zStart}
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+
+            and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM')=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &lt;=#{endDate} and TO_CHAR(o.CREATE_TIME /(1000 * 60 * 60 * 24)+ TO_DATE('1970-01-01', 'YYYY-MM-DD'), 'YYYY-MM-DD') &gt;=#{startDate}
+
+        </if>
+        group by DS1.COMPANYNAME
+        ),
+        m7 as(
+        SELECT  COMPANYNAME,SUM(NUM) as 中诚信推送  FROM ds2 group by COMPANYNAME
+        &lt;!&ndash;风险事件&新闻舆情&ndash;&gt;
+
+        ),
+        m8 as(
+        select COMPANYNAME,COUNT(DISTINCT COMPANY_NAME) as 天眼查关注 from (
+        select a.*,b.name,TO_CHAR(TO_TIMESTAMP(d.updatetime,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as updatetime,c.companyname from CREDIT_FOCUS_RELATIONS a left join credit_user b on a.user_id = b.user_id
+        left join RECUR_ORG c on b.company_name = c. subcompanyname
+        left join log_tyc_concern d on b.username = d.updateby and d.entname = a.company_name
+
+        )
+        where 1=1
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+
+            and substr(updatetime,1,7)=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            and substr(updatetime,1,10)&gt;=SUBSTR(to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,10)
+            AND substr(updatetime,1,10)&lt;=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,10)
+        </if>
+        and RELATIONS LIKE '%"tianyancha":1%' GROUP BY COMPANYNAME
+        &lt;!&ndash;天眼查关注&ndash;&gt;
+
+        ),
+        m9 as(
+        select COMPANYNAME,COUNT(DISTINCT COMPANY_NAME)*100 as 中诚信关注 from (
+        select a.*
+        ,b.name
+        ,TO_CHAR(TO_TIMESTAMP(d.updatetime,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as updatetime,c.companyname
+        from CREDIT_FOCUS_RELATIONS a
+        left join credit_user b on a.user_id = b.user_id
+        left join RECUR_ORG c
+        on b.company_name = c. subcompanyname
+        left join log_zcx_concern d
+        on b.username = d.updateby and d.entname = a.company_name
+
+        )
+        where 1=1
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+
+            and substr(updatetime,1,7)=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            and substr(updatetime,1,10)&gt;=SUBSTR(to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,10)
+            AND substr(updatetime,1,10)&lt;=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,10)
+        </if>
+        and RELATIONS LIKE '%"zhongchengxin":1%' GROUP BY COMPANYNAME
+
+        &lt;!&ndash;中诚信关注&ndash;&gt;
+        )
+        SELECT
+        m0.COMPANYNAME companyName1,
+        m0.SHORTNAME companyName,
+        CASE m0.SHORTNAME WHEN  '浙江东方' THEN 1
+        WHEN  '浙商资产' THEN 2
+        WHEN  '浙金信托' THEN 3
+        WHEN  '大地期货' THEN 4
+        WHEN  '中韩人寿' THEN 5
+        WHEN  '浙江粮油' THEN 6
+        WHEN  '浙江土畜' THEN 7
+        WHEN  '浙纺公司' THEN 8
+        WHEN  '浙江化工' THEN 9
+        WHEN  '中大技术' THEN 10
+        WHEN  '东方机电' THEN 11
+        WHEN  '国贸云商' THEN 12
+        WHEN  '国际供应链公司' THEN 13
+        WHEN  '省中医药集团' THEN 14
+        WHEN  '英特集团' THEN 15
+        WHEN  '康恩贝' THEN 16
+        WHEN  '集团总部' THEN 17
+        WHEN  '国贸资产' THEN 18
+        ELSE 19 END AS  OID,
+        CASE WHEN  SHORTNAME ='东方金控' THEN '金融' ELSE nvl(m0.PART,'其他') END AS businessSegments,
+        CASE part WHEN  '金融' THEN 1
+        WHEN  '商贸' THEN 2
+        WHEN  '医药' THEN 3
+        ELSE 4 END AS  FID,
+        客商初筛 tycSxNum,天眼查使用 tycUseNum,中诚信使用 zcxUseNum,中信保使用 zxbUseNum,天眼查API tycApiNum,中诚信API zcxApiNum,天眼查关注 tycGzNum,中诚信关注 zcxGzNum,天眼查推送 tycMessageNum,中诚信推送 zcxMessageNum
+        FROM M0
+        LEFT JOIN M1 ON m0.COMPANYNAME=m1.COMPANYNAME
+        LEFT JOIN M2 ON m0.COMPANYNAME=m2.COMPANYNAME
+        LEFT JOIN M3 ON m0.COMPANYNAME=m3.COMPANYNAME
+        LEFT JOIN M4 ON m0.COMPANYNAME=m4.COMPANYNAME
+        LEFT JOIN M51 ON m0.COMPANYNAME=m51.COMPANYNAME
+        LEFT JOIN M52 ON m0.COMPANYNAME=m52.COMPANYNAME
+        LEFT JOIN M6 ON m0.COMPANYNAME=m6.COMPANYNAME
+        LEFT JOIN M7 ON m0.COMPANYNAME=m7.COMPANYNAME
+        LEFT JOIN M8 ON m0.COMPANYNAME=m8.COMPANYNAME
+        LEFT JOIN M9 ON m0.COMPANYNAME=m9.COMPANYNAME
+        WHERE m0.COMPANYNAME is not null
+        ORDER BY FID,OID-->
+        with RECUR_ORG AS(
+        SELECT
+        '010' AS GROUPCODE,'浙江省国际贸易集团有限公司' AS GROUPNAME,
+        F.CODE AS COMPANYCODE,F.NAME AS COMPANYNAME,
+        T.CODE AS SUBCOMPANYCODE,T.NAME AS SUBCOMPANYNAME,T.SHORTNAME,LEVEL,T.PART
+        FROM (
+        SELECT
+        A.CODE,A.NAME,A.SCODE,A.SNAME,A.SHORTNAME,CASE WHEN B.DEF1 ='制造' THEN '其他' WHEN B.DEF1 <![CDATA[<> ]]> C.DEF1 THEN C.DEF1 WHEN B.DEF1 IS NULL THEN C.DEF1 ELSE B.DEF1 END AS PART
+        FROM ODS_HR_ORG A LEFT
+        JOIN ODS_HRM_ORG_DETAIL B
+        ON A.CODE = B.CODE LEFT
+        JOIN ODS_HRM_ORG_DETAIL C
+        ON C.NAME = RES_ENAIL(A.NAME)
+        UNION ALL
+        SELECT
+        A.CODE,A.NAME,A.SCODE,A.SNAME,A.SHORTNAME,
+        CASE WHEN A.SHORTNAME LIKE'%中韩%'
+        THEN '金融'
+        WHEN  A.CODE LIKE'%knb%' OR  A.CODE LIKE'%keb%'  OR A.CODE LIKE'%KEB%'
+        THEN '医药'
+        WHEN C.DEF1 IS NULL
+        THEN '其他' ELSE C.DEF1 END AS PART
+        FROM INPUT_HR_ORG A LEFT
+        JOIN ODS_HRM_ORG_DETAIL C
+        ON C.NAME = RES_ENAIL(A.NAME)
+        ) T LEFT
+        JOIN (
+        SELECT
+        A.CODE,A.NAME,A.SCODE,A.SNAME,A.SHORTNAME
+        FROM ODS_HR_ORG A
+        UNION
+        SELECT
+        CODE,NAME,SCODE,SNAME,SHORTNAME
+        FROM INPUT_HR_ORG ) F
+        ON RES_ENAIL(T.NAME) = F.NAME
+        START WITH T.CODE = '010' CONNECT BY PRIOR T.CODE  = T.SCODE
+
+        ),
+        m0 as(
+        select
+        b.companyname,
+        c.shortname,
+        CASE WHEN b.part='制造' THEN '其他'   WHEN b.companyname='浙江东方金融控股集团股份有限公司' THEN '金融' ELSE b.part END AS part FROM CREDIT_USER A
+        LEFT JOIN RECUR_ORG B on a.company_code = b.subcompanycode
+        LEFT JOIN RECUR_ORG C on b.companycode= c.subcompanycode
+        WHERE STATUS = 1
+        group by b.companyname,c.shortname,CASE WHEN b.part='制造' THEN '其他'  WHEN b.companyname='浙江东方金融控股集团股份有限公司' THEN '金融' ELSE b.part END
+        ),
+        m1 as(
+        SELECT
+        count(*) as 客商初筛,companyname
+        FROM (SELECT
+        A.*,C.*,RES_ENAIL(B.COMPANY_NAME) AS COMPANYNAME
+        FROM INPUT_CUSTOM_HAND A LEFT
+        JOIN CREDIT_USER B
+        ON A.UPDATEBY = B.USERNAME LEFT
+        JOIN ODS_TYC_JSON C
+        ON A.FID = C.FID
+        WHERE NVL(C.FID,'0') <![CDATA[<> ]]> '0'
+        AND C.ERROR_CODE = 0
+        and to_char(a.updatetime,'YYYY-MM-DD')&gt;=to_char(to_date(#{tStart},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
+
+            and SUBSTR(to_char(a.updatetime,'YYYY-MM-DD'),1,7)=SUBSTR(to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD'),1,7)
+
+        </if>
+        <if test="flag!=null and flag!='' and flag.toString()=='1'.toString()">
+            and to_char(a.updatetime,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+
+            and to_char(a.updatetime,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        </if>
+
+        ) I
+        WHERE 1 = 1
+        GROUP BY companyname
         <!--天眼查客商初筛-->
 
         ),
@@ -1617,7 +2138,7 @@ WHERE STATUS = 1-->
             and to_char(A.UPDATETIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         </if>) O
         GROUP BY O.COMPANYNAME
-        --天眼查使用
+        <!--天眼查使用-->
 
 
         ),
@@ -1625,7 +2146,7 @@ WHERE STATUS = 1-->
         select SUM(CASE WHEN A.REPORT_TYPE='风险初筛' THEN 10 ELSE 2 END) AS 中诚信使用,c.companyname
         from (select * from CREDIT_REPORT where UPDATE_BY <![CDATA[!= ]]>'null' )A left join CREDIT_USER B
         on A.UPDATE_BY=B.USER_ID
-        left join RECUR_ORG c on b.company_name = c.subcompanyname
+        left join RECUR_ORG c on b.company_code = c.subcompanycode
         where 1=1
         and  to_char(A.UPDATE_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{zStart},'YYYY-MM-DD'),'YYYY-MM-DD')
         <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
@@ -1651,7 +2172,7 @@ WHERE STATUS = 1-->
         INNER JOIN ODS_ZXB_REPORTAPPROVE R ON R.NOTICESERIALNO=P.NOTICESERIALNO
         INNER JOIN LOG_ZXB_APPLY A ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
         INNER  JOIN CREDIT_USER B ON A.UPDATEBY=B.USERNAME
-        INNER join RECUR_ORG c on b.company_name = c.subcompanyname
+        INNER join RECUR_ORG c on b.company_code = c.subcompanycode
         WHERE ORDERSTATE='0'
         and to_char(P.updatetime,'YYYY-MM-DD')&gt;=to_char(to_date(#{bStart},'YYYY-MM-DD'),'YYYY-MM-DD')
         <if test="flag!=null and flag!='' and flag.toString()=='0'.toString()">
@@ -1754,7 +2275,7 @@ WHERE STATUS = 1-->
         from CREDIT_FOCUS_RELATIONS a
         left join credit_user b on a.user_id = b.user_id
         left join RECUR_ORG c
-        on b.company_name = c. subcompanyname
+        on b.company_code = c.subcompanycode
         left join log_tyc_concern d
         on b.username = d.updateby and d.entname = a.company_name
         )
@@ -1785,7 +2306,7 @@ WHERE STATUS = 1-->
         from CREDIT_FOCUS_RELATIONS a
         left join credit_user b on a.user_id = b.user_id
         left join RECUR_ORG c
-        on b.company_name = c. subcompanyname
+        on b.company_code = c.subcompanycode
         left join log_zcx_concern d
         on b.username = d.updateby and d.entname = a.company_name
         )
@@ -1837,7 +2358,7 @@ WHERE STATUS = 1-->
         m8 as(
         select COMPANYNAME,COUNT(DISTINCT COMPANY_NAME) as 天眼查关注 from (
         select a.*,b.name,TO_CHAR(TO_TIMESTAMP(d.updatetime,'DD-MON-YY hh.mi.ss.ff PM'),'YYYY-MM-DD hh24:mi:ss') as updatetime,c.companyname from CREDIT_FOCUS_RELATIONS a left join credit_user b on a.user_id = b.user_id
-        left join RECUR_ORG c on b.company_name = c. subcompanyname
+        left join RECUR_ORG c on b.company_code = c.subcompanycode
         left join log_tyc_concern d on b.username = d.updateby and d.entname = a.company_name
 
         )
@@ -1863,7 +2384,7 @@ WHERE STATUS = 1-->
         from CREDIT_FOCUS_RELATIONS a
         left join credit_user b on a.user_id = b.user_id
         left join RECUR_ORG c
-        on b.company_name = c. subcompanyname
+        on b.company_code = c.subcompanycode
         left join log_zcx_concern d
         on b.username = d.updateby and d.entname = a.company_name
 
@@ -1923,6 +2444,7 @@ WHERE STATUS = 1-->
         LEFT JOIN M9 ON m0.COMPANYNAME=m9.COMPANYNAME
         WHERE m0.COMPANYNAME is not null
         ORDER BY FID,OID
+
 
 
     </select>

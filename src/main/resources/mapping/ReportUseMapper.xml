@@ -82,7 +82,7 @@
         WHERE P.NOTICESERIALNO IS NOT NULL and a.companyname IS NOT NULL
         GROUP BY a.companyname
         order by a.companyname-->
-        SELECT
+        <!--SELECT
         a.companyname,
         COUNT(DISTINCT P.NOTICESERIALNO) AS num,
         SUM(NVL(C.NUM,0)) usrNum
@@ -119,6 +119,44 @@
         <if test="companyName!=null and companyName!=''">
             and  ${companyName}
         </if>
+        GROUP BY a.companyname
+        order by a.companyname-->
+        SELECT
+        a.companyname,
+        COUNT(DISTINCT P.NOTICESERIALNO) AS num,
+        SUM(NVL(C.NUM,0)) usrNum
+        from (
+        select a.*,B.name as 申请人,RES_ENAIL(B.COMPANY_NAME) companyname from LOG_ZXB_APPLY a
+        left join credit_user B on a.updateby = B.username
+        where 1=1 and to_char(APPROVEDATE,'YYYY-MM-DD') &gt;= to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(APPROVEDATE,'YYYY-MM-DD') &lt;= to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="companyName!=null and companyName!=''">
+            and  ${companyName}
+        </if>
+        ) A
+        left join ODS_ZXB_REPORTAPPROVE  R ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
+        left join ODS_ZXB_PDF P ON P.NOTICESERIALNO = R.NOTICESERIALNO
+        left join (
+        SELECT
+        a.companyname,
+        substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1) AS CODE,
+        A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME AS NAME,
+        count(*) AS NUM
+        FROM (
+        select a.*,RES_ENAIL(B.COMPANY_NAME) companyname from LOG_ZXB_APPLY a
+        left join credit_user b on a.UPDATEBY  = b.username
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            and  ${companyName}
+        </if>
+        ) A
+        LEFT JOIN ODS_ZXB_REPORTAPPROVE  R ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
+        LEFT JOIN  LOG_INTERFACE_REPORT I ON substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1)=R.NOTICESERIALNO
+        WHERE URI='//company/getPDF' and  TO_CHAR(TO_DATE(case when length(request_time) &lt;&gt; 19
+        then substr(request_time,2,19) else request_time end,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD') &gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and TO_CHAR(TO_DATE(case when length(request_time) &lt;&gt; 19
+        then substr(request_time,2,19) else request_time end,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        group by  a.companyname,substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1),A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME
+        ) C on C.CODE=P.NOTICESERIALNO AND a.companyname=C.companyname
+        WHERE P.NOTICESERIALNO IS NOT NULL and a.companyname IS NOT NULL
         GROUP BY a.companyname
         order by a.companyname
 
@@ -261,7 +299,7 @@
         WHERE URI='//company/getPDF' and  TO_CHAR(TO_DATE(REQUEST_TIME,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD') BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         group by  substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1),A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME,
         case when REQUEST_MESSAGE like '%"isDownload":"1"%' then '1' else '0' end-->
-        SELECT
+        <!--SELECT
         substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1) AS CODE,
         A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME AS NAME,
         case when REQUEST_MESSAGE like '%"isDownload":"1"%' then '1' else '0' end as type,
@@ -270,6 +308,25 @@
         select a.* from LOG_ZXB_APPLY a
         left join credit_user b on a.UPDATEBY = b.username
         left join DIM_ORG c on b.company_name = c.subcompanyname
+        where 1=1
+        <if test="companyName!=null and companyName!=''">
+            and ${companyName}
+        </if>
+        ) A
+        LEFT JOIN ODS_ZXB_REPORTAPPROVE  R ON R.CORPSERIALNO=A.CORPSERIALNO_IMPORT
+        LEFT JOIN  LOG_INTERFACE_REPORT I ON substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1)=R.NOTICESERIALNO
+
+        WHERE URI='//company/getPDF' and  TO_CHAR(TO_DATE(REQUEST_TIME,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD') BETWEEN to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD') and to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        group by  substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1),A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME,
+        case when REQUEST_MESSAGE like '%"isDownload":"1"%' then '1' else '0' end-->
+        SELECT
+        substr( PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),1,instr(PARSEJSON (REQUEST_MESSAGE, 'noticeSerialno'),'.',1)-1) AS CODE,
+        A.REPORTCORPCHNNAME||'/'||A.REPORTCORPENGNAME AS NAME,
+        case when REQUEST_MESSAGE like '%"isDownload":"1"%' then '1' else '0' end as type,
+        count(*) AS NUM
+        FROM (
+        select a.* from LOG_ZXB_APPLY a
+        left join credit_user b on a.UPDATEBY  = b.username
         where 1=1
         <if test="companyName!=null and companyName!=''">
             and ${companyName}
