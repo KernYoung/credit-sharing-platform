@@ -369,7 +369,7 @@
         where to_char(A.UPDATE_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         and to_char(A.UPDATE_TIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         <if test="companyName!=null and companyName!=''">
-            and RES_ENAIL(B.COMPANY_NAME) IN ()
+            and ${companyName}
         </if>
         group by A.REPORT_TYPE) A LEFT JOIN(
         select C.REPORT_TYPE module,COUNT(*) AS shareNumber
@@ -384,7 +384,7 @@
         AND TO_CHAR(TO_DATE(REQUEST_TIME,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         and TO_CHAR(TO_DATE(REQUEST_TIME,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
         <if test="companyName!=null and companyName!=''">
-            and RES_ENAIL(B.COMPANY_NAME) IN ()
+            and ${companyName}
         </if>
         group by C.REPORT_TYPE) B
         ON A.module = B.module
