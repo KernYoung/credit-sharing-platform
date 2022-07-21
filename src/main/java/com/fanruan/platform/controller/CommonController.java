@@ -1736,6 +1736,18 @@ public class CommonController {
                 return ReturnJson.getJson("1","文件为空",null);
             }
             List<SpeedMapping> list = EasyExcel.read(file.getInputStream()).head(SpeedMapping.class).sheet(0).doReadSync();
+            if(list==null||list.size()==0){
+                return ReturnJson.getJson("1","文件为空",null);
+            }
+            for (SpeedMapping speedmapping :list) {
+                if(speedmapping.getNationCode()==null||"".equals(speedmapping.getNationCode())){
+                    return ReturnJson.getJson("1","国家编码不能为空",null);
+                }
+                if(speedmapping.getSpeed()==null||"".equals(speedmapping.getSpeed())){
+                    return ReturnJson.getJson("1","紧急程度不能为空",null);
+                }
+
+            }
             speedMappingService.uploadSpeedMapping(list);
             int size = list==null?0:list.size();
             return ReturnJson.getJson("0","导入成功"+size+"条数据",null);
@@ -1743,6 +1755,8 @@ public class CommonController {
             return ReturnJson.getJson("1","导入失败"+e.getMessage(),null);
         }
     }
+
+
 
 
     /**
