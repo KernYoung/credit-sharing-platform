@@ -1932,7 +1932,13 @@ public class CommonController {
             }else if("3".equals(speed)){
                 speedName="特急";
             }
-            hs.put("returnMsg","当前国家不能申请紧急程度:"+speedName);
+            reportCorpCountryCode = param.get("reportCorpCountryCode")==null?"":
+                    param.get("reportCorpCountryCode").toString();
+            if("".equals(reportCorpCountryCode)){
+                hs.put("returnMsg","当前待调查企业中国信保企业代码对应的国家不能申请紧急程度:"+speedName);
+            }else {
+                hs.put("returnMsg", "当前国家不能申请紧急程度:" + speedName);
+            }
             hs.put("returnCode","500");
             return objectMapper.writeValueAsString(hs);
         }

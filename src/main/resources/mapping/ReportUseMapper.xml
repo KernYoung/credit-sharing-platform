@@ -362,7 +362,7 @@
             and ${companyName}
         </if>
         group by A.REPORT_TYPE-->
-        SELECT A.module,A.userNumber,B.shareNumber FROM (
+        <!--SELECT A.module,A.userNumber,B.shareNumber FROM (
         select A.REPORT_TYPE module,count(*) as userNumber
         from (select * from CREDIT_REPORT where update_by &lt;&gt; 'null' ) A
         left join CREDIT_USER B on A.UPDATE_BY=B.USER_ID
@@ -387,8 +387,37 @@
             and ${companyName}
         </if>
         group by C.REPORT_TYPE) B
-        ON A.module = B.module
-
+        ON A.module = B.module-->
+        SELECT S.module,A.userNumber,B.shareNumber FROM(
+        SELECT
+        DISTINCT REPORT_TYPE AS module
+        FROM CREDIT_REPORT
+        ) S LEFT JOIN (
+        select A.REPORT_TYPE module,count(*) as userNumber
+        from (select * from CREDIT_REPORT where update_by &lt;&gt; 'null' ) A
+        left join CREDIT_USER B on A.UPDATE_BY=B.USER_ID
+        where to_char(A.UPDATE_TIME,'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and to_char(A.UPDATE_TIME,'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="companyName!=null and companyName!=''">
+            and ${companyName}
+        </if>
+        group by A.REPORT_TYPE) A ON A.module = S.module LEFT JOIN(
+        select C.REPORT_TYPE module,COUNT(*) AS shareNumber
+        from LOG_INTERFACE_REPORT A LEFT
+        JOIN (SELECT * FROM
+        (select A.*,ROW_NUMBER()OVER(PARTITION BY A.FILE_NAME ORDER BY A.UPDATE_TIME) AS RN from CREDIT_REPORT A where update_by &lt;&gt; 'null')
+        WHERE RN = 1) C
+        ON PARSEJSON (REQUEST_MESSAGE, 'fileName') = C.FILE_NAME LEFT
+        JOIN CREDIT_USER B
+        on C.UPDATE_BY=B.USER_ID
+        where URI='//company/zhongChengXin/getReportPDF'
+        AND TO_CHAR(TO_DATE(REQUEST_TIME,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD')&gt;=to_char(to_date(#{startDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        and TO_CHAR(TO_DATE(REQUEST_TIME,'YYYY-MM-DD hh24:mi:ss'),'YYYY-MM-DD')&lt;=to_char(to_date(#{endDate},'YYYY-MM-DD'),'YYYY-MM-DD')
+        <if test="companyName!=null and companyName!=''">
+            and ${companyName}
+        </if>
+        group by C.REPORT_TYPE) B
+        ON S.module = B.module
 
     </select>
 
